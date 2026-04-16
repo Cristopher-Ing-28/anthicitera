@@ -373,7 +373,7 @@
     <div class="flex flex-1 overflow-hidden">
         <!-- Sidebar -->
         <aside class="w-64 bg-[#f0e6cd] border-r border-stone-300 flex flex-col">
-            <nav class="p-6 space-y-1 flex-1">
+            <nav class="p-6 space-y-1">
                 <button onclick="navigateTo('terminal')" id="nav-terminal"
                     class="sidebar-item w-full flex items-center gap-3 px-4 py-2.5 rounded text-sm font-medium active">
                     <i data-lucide="terminal" class="w-4 h-4"></i> Terminal
@@ -387,7 +387,20 @@
                     <i data-lucide="pen-tool" class="w-4 h-4"></i> Bloc de Notas
                 </button>
             </nav>
-            <div class="p-6 border-t border-stone-300">
+
+            <div class="flex-1 overflow-y-auto px-4 py-2 border-t border-stone-300 flex flex-col">
+                <div class="flex justify-between items-center mb-2 px-2 text-stone-500">
+                    <span class="text-[10px] uppercase font-bold tracking-widest text-amber-900">Explorador</span>
+                    <button id="btn-open-folder" title="Seleccionar Carpeta Local" class="hover:text-amber-700 transition-colors p-1 bg-white/50 rounded border border-stone-300 shadow-sm">
+                        <i data-lucide="folder-search" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+                <div id="file-explorer-tree" class="flex-1 text-xs text-stone-600 space-y-0.5 overflow-y-auto pb-4 custom-scrollbar">
+                    <div class="italic text-[10px] text-stone-400 text-center mt-6">Haz clic en el ícono de carpeta para vincular tu directorio local.</div>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-stone-300 bg-[#f0e6cd]">
                 <div class="glass-card p-3 rounded-lg text-center">
                     <p class="text-[10px] uppercase font-bold text-stone-500 mb-1">Capacidad Local</p>
                     <div class="w-full bg-stone-300 h-1 rounded-full overflow-hidden">
@@ -1689,6 +1702,113 @@
         setInterval(() => {
             document.getElementById('clock').innerText = new Date().toLocaleTimeString();
         }, 1000);
+
+// --- EXPLORADOR DE ARCHIVOS LOCAL (File System Access API) ---
+        const btnOpenFolder = document.getElementById('btn-open-folder');
+        const explorerTree = document.getElementById('file-explorer-tree');
+
+        if(btnOpenFolder) {
+            btnOpenFolder.addEventListener('click', async () => {
+                try {
+                    // Solicitar acceso al directorio local (Solo lectura)
+                    const dirHandle = await window.showDirectoryPicker({
+                        mode: 'read'
+                    });
+                    
+                    explorerTree.innerHTML = ''; 
+                    await renderDirectoryTree(dirHandle, explorerTree, 0);
+                    showToast("Directorio vinculado exitosamente");
+                } catch (err) {
+                    if(err.name !== 'AbortError') {
+                        console.error("Error al acceder a la carpeta:", err);
+                        showToast("Error al cargar la carpeta local");
+                    }
+                }
+            });
+        }
+
+        async function renderDirectoryTree(dirHandle, parentElement, depth) {
+            const paddingLeft = depth * 12; // Indentación progresiva
+
+            // Ordenar: primero carpetas, luego archivos alfabéticamente
+            const entries = [];
+            for await (const entry of dirHandle.values()) {
+                entries.push(entry);
+            }
+            entries.sort((a, b) => {
+                if (a.kind === b.kind) return a.name.localeCompare(b.name);
+                return a.kind === 'directory' ? -1 : 1;
+            });
+
+            for (const entry of entries) {
+                // Ignorar carpetas ocultas comunes como .git
+                if(entry.name.startsWith('.')) continue;
+
+                const itemDiv = document.createElement('div');
+                // Estilos para que coincida con la paleta de Anticithera
+                itemDiv.className = `flex items-center gap-2 py-1 px-2 rounded cursor-pointer hover:bg-[#e4d6b8] transition-colors truncate text-[11px] font-medium`;
+                itemDiv.style.paddingLeft = `${paddingLeft + 8}px`;
+
+                const iconName = entry.kind === 'directory' ? 'folder' : getFileIconForExplorer(entry.name);
+                const iconColor = entry.kind === 'directory' ? 'text-amber-700' : 'text-stone-500';
+                
+                itemDiv.innerHTML = `
+                    <i data-lucide="${iconName}" class="w-3.5 h-3.5 ${iconColor} flex-shrink-0 transition-transform"></i>
+                    <span class="truncate select-none">${entry.name}</span>
+                `;
+
+                if (entry.kind === 'directory') {
+                    // Contenedor para subcarpetas (oculto por defecto)
+                    const childrenContainer = document.createElement('div');
+                    childrenContainer.className = 'hidden flex-col';
+                    
+                    itemDiv.onclick = async (e) => {
+                        e.stopPropagation();
+                        const isHidden = childrenContainer.classList.contains('hidden');
+                        const iconEl = itemDiv.querySelector('i');
+                        
+                        if (isHidden) {
+                            // Cargar contenido perezosamente (lazy load) al expandir
+                            if (childrenContainer.innerHTML === '') {
+                                await renderDirectoryTree(entry, childrenContainer, depth + 1);
+                            }
+                            childrenContainer.classList.remove('hidden');
+                            iconEl.setAttribute('data-lucide', 'folder-open');
+                            iconEl.classList.add('text-amber-800');
+                        } else {
+                            childrenContainer.classList.add('hidden');
+                            iconEl.setAttribute('data-lucide', 'folder');
+                            iconEl.classList.remove('text-amber-800');
+                        }
+                        lucide.createIcons();
+                    };
+                    
+                    parentElement.appendChild(itemDiv);
+                    parentElement.appendChild(childrenContainer);
+                } else {
+                    itemDiv.onclick = async (e) => {
+                        e.stopPropagation();
+                        // Acción al hacer clic en un archivo
+                        showToast(`Archivo: ${entry.name}`);
+                    };
+                    parentElement.appendChild(itemDiv);
+                }
+            }
+            lucide.createIcons();
+        }
+
+        // Asignador de íconos basado en la extensión del archivo
+        function getFileIconForExplorer(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            if (['pdf'].includes(ext)) return 'file-text';
+            if (['md'].includes(ext)) return 'file-type';
+            if (['ipynb'].includes(ext)) return 'layout';
+            if (['docx', 'doc'].includes(ext)) return 'file-text';
+            if (['xlsx', 'ods', 'csv'].includes(ext)) return 'table';
+            if (['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(ext)) return 'image';
+            if (['html', 'css', 'js', 'json', 'py'].includes(ext)) return 'code';
+            return 'file';
+        }
 
         window.onload = () => {
             initDB();
