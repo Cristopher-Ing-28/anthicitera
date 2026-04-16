@@ -9,16 +9,12 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
-    <!-- PDF.js para el Visor -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf_viewer.min.css">
-    <!-- Exportación -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <!-- Resaltado de Código y Mates para Notebooks -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <!-- Office Parsers -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
@@ -164,18 +160,15 @@
 
 <body class="h-screen flex flex-col">
 
-    <!-- Notificaciones -->
     <div id="toast"
         class="fixed top-6 right-6 z-[600] px-6 py-3 bg-stone-900 text-white text-xs font-bold uppercase tracking-widest opacity-0 transition-opacity duration-300 pointer-events-none">
     </div>
 
-    <!-- Botón Flotante de Citas (FAB) -->
     <button id="selectionFAB"
         class="hidden fixed z-[500] bg-amber-900 text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-2xl flex items-center gap-2 transform -translate-x-1/2">
         <i data-lucide="plus-square" class="w-3 h-3"></i> Crear Ficha
     </button>
 
-    <!-- Modal de Metadatos y Citas -->
     <div id="metadata-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center p-4 modal-overlay">
         <div
             class="bg-white border border-stone-400 w-full max-w-2xl rounded shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
@@ -185,12 +178,10 @@
                         data-lucide="x"></i></button>
             </div>
             <div id="metadata-body" class="p-6 overflow-y-auto space-y-6">
-                <!-- Se llena dinámicamente -->
-            </div>
+                </div>
         </div>
     </div>
 
-    <!-- Modal de Ficha Bibliográfica -->
     <div id="ficha-modal" class="hidden fixed inset-0 z-[550] flex items-center justify-center p-4 modal-overlay">
         <div
             class="bg-white border border-stone-400 w-full max-w-lg rounded shadow-2xl overflow-hidden flex flex-col transform transition-all">
@@ -235,7 +226,6 @@
         </div>
     </div>
 
-    <!-- Visor de PDF Pantalla Completa -->
     <div id="pdf-viewer-overlay" class="hidden fixed inset-0 z-[350] bg-stone-900 flex flex-col">
         <div class="h-14 bg-stone-800 border-b border-stone-700 flex items-center justify-between px-4 text-white">
             <div class="flex items-center gap-4">
@@ -268,10 +258,8 @@
         </div>
     </div>
 
-    <!-- Contenedor Invisible para Impresión -->
     <div id="print-section" class="hidden"></div>
 
-    <!-- Visor de Notebooks (Jupyter) -->
     <div id="notebook-viewer-overlay" class="hidden fixed inset-0 z-[360] bg-white flex flex-col overflow-hidden">
         <div class="h-14 bg-stone-100 border-b border-stone-200 flex items-center justify-between px-6">
             <div class="flex items-center gap-4">
@@ -287,11 +275,9 @@
         </div>
         <div id="notebook-content-area"
             class="flex-1 overflow-y-auto p-8 max-w-5xl mx-auto w-full space-y-6 bg-white shadow-2xl my-4 rounded-xl border border-stone-100">
-            <!-- Celdas se cargan aquí -->
-        </div>
+            </div>
     </div>
 
-    <!-- Visor de Documentos Office -->
     <div id="office-viewer-overlay" class="hidden fixed inset-0 z-[370] bg-[#f9f7f2] flex flex-col overflow-hidden">
         <div class="h-14 bg-white border-b border-stone-200 flex items-center justify-between px-6 shadow-sm">
             <div class="flex items-center gap-4">
@@ -316,21 +302,17 @@
         <div class="flex-1 overflow-auto bg-stone-100 p-8 flex justify-center">
             <div id="office-content-area" onmouseup="handleSelectionEvent(event)"
                 class="bg-white shadow-xl max-w-5xl w-full p-12 min-h-[1056px] rounded-sm border border-stone-200 prose prose-stone select-text overflow-y-auto">
-                <!-- Contenido dinámico -->
-            </div>
+                </div>
         </div>
     </div>
 
-    <!-- Header -->
     <header class="h-14 border-b border-stone-300 bg-[#ede0c4] flex items-center justify-between px-6 z-50">
         <div class="flex items-center gap-3">
             <i data-lucide="binary" class="text-amber-900 w-6 h-6"></i>
             <h1 class="text-xl font-bold uppercase tracking-tighter italic text-amber-900">Anticithera</h1>
         </div>
 
-        <!-- Buscador Global y DOI -->
         <div class="flex-1 max-w-4xl mx-8 flex items-center gap-4">
-            <!-- Buscador -->
             <div class="relative flex-1 group">
                 <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400"></i>
                 <input type="text" id="globalSearchInput"
@@ -338,7 +320,6 @@
                     oninput="handleGlobalSearch(this.value)"
                     class="w-full bg-[#fdfaf1] border border-stone-300 rounded-full py-1.5 pl-10 pr-4 text-xs focus:ring-1 focus:ring-amber-700 outline-none transition-all">
 
-                <!-- Resultados del Buscador -->
                 <div id="search-results-overlay"
                     class="hidden absolute top-full left-0 right-0 mt-2 bg-white border border-stone-200 shadow-2xl rounded-xl overflow-hidden z-[100] max-h-[400px] flex flex-col">
                     <div id="search-results-list" class="overflow-y-auto p-2 space-y-1"></div>
@@ -349,7 +330,6 @@
                 </div>
             </div>
 
-            <!-- Importación por DOI -->
             <div class="flex items-center gap-2 w-64">
                 <div class="relative flex-1">
                     <i data-lucide="link"
@@ -371,7 +351,6 @@
     </header>
 
     <div class="flex flex-1 overflow-hidden">
-        <!-- Sidebar -->
         <aside class="w-64 bg-[#f0e6cd] border-r border-stone-300 flex flex-col">
             <nav class="p-6 space-y-1">
                 <button onclick="navigateTo('terminal')" id="nav-terminal"
@@ -410,10 +389,8 @@
             </div>
         </aside>
 
-        <!-- Main Workspace -->
         <main class="flex-1 overflow-y-auto bg-[#f4ecd8] relative" id="view-container">
 
-            <!-- VISTA: TERMINAL -->
             <section id="view-terminal" class="p-8 animate-fade h-full overflow-y-auto">
                 <div class="max-w-4xl mx-auto space-y-8">
                     <div>
@@ -446,13 +423,11 @@
                         <h4 class="font-bold mb-4 uppercase text-xs tracking-widest text-stone-500">Actividad Reciente
                         </h4>
                         <div class="space-y-3" id="recent-activity">
-                            <!-- JS -->
-                        </div>
+                            </div>
                     </div>
                 </div>
             </section>
 
-            <!-- VISTA: LIBRERÍA -->
             <section id="view-libreria" class="p-8 animate-fade hidden h-full flex flex-col">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-3xl font-bold italic">La Librería</h2>
@@ -485,7 +460,6 @@
                     </div>
                 </div>
 
-                <!-- Panel de Búsqueda Avanzada -->
                 <div class="glass-card p-6 rounded-2xl mb-8 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div class="md:col-span-2 relative">
@@ -524,18 +498,15 @@
                     <div class="flex items-center gap-2 overflow-x-auto pb-1" id="adv-tag-filters">
                         <span class="text-[9px] font-bold uppercase text-stone-400 mr-2 whitespace-nowrap">Tags
                             Sugeridos:</span>
-                        <!-- Tags se cargarán dinámicamente -->
-                    </div>
+                        </div>
                 </div>
 
                 <div class="flex-1 overflow-y-auto">
                     <div id="resources-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Items Unificados -->
-                    </div>
+                        </div>
                 </div>
             </section>
 
-            <!-- VISTA: NOTAS -->
             <section id="view-notas" class="p-8 animate-fade hidden h-full flex flex-col">
                 <div class="flex gap-6 h-full">
                     <div class="w-1/3 border-r border-stone-300 pr-6 flex flex-col">
@@ -912,7 +883,7 @@
 
         // --- GESTIÓN DE ARCHIVOS ---
         const handleFileUpload = async (e) => {
-            const file = e.target.files[0];
+            const file = e.target.files ? e.target.files[0] : null;
             if (!file) return;
 
             showToast("Procesando PDF...");
@@ -947,7 +918,7 @@
 
         // --- IMPORTACIÓN OBSIDIAN (.MD) ---
         const handleObsidianUpload = async (e) => {
-            const file = e.target.files[0];
+            const file = e.target.files ? e.target.files[0] : null;
             if (!file) return;
 
             const text = await file.text();
@@ -1000,7 +971,7 @@
 
         // --- VISOR UNIVERSAL DE OFFICE (DOCX, XLSX, ODS, PPTX, ODT) ---
         const handleOfficeUpload = async (e) => {
-            const file = e.target.files[0];
+            const file = e.target.files ? e.target.files[0] : null;
             if (!file) return;
             showToast("Indexando Documento...");
 
@@ -1100,10 +1071,8 @@
             }
         });
 
-        // Modificar para compatibilidad con PDF (el viewer de PDF tiene su propia lógica de selección por capas)
-        // Pero el mouseup global puede atraparlo si el PDF no dispara stopPropagation
         const handleNotebookUpload = async (e) => {
-            const file = e.target.files[0];
+            const file = e.target.files ? e.target.files[0] : null;
             if (!file) return;
 
             const text = await file.text();
@@ -1323,7 +1292,7 @@
                 } else {
                     icon = item.type === 'ficha' ? 'plus-square' : (item.type === 'obsidian' ? 'file-type' : 'pen-tool');
                     typeLabel = item.type === 'ficha' ? 'Ficha' : (item.type === 'obsidian' ? 'Obsidian' : 'Nota');
-                    action = `navigateTo('notas'); loadNote('${item.id}');`;
+                    action = `MapsTo('notas'); loadNote('${item.id}');`;
                 }
 
                 card.innerHTML = `
@@ -1703,7 +1672,7 @@
             document.getElementById('clock').innerText = new Date().toLocaleTimeString();
         }, 1000);
 
-// --- EXPLORADOR DE ARCHIVOS LOCAL (File System Access API) ---
+        // --- EXPLORADOR DE ARCHIVOS LOCAL (File System Access API) ---
         const btnOpenFolder = document.getElementById('btn-open-folder');
         const explorerTree = document.getElementById('file-explorer-tree');
 
@@ -1786,6 +1755,22 @@
                     parentElement.appendChild(itemDiv);
                     parentElement.appendChild(childrenContainer);
                 } else {
+                    // Hacer el elemento arrastrable
+                    itemDiv.draggable = true;
+
+                    // Al iniciar el arrastre, guardamos la referencia en una variable global
+                    itemDiv.ondragstart = (e) => {
+                        window.draggedFileHandle = entry;
+                        e.dataTransfer.effectAllowed = 'copy';
+                        itemDiv.classList.add('opacity-50'); // Efecto visual
+                    };
+
+                    // Al terminar, limpiamos
+                    itemDiv.ondragend = (e) => {
+                        window.draggedFileHandle = null;
+                        itemDiv.classList.remove('opacity-50');
+                    };
+
                     itemDiv.onclick = async (e) => {
                         e.stopPropagation();
                         // Acción al hacer clic en un archivo
@@ -1808,6 +1793,63 @@
             if (['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(ext)) return 'image';
             if (['html', 'css', 'js', 'json', 'py'].includes(ext)) return 'code';
             return 'file';
+        }
+
+        // --- SISTEMA DE ARRASTRAR Y SOLTAR DESDE EL EXPLORADOR LOCAL ---
+        
+        // Variable global para mantener la referencia del archivo en movimiento
+        window.draggedFileHandle = null;
+
+        const viewContainer = document.getElementById('view-container');
+
+        // Permitir que el contenedor acepte elementos arrastrados
+        viewContainer.addEventListener('dragover', (e) => {
+            e.preventDefault(); // Necesario para permitir el "drop"
+            e.dataTransfer.dropEffect = 'copy';
+            viewContainer.classList.add('bg-[#e4d6b8]', 'transition-colors'); // Efecto visual al sobrevolar
+        });
+
+        viewContainer.addEventListener('dragleave', (e) => {
+            viewContainer.classList.remove('bg-[#e4d6b8]');
+        });
+
+        // Manejar el evento de soltar
+        viewContainer.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            viewContainer.classList.remove('bg-[#e4d6b8]');
+
+            // Verificar si el elemento soltado viene de nuestro explorador local
+            if (window.draggedFileHandle) {
+                try {
+                    // Extraer el archivo real (File object) a partir del Handle
+                    const file = await window.draggedFileHandle.getFile();
+                    processDroppedFile(file);
+                } catch (err) {
+                    console.error("Error al leer el archivo arrastrado:", err);
+                    showToast("Error al leer el archivo. Verifica los permisos.");
+                }
+                window.draggedFileHandle = null; // Limpiar
+            }
+        });
+
+        // Enrutador: Envía el archivo a la función de ingesta correspondiente
+        function processDroppedFile(file) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            
+            // Creamos un evento falso (Mock Event) para reutilizar tus funciones existentes
+            const fakeEvent = { target: { files: [file] } };
+
+            if (['pdf'].includes(ext)) {
+                handleFileUpload(fakeEvent);
+            } else if (['md'].includes(ext)) {
+                handleObsidianUpload(fakeEvent);
+            } else if (['ipynb'].includes(ext)) {
+                handleNotebookUpload(fakeEvent);
+            } else if (['docx', 'xlsx', 'ods', 'pptx', 'odt'].includes(ext)) {
+                handleOfficeUpload(fakeEvent);
+            } else {
+                showToast(`Formato .${ext} no soportado para importación.`);
+            }
         }
 
         window.onload = () => {
