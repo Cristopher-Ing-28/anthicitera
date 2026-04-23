@@ -254,8 +254,28 @@ async function manejarArchivoSeleccionado(data) {
 
         function openFichaModal() {
             document.getElementById('ficha-text-preview').innerText = selectedText;
-            document.getElementById('ficha-ref').value = document.getElementById('pdf-viewer-title').innerText;
-            document.getElementById('ficha-page').value = pageNum;
+            
+            // Lógica inteligente para detectar el visor activo y extraer su título
+            let docTitle = "Documento Desconocido";
+            let page = "N/A";
+
+            if (!document.getElementById('pdf-viewer-overlay').classList.contains('hidden')) {
+                // Si estamos en un PDF
+                docTitle = document.getElementById('pdf-viewer-title').innerText;
+                page = pageNum;
+            } else if (!document.getElementById('office-viewer-overlay').classList.contains('hidden')) {
+                // Si estamos en Word, Excel, etc.
+                docTitle = document.getElementById('office-title').innerText;
+                page = "Única"; // Estos documentos no están paginados en la web
+            } else if (!document.getElementById('notebook-viewer-overlay').classList.contains('hidden')) {
+                // Si estamos en un Notebook de Jupyter
+                docTitle = document.getElementById('notebook-title').innerText;
+                page = "Celda"; 
+            }
+
+            // Inyectar los metadatos correctos en la ventana de creación
+            document.getElementById('ficha-ref').value = docTitle;
+            document.getElementById('ficha-page').value = page;
             document.getElementById('ficha-comment').value = '';
             document.getElementById('ficha-modal').classList.remove('hidden');
         }
@@ -593,25 +613,54 @@ async function manejarArchivoSeleccionado(data) {
                 container.innerHTML = 'Procesando contenido...';
                 document.getElementById('office-viewer-overlay').classList.remove('hidden');
 
-                try {
+try {
                     if (res.name.endsWith('.docx')) {
                         badgeEl.innerText = "Soporte Word Nativo";
                         const result = await mammoth.convertToHtml({ arrayBuffer });
-                        container.innerHTML = result.value;
+                        // Envolvemos en Tailwind Typography para un formato de lectura impecable
+                        container.innerHTML = `<div class="prose prose-stone max-w-none prose-headings:font-bold prose-headings:text-stone-800 prose-p:text-stone-600 prose-a:text-amber-700">${result.value}</div>`;
                     }
                     else if (res.name.endsWith('.xlsx') || res.name.endsWith('.ods')) {
-                        badgeEl.innerText = "Hoja de Cálculo (Solo Lectura)";
+                        badgeEl.innerText = "Hoja de Cálculo";
                         const workbook = XLSX.read(arrayBuffer);
                         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                        container.innerHTML = XLSX.utils.sheet_to_html(firstSheet);
-                        // Añadir estilos mínimos a la tabla
-                        container.querySelectorAll('table').forEach(t => t.className = "w-full border-collapse border border-stone-200 text-xs");
+                        const htmlString = XLSX.utils.sheet_to_html(firstSheet);
+                        
+                        // Envolvemos la tabla en un contenedor scrolleable
+                        container.innerHTML = `<div class="spreadsheet-container">${htmlString}</div>`;
+                        
+                        // Inyectamos estilos de tabla profesional directamente al DOM generado
+                        const table = container.querySelector('table');
+                        if (table) {
+                            table.className = "w-full text-sm text-left border-collapse bg-white";
+                            container.querySelectorAll('td, th').forEach(cell => {
+                                cell.className = "border border-stone-200 px-4 py-2 text-stone-600 whitespace-nowrap";
+                            });
+                            // Estilo para la primera fila (asumiendo que son los encabezados)
+                            container.querySelectorAll('tr:first-child td').forEach(cell => {
+                                cell.classList.add('bg-stone-100', 'font-bold', 'text-stone-800', 'uppercase', 'text-[10px]', 'tracking-wider');
+                            });
+                        }
                     }
                     else {
-                        container.innerHTML = `<div class="p-8 text-center italic text-stone-400">El formato de "${res.name}" solicita visualización externa o básica. Soporte limitado para PPTX/ODT en esta versión del núcleo.</div>`;
+                        // Pantalla de error elegante para PPTX u otros
+                        container.innerHTML = `
+                            <div class="flex flex-col items-center justify-center h-full text-center text-stone-400 space-y-4 py-20">
+                                <i data-lucide="monitor-x" class="w-16 h-16 text-stone-300"></i>
+                                <h3 class="text-xl font-bold text-stone-600">Visualización no soportada</h3>
+                                <p class="text-sm max-w-md leading-relaxed">El formato de <b>${res.name}</b> requiere un motor gráfico externo.</p>
+                                <div class="p-4 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-xs mt-4">
+                                    <i data-lucide="lightbulb" class="w-4 h-4 inline-block mr-1 mb-0.5"></i>
+                                    <b>Recomendación del Ecosistema:</b> Exporta tus presentaciones (PPTX) a formato PDF antes de subirlas para aprovechar el visor integrado.
+                                </div>
+                            </div>`;
                     }
                 } catch (err) {
-                    container.innerHTML = `<p class="text-red-500">Error al renderizar el documento: ${err.message}</p>`;
+                    container.innerHTML = `
+                        <div class="p-8 text-center text-red-500 bg-red-50 rounded border border-red-200">
+                            <i data-lucide="alert-triangle" class="w-8 h-8 mx-auto mb-2"></i>
+                            <p>Error al renderizar el documento: ${err.message}</p>
+                        </div>`;
                 }
                 lucide.createIcons();
             };
@@ -876,7 +925,7 @@ async function manejarArchivoSeleccionado(data) {
                 } else {
                     icon = item.type === 'ficha' ? 'plus-square' : (item.type === 'obsidian' ? 'file-type' : 'pen-tool');
                     typeLabel = item.type === 'ficha' ? 'Ficha' : (item.type === 'obsidian' ? 'Obsidian' : 'Nota');
-                    action = `MapsTo('notas'); loadNote('${item.id}');`;
+                    action = `navigateTo('notas'); loadNote('${item.id}');`;
                 }
 
                 card.innerHTML = `

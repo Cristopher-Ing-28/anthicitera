@@ -216,3 +216,45 @@
             background: #f3f4f6;
             color: #374151;
         }
+
+        #office-viewer-overlay .flex-1.bg-stone-100 {
+            background-color: #525659 !important;
+            padding: 2rem;
+        }
+
+        #office-content-area {
+            background-color: white !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3) !important;
+            max-width: 850px; 
+            margin: 0 auto;
+            padding: 4rem 5rem !important; 
+            border-radius: 4px;
+            border: none !important;
+        }
+
+       
+        .spreadsheet-container {
+            width: 100%;
+            overflow-x: auto;
+            background: white;
+            border: 1px solid var(--sepia-border);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+       
+        .spreadsheet-container::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        .spreadsheet-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 0 0 8px 8px;
+        }
+        .spreadsheet-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .spreadsheet-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
