@@ -87,25 +87,16 @@ async function manejarArchivoSeleccionado(data) {
         try {
             let url;
             
-            // ¡EL TRUCO! Detectamos si es un formato nativo de Google Workspace
             if (mimeType === 'application/vnd.google-apps.document') {
-                // Es un Google Doc, le decimos a la API que lo exporte como Word (.docx)
                 url = `https://www.googleapis.com/drive/v3/files/${fileId}/export?mimeType=application/vnd.openxmlformats-officedocument.wordprocessingml.document`;
-                // Le aseguramos la extensión al nombre para que tu sistema lo reconozca
                 if (!fileName.endsWith('.docx')) fileName += '.docx';
                 
-            } else if (mimeType === 'application/vnd.google-apps.spreadsheet') {
-                // Es un Google Sheet, lo exportamos como Excel (.xlsx)
-                url = `https://www.googleapis.com/drive/v3/files/${fileId}/export?mimeType=application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`;
-                if (!fileName.endsWith('.xlsx')) fileName += '.xlsx';
-                
-            } else if (mimeType === 'application/vnd.google-apps.presentation') {
-                // Es un Google Slide, lo exportamos como PowerPoint (.pptx)
-                url = `https://www.googleapis.com/drive/v3/files/${fileId}/export?mimeType=application/vnd.openxmlformats-officedocument.presentationml.presentation`;
-                if (!fileName.endsWith('.pptx')) fileName += '.pptx';
+            } else if (mimeType === 'application/vnd.google-apps.spreadsheet' || mimeType === 'application/vnd.google-apps.presentation') {
+                // Bloqueamos Hojas de cálculo y Presentaciones
+                showToast("Formato no soportado. Sube solo Documentos (Word/PDF).");
+                return; // Rompemos la función aquí
                 
             } else {
-                // Es un archivo normal (PDF, o un documento de Office ya existente)
                 url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
             }
 
@@ -613,46 +604,19 @@ async function manejarArchivoSeleccionado(data) {
                 container.innerHTML = 'Procesando contenido...';
                 document.getElementById('office-viewer-overlay').classList.remove('hidden');
 
-try {
+            try {
                     if (res.name.endsWith('.docx')) {
                         badgeEl.innerText = "Soporte Word Nativo";
                         const result = await mammoth.convertToHtml({ arrayBuffer });
-                        // Envolvemos en Tailwind Typography para un formato de lectura impecable
                         container.innerHTML = `<div class="prose prose-stone max-w-none prose-headings:font-bold prose-headings:text-stone-800 prose-p:text-stone-600 prose-a:text-amber-700">${result.value}</div>`;
                     }
-                    else if (res.name.endsWith('.xlsx') || res.name.endsWith('.ods')) {
-                        badgeEl.innerText = "Hoja de Cálculo";
-                        const workbook = XLSX.read(arrayBuffer);
-                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                        const htmlString = XLSX.utils.sheet_to_html(firstSheet);
-                        
-                        // Envolvemos la tabla en un contenedor scrolleable
-                        container.innerHTML = `<div class="spreadsheet-container">${htmlString}</div>`;
-                        
-                        // Inyectamos estilos de tabla profesional directamente al DOM generado
-                        const table = container.querySelector('table');
-                        if (table) {
-                            table.className = "w-full text-sm text-left border-collapse bg-white";
-                            container.querySelectorAll('td, th').forEach(cell => {
-                                cell.className = "border border-stone-200 px-4 py-2 text-stone-600 whitespace-nowrap";
-                            });
-                            // Estilo para la primera fila (asumiendo que son los encabezados)
-                            container.querySelectorAll('tr:first-child td').forEach(cell => {
-                                cell.classList.add('bg-stone-100', 'font-bold', 'text-stone-800', 'uppercase', 'text-[10px]', 'tracking-wider');
-                            });
-                        }
-                    }
                     else {
-                        // Pantalla de error elegante para PPTX u otros
+                        // Pantalla de error elegante para formatos no soportados
                         container.innerHTML = `
                             <div class="flex flex-col items-center justify-center h-full text-center text-stone-400 space-y-4 py-20">
                                 <i data-lucide="monitor-x" class="w-16 h-16 text-stone-300"></i>
                                 <h3 class="text-xl font-bold text-stone-600">Visualización no soportada</h3>
-                                <p class="text-sm max-w-md leading-relaxed">El formato de <b>${res.name}</b> requiere un motor gráfico externo.</p>
-                                <div class="p-4 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-xs mt-4">
-                                    <i data-lucide="lightbulb" class="w-4 h-4 inline-block mr-1 mb-0.5"></i>
-                                    <b>Recomendación del Ecosistema:</b> Exporta tus presentaciones (PPTX) a formato PDF antes de subirlas para aprovechar el visor integrado.
-                                </div>
+                                <p class="text-sm max-w-md leading-relaxed">El formato de <b>${res.name}</b> no es compatible con el motor de lectura seguro.</p>
                             </div>`;
                     }
                 } catch (err) {
@@ -1294,16 +1258,41 @@ try {
         }
 
         function goToResult(type, id) {
-            searchResultsOverlay.classList.add('hidden');
-            searchInput.value = '';
+    searchResultsOverlay.classList.add('hidden');
+    searchInput.value = '';
 
-            if (type === 'resource') {
-                openPdfViewer(id);
-            } else {
-                navigateTo('notas');
-                loadNote(id);
+    if (type === 'resource') {
+        // Hacemos una consulta rápida a la base de datos para saber qué archivo es
+        const tx = db.transaction('resources', 'readonly');
+        tx.objectStore('resources').get(id).onsuccess = (e) => {
+            const res = e.target.result;
+            if (!res) return;
+
+            const name = res.name.toLowerCase();
+
+            // Evaluamos la extensión y abrimos el visor correspondiente
+            if (res.blob) {
+                if (name.endsWith('.ipynb')) {
+                    openNotebookViewer(id);
+                } else if (name.endsWith('.pdf')) {
+                    openPdfViewer(id);
+                } else if (name.endsWith('.docx') || name.endsWith('.odt')) {
+                    openOfficeViewer(id);
+                } else {
+                    // Por defecto, lo intentamos abrir en el PDF
+                    openPdfViewer(id);
+                }
+            } else if (res.metadata) {
+                // Si es un recurso importado por DOI (solo enlace)
+                window.open(`https://doi.org/${res.metadata.doi}`, '_blank');
             }
-        }
+        };
+    } else {
+        // Si no es recurso, es una nota/ficha y va a su lugar correcto
+        navigateTo('notas');
+        loadNote(id);
+    }
+}
 
         // Cerrar buscador con Escape
         document.addEventListener('keydown', (e) => {
@@ -1542,7 +1531,7 @@ try {
                 handleObsidianUpload(fakeEvent);
             } else if (['ipynb'].includes(ext)) {
                 handleNotebookUpload(fakeEvent);
-            } else if (['docx', 'xlsx', 'ods', 'pptx', 'odt'].includes(ext)) {
+            } else if (['docx', 'odt'].includes(ext)) {
                 handleOfficeUpload(fakeEvent);
             } else {
                 showToast(`Formato .${ext} no soportado para importación.`);

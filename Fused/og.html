@@ -12,10 +12,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf_viewer.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <script async defer src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -252,6 +252,12 @@
                     class="border border-stone-300 bg-white/50 hover:bg-white px-2 py-1.5 rounded-full text-[#4285F4] transition-all shadow-sm flex items-center">
                     <i data-lucide="cloud" class="w-4 h-4"></i>
                 </button>
+
+                <input type="file" id="zipUploadInput" class="hidden" accept=".zip" onchange="manejarArchivoZipLocal(event)">
+                <button type="button" onclick="menuImportarZip()" title="Restaurar copia de seguridad (ZIP/GitHub)"
+                    class="border border-stone-300 bg-white/50 hover:bg-white px-2 py-1.5 rounded-full text-amber-700 transition-all shadow-sm flex items-center">
+                    <i data-lucide="archive-restore" class="w-4 h-4"></i>
+                </button>
             </div>
         </div>
 
@@ -294,14 +300,13 @@
                         vincular tu directorio local.</div>
                 </div>
             </div>
-
-            <div class="p-6 border-t border-stone-300 bg-[#f0e6cd]">
-                <div class="glass-card p-3 rounded-lg text-center">
-                    <p class="text-[10px] uppercase font-bold text-stone-500 mb-1">Capacidad Local</p>
-                    <div class="w-full bg-stone-300 h-1 rounded-full overflow-hidden">
-                        <div class="bg-amber-700 h-full w-1/3"></div>
-                    </div>
-                </div>
+            
+            <div class="p-4 border-t border-stone-300">
+                <button type="button" onclick="exportarLibreriaAZip()"
+                    class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded text-[10px] font-bold uppercase tracking-widest transition-transform hover:scale-[1.02] shadow-md"
+                    style="background-color: #433422; color: #d2c1a5;">
+                    <i data-lucide="archive" class="w-4 h-4"></i> Exportar Librería
+                </button>
             </div>
         </aside>
 
@@ -354,7 +359,7 @@
                             onchange="handleObsidianUpload(event)">
                         <input type="file" id="notebookUpload" class="hidden" accept=".ipynb"
                             onchange="handleNotebookUpload(event)">
-                        <input type="file" id="officeUpload" class="hidden" accept=".docx,.xlsx,.ods,.pptx,.odt"
+                        <input type="file" id="officeUpload" class="hidden" accept=".docx,.odt"
                             onchange="handleOfficeUpload(event)">
 
                         <button type="button" onclick="document.getElementById('pdfUpload').click()"
@@ -460,8 +465,7 @@
 
         </main>
     </div>
-
     <script src="scripts.js"></script>
+    <script src="exportZIP.js"></script>
 </body>
-
 </html>
