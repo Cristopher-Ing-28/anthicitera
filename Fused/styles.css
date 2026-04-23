@@ -1,0 +1,218 @@
+ @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono&display=swap');
+
+        :root {
+            --sepia-bg: #f4ecd8;
+            --sepia-text: #433422;
+            --sepia-border: #d2c1a5;
+            --sepia-accent: #8b5e34;
+        }
+
+        body {
+            font-family: 'Crimson Pro', serif;
+            background-color: var(--sepia-bg);
+            color: var(--sepia-text);
+            overflow: hidden;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.45);
+            border: 1px solid var(--sepia-border);
+            backdrop-filter: blur(8px);
+        }
+
+        .sidebar-item {
+            transition: all 0.2s;
+        }
+
+        .sidebar-item:hover {
+            background-color: rgba(139, 94, 52, 0.08);
+        }
+
+        .sidebar-item.active {
+            background-color: rgba(139, 94, 52, 0.12);
+            border-left: 3px solid var(--sepia-accent);
+            color: var(--sepia-accent);
+            font-weight: 700;
+        }
+
+        .btn-sepia {
+            background-color: var(--sepia-accent);
+            color: #fdfaf1;
+            transition: all 0.2s;
+        }
+
+        .btn-sepia:hover {
+            filter: brightness(1.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--sepia-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--sepia-border);
+            border-radius: 10px;
+        }
+
+        .modal-overlay {
+            background: rgba(42, 34, 24, 0.85);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Estilos Visor PDF */
+        #pdf-render-container {
+            background: #525659;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .pdf-page-container {
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+            background: white;
+        }
+
+        #pdf-canvas {
+            display: block;
+        }
+
+        .textLayer {
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            opacity: 0.2;
+            line-height: 1;
+            mix-blend-mode: multiply;
+        }
+
+        .textLayer ::selection {
+            background: rgba(139, 94, 52, 0.4);
+        }
+
+        @media print {
+            body>*:not(#print-section) {
+                display: none !important;
+            }
+
+            #print-section {
+                display: block !important;
+                padding: 40px;
+                background: white;
+                color: black;
+                font-family: serif;
+            }
+
+            #print-section h1 {
+                font-size: 24pt;
+                margin-bottom: 20px;
+                border-bottom: 2px solid black;
+            }
+
+            #print-section .note-content {
+                font-size: 12pt;
+                line-height: 1.6;
+            }
+
+            #print-section .metadata {
+                margin-top: 40px;
+                border-top: 1px solid #ccc;
+                padding-top: 10px;
+                font-size: 9pt;
+                font-style: italic;
+            }
+        }
+
+        /* Estilos Menú de Etiquetas */
+        .tag-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid var(--sepia-border);
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+            min-width: 140px;
+            padding: 6px 0;
+            display: none;
+            margin-top: 4px;
+        }
+
+        .tag-menu.active {
+            display: block;
+            animation: slideDown 0.2s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tag-menu-item {
+            padding: 8px 16px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--sepia-text);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tag-menu-item:hover {
+            background: rgba(139, 94, 52, 0.1);
+            color: var(--sepia-accent);
+        }
+
+        .tag-badge {
+            font-size: 8px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+        }
+
+        .tag-investigacion {
+            background: #dcfce7;
+            color: #1e6516;
+        }
+
+        .tag-borradores {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .tag-favoritos {
+            background: #ffe4e6;
+            color: #9f1239;
+        }
+
+        .tag-archivo {
+            background: #f3f4f6;
+            color: #374151;
+        }
