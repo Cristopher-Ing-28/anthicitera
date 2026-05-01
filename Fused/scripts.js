@@ -1696,7 +1696,34 @@ async function moveNoteToCollection(noteId, colId, colColor) {
     }
 }
 
+// --- SISTEMA DE MODO OSCURO ---
+
+function toggleDarkMode() {
+    const body = document.body;
+    const isDark = body.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', isDark);
+    
+    // Cambiar icono
+    const icon = document.getElementById('darkModeIcon');
+    if (icon) {
+        icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+        lucide.createIcons();
+    }
+    
+    showToast(isDark ? "Modo Oscuro Activado" : "Modo Sepia Activado");
+}
+
+function loadDarkModePreference() {
+    const isDark = localStorage.getItem('darkMode') === 'true';
+    if (isDark) {
+        document.body.classList.add('dark-mode');
+        const icon = document.getElementById('darkModeIcon');
+        if (icon) icon.setAttribute('data-lucide', 'sun');
+    }
+}
+
 window.onload = () => {
     initDB();
+    loadDarkModePreference();
     lucide.createIcons();
 };
