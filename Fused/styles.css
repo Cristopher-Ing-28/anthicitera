@@ -258,3 +258,100 @@
         .spreadsheet-container::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+
+        /* Laboratorio Styles */
+        #lab-notebooks-list div {
+            animation: slideIn 0.3s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-10px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        #lab-notebooks-list div:nth-child(1) { animation-delay: 0.1s; }
+        #lab-notebooks-list div:nth-child(2) { animation-delay: 0.2s; }
+        #lab-notebooks-list div:nth-child(3) { animation-delay: 0.3s; }
+        #lab-notebooks-list div:nth-child(4) { animation-delay: 0.4s; }
+
+        .animate-fade {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* notebook.js Styles */
+        .notebook-js-container .nb-cell {
+            margin-bottom: 2rem;
+            max-width: 100%;
+        }
+        
+        .notebook-js-container .nb-input {
+            background-color: #faf9f6;
+            border: 1px solid rgba(214, 211, 209, 0.6);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1rem;
+        }
+
+        .notebook-js-container .nb-prompt {
+            padding: 0.5rem 1.25rem;
+            background-color: rgba(245, 245, 244, 0.8);
+            border-bottom: 1px solid #e7e5e4;
+            font-size: 0.65rem;
+            font-family: monospace;
+            color: #a8a29e;
+            font-weight: bold;
+        }
+
+        .notebook-js-container .nb-input pre {
+            padding: 1.5rem !important;
+            margin: 0 !important;
+            background-color: transparent !important;
+            font-size: 0.875rem !important;
+            overflow-x: auto;
+        }
+
+        .notebook-js-container .nb-output {
+            margin-top: 1.25rem;
+            padding-left: 2rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-left: 4px solid rgba(217, 119, 6, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            overflow-x: hidden;
+        }
+
+        .notebook-js-container .nb-output pre {
+            white-space: pre-wrap;
+            font-size: 0.75rem;
+            color: #57534e;
+            line-height: 1.6;
+        }
+
+        .notebook-js-container .nb-output img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e7e5e4;
+            background-color: white;
+            padding: 1rem;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .notebook-js-container .nb-markdown-cell {
+            font-size: 1rem;
+            line-height: 1.75;
+            color: #292524;
+        }
