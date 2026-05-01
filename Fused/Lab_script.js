@@ -6,6 +6,48 @@
 function initLaboratorio() {
     console.log("Laboratorio de Inteligencia Científica Inicializado");
     loadNotebooksList();
+
+    // Habilitar sistema de citas/fichas para el contenido del laboratorio
+    const labContent = document.getElementById('lab-notebook-content');
+    if (labContent) {
+        labContent.addEventListener('mouseup', handleLabSelection);
+    }
+}
+
+/**
+ * Maneja la selección de texto en el laboratorio para mostrar el sistema de fichas
+ */
+function handleLabSelection(e) {
+    const selection = window.getSelection();
+    const text = selection.toString().trim();
+    const fab = document.getElementById('selectionFAB');
+
+    if (text.length > 5) {
+        // Guardar el texto en la variable global compartida con scripts.js
+        if (typeof selectedText !== 'undefined') {
+            selectedText = text;
+        } else {
+            window.selectedText = text;
+        }
+        
+        // Posicionamiento inteligente del botón flotante (FAB)
+        try {
+            const range = selection.getRangeAt(0);
+            const rect = range.getBoundingClientRect();
+
+            if (fab) {
+                fab.style.left = `${rect.left + (rect.width / 2)}px`;
+                fab.style.top = `${rect.top + window.scrollY - 40}px`;
+                fab.classList.remove('hidden');
+            }
+        } catch (err) {
+            console.warn("Error posicionando FAB:", err);
+        }
+    } else {
+        if (fab && !fab.contains(e.target)) {
+            fab.classList.add('hidden');
+        }
+    }
 }
 
 /**
@@ -79,10 +121,53 @@ function renderNotebooksSidebar(notebooks) {
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
+/**
+ * Alterna entre el modo normal y el modo presentación del visor
+ */
+function togglePresentationMode() {
+    const view = document.getElementById('lab-notebook-view');
+    if (!view) return;
+
+    const isPresentation = view.classList.toggle('presentation-mode');
+    
+    // Cambiar icono y texto del botón (opcional, para feedback visual)
+    const btn = view.querySelector('button[onclick="togglePresentationMode()"]');
+    if (btn) {
+        const icon = btn.querySelector('i');
+        if (isPresentation) {
+            icon.setAttribute('data-lucide', 'monitor-off');
+            btn.title = "Salir de Modo Presentación";
+        } else {
+            icon.setAttribute('data-lucide', 'monitor-play');
+            btn.title = "Modo Presentación";
+        }
+        if (window.lucide) lucide.createIcons();
+    }
+
+    // Bloquear scroll del body si está en presentación
+    document.body.style.overflow = isPresentation ? 'hidden' : '';
+}
+
+/**
+ * Cierra el visor de notebooks del laboratorio
+ */
 function closeLabNotebook() {
+    // Si estamos en modo presentación, salir de él primero
+    const view = document.getElementById('lab-notebook-view');
+    if (view && view.classList.contains('presentation-mode')) {
+        togglePresentationMode();
+    }
+    
     document.getElementById('lab-notebook-view').classList.add('hidden');
     document.getElementById('lab-no-selection').classList.remove('hidden');
 }
+
+/**
+ * Función global para abrir notebook (expuesta para usar desde otros módulos)
+ */
+window.openNotebookInLab = openNotebookInLab;
+window.togglePresentationMode = togglePresentationMode;
+window.closeLabNotebook = closeLabNotebook;
 
 /**
  * Normaliza los datos de salida de Jupyter (asegura que text sea string, no array)
@@ -207,6 +292,9 @@ async function openNotebookInLab(id) {
                 if (window.MathJax) {
                     await MathJax.typesetPromise([container]);
                 }
+
+                // NUEVO: Resolver imágenes locales después del renderizado
+                await fixRelativeImages(container);
 
             } catch (parseErr) {
                 console.error("Error al renderizar notebook:", parseErr);
@@ -376,6 +464,66 @@ function escapeHtml(str) {
 }
 
 /**
+ * Escanea el contenedor en busca de imágenes con rutas relativas y trata de resolverlas
+ * usando el directorio local vinculado.
+ */
+async function fixRelativeImages(container) {
+    if (!window.currentDirHandle) return;
+
+    const images = container.querySelectorAll('img');
+    for (const img of images) {
+        const src = img.getAttribute('src');
+        
+        // Solo procesar rutas que parezcan relativas (no http, no data:, no blobs)
+        if (src && !src.startsWith('http') && !src.startsWith('data:') && !src.startsWith('blob:')) {
+            const blobUrl = await resolveLocalPath(src);
+            if (blobUrl) {
+                img.src = blobUrl;
+                img.classList.add('resolved-local-image');
+            }
+        }
+    }
+}
+
+/**
+ * Busca un archivo en el handle de directorio actual siguiendo una ruta relativa.
+ */
+async function resolveLocalPath(path) {
+    if (!window.currentDirHandle) return null;
+    
+    // Limpiar el path de prefijos ./ o similares y decodificar
+    const cleanPath = path.replace(/^\.\//, '');
+    const parts = cleanPath.split('/').map(p => decodeURIComponent(p));
+    
+    let currentHandle = window.currentDirHandle;
+    
+    try {
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+            if (!part || part === '.') continue;
+            
+            if (i === parts.length - 1) {
+                // Es el archivo final
+                const fileHandle = await currentHandle.getFileHandle(part);
+                const file = await fileHandle.getFile();
+                return URL.createObjectURL(file);
+            } else {
+                // Es una carpeta intermedia
+                currentHandle = await currentHandle.getDirectoryHandle(part);
+            }
+        }
+    } catch (e) {
+        // Si no se encuentra siguiendo la ruta exacta, intentar una búsqueda recursiva simple
+        // o simplemente reportar que no se encontró.
+        console.warn("No se pudo encontrar el archivo local siguiendo la ruta:", path);
+        return null;
+    }
+    return null;
+}
+
+/**
  * Función global para abrir notebook (expuesta para usar desde otros módulos)
  */
 window.openNotebookInLab = openNotebookInLab;
+window.togglePresentationMode = togglePresentationMode;
+window.closeLabNotebook = closeLabNotebook;

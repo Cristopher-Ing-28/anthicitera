@@ -250,18 +250,23 @@ function openFichaModal() {
     let docTitle = "Documento Desconocido";
     let page = "N/A";
 
-    if (!document.getElementById('pdf-viewer-overlay').classList.contains('hidden')) {
-        // Si estamos en un PDF
+    const pdfOverlay = document.getElementById('pdf-viewer-overlay');
+    const officeOverlay = document.getElementById('office-viewer-overlay');
+    const nbOverlay = document.getElementById('notebook-viewer-overlay');
+    const labView = document.getElementById('lab-notebook-view');
+
+    if (pdfOverlay && !pdfOverlay.classList.contains('hidden')) {
         docTitle = document.getElementById('pdf-viewer-title').innerText;
         page = pageNum;
-    } else if (!document.getElementById('office-viewer-overlay').classList.contains('hidden')) {
-        // Si estamos en Word, Excel, etc.
+    } else if (officeOverlay && !officeOverlay.classList.contains('hidden')) {
         docTitle = document.getElementById('office-title').innerText;
-        page = "Única"; // Estos documentos no están paginados en la web
-    } else if (!document.getElementById('notebook-viewer-overlay').classList.contains('hidden')) {
-        // Si estamos en un Notebook de Jupyter
+        page = "Única";
+    } else if (nbOverlay && !nbOverlay.classList.contains('hidden')) {
         docTitle = document.getElementById('notebook-title').innerText;
         page = "Celda";
+    } else if (labView && !labView.classList.contains('hidden')) {
+        docTitle = document.getElementById('lab-notebook-title').innerText;
+        page = "Lab";
     }
 
     // Inyectar los metadatos correctos en la ventana de creación
@@ -1308,6 +1313,9 @@ if (btnOpenFolder) {
             const dirHandle = await window.showDirectoryPicker({
                 mode: 'read'
             });
+
+            // Guardar el handle globalmente para que el visor de notebooks pueda resolver rutas relativas
+            window.currentDirHandle = dirHandle;
 
             explorerTree.innerHTML = '';
             await renderDirectoryTree(dirHandle, explorerTree, 0);

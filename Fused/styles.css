@@ -355,3 +355,49 @@
             line-height: 1.75;
             color: #292524;
         }
+
+        /* Presentation Mode */
+        .presentation-mode {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 9999 !important;
+            background-color: #f4ecd8 !important; /* Mismo sepia de fondo */
+            display: flex !important;
+            flex-direction: column !important;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .presentation-mode #lab-notebook-content {
+            max-width: 900px !important;
+            padding: 4rem 2rem !important;
+            background-color: #fffaf0; /* Fondo ligeramente más claro para lectura */
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+            margin: 0 auto !important;
+            border-left: 1px solid #e7e5e4;
+            border-right: 1px solid #e7e5e4;
+        }
+
+        .presentation-mode .markdown-cell {
+            font-size: 1.25rem !important;
+            line-height: 1.8 !important;
+            margin-bottom: 3rem !important;
+        }
+
+        .presentation-mode .code-cell {
+            margin-bottom: 3rem !important;
+            border-radius: 1rem !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .presentation-mode .h-16 {
+            background-color: #dfd2b0 !important;
+            border-bottom: 2px solid #cbb994 !important;
+        }
+
+        /* Ocultar barra lateral en modo presentación si fuera necesario */
+        .presentation-mode aside {
+            display: none !important;
+        }
