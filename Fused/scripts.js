@@ -280,7 +280,7 @@ function openFichaModal() {
     document.getElementById('ficha-modal').classList.remove('hidden');
 }
 
-const saveFicha = () => {
+const saveFicha = async () => {
     const comment = document.getElementById('ficha-comment').value;
     const ref = document.getElementById('ficha-ref').value;
     const pg = document.getElementById('ficha-page').value;
@@ -288,12 +288,17 @@ const saveFicha = () => {
 
     if (!comment) return showToast("El comentario es obligatorio");
 
+    // Lógica Universal: Asegurar que exista una colección para este documento
+    const collection = await getOrCreateCollectionForDocument(ref);
+
     const id = 'note_ficha_' + Date.now();
     const note = {
         id,
         title: `FICHA: ${ref} (Pág. ${pg})`,
         content: `FRAGMENTO:\n"${text}"\n\nCOMENTARIO:\n${comment}\n\nORIGEN: ${ref} | PÁGINA: ${pg}`,
         type: 'ficha',
+        collectionId: collection.id,
+        collectionColor: collection.color,
         updatedAt: new Date().toISOString()
     };
 
@@ -301,10 +306,63 @@ const saveFicha = () => {
     tx.objectStore('notes').put(note);
     tx.oncomplete = () => {
         closeModal('ficha-modal');
-        showToast("Ficha bibliográfica almacenada con éxito");
+        showToast(`Ficha almacenada en colección: ${ref}`);
         window.getSelection().removeAllRanges();
+        if (currentView === 'notas') renderNotesList();
     };
 };
+
+/**
+ * Función Universal para obtener o crear una colección basada en el nombre del documento
+ */
+async function getOrCreateCollectionForDocument(docName) {
+    const tx = db.transaction('collections', 'readwrite');
+    const store = tx.objectStore('collections');
+    
+    // Buscar si ya existe
+    const collections = await new Promise(r => {
+        const req = store.getAll();
+        req.onsuccess = () => r(req.result);
+    });
+
+    const existing = collections.find(c => c.name === docName);
+    if (existing) return existing;
+
+    // Si no existe, crearla
+    const colors = ['#78350f', '#1e3a8a', '#064e3b', '#701a75', '#9f1239', '#ea580c', '#0891b2', '#4f46e5', '#65a30d', '#be123c', '#57534e'];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    
+    const newCol = {
+        id: 'col_' + Date.now(),
+        name: docName,
+        color: randomColor,
+        createdAt: new Date().toISOString()
+    };
+
+    await new Promise(r => {
+        const req = store.add(newCol);
+        req.onsuccess = () => r();
+    });
+
+    return newCol;
+}
+
+/**
+ * Redirige desde el laboratorio a la colección específica del documento
+ */
+async function goToDocumentCollection() {
+    const docName = document.getElementById('lab-notebook-title').innerText;
+    if (!docName || docName === 'Notebook') return showToast("No hay un documento activo");
+
+    const collection = await getOrCreateCollectionForDocument(docName);
+    
+    currentCollectionId = collection.id;
+    navigateTo('notas');
+    renderCollections();
+    renderNotesList();
+    
+    showToast(`Mostrando fichas de: ${docName}`);
+}
 
 // --- EXTRACCIÓN DE METADATOS (CROSSREF / OPENALEX) ---
 async function fetchAcademicMetadata(doi) {
@@ -1573,7 +1631,7 @@ function renderCollections() {
         renderNotesList();
     };
     allBtn.innerHTML = `
-        <i data-lucide="layers" class="w-5 h-5 text-stone-400"></i>
+        <i data-lucide="layers" class="w-3.5 h-3.5 text-stone-400"></i>
         <span>Todas</span>
     `;
     grid.appendChild(allBtn);
@@ -1609,7 +1667,7 @@ function renderCollections() {
             };
 
             folder.innerHTML = `
-                <i data-lucide="folder" class="w-5 h-5" style="color: ${col.color}"></i>
+                <i data-lucide="folder" class="w-3.5 h-3.5" style="color: ${col.color}"></i>
                 <span style="color: ${col.color}">${col.name}</span>
             `;
             grid.appendChild(folder);

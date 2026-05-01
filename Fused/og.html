@@ -179,21 +179,39 @@
                 </div>
                 <div>
                     <label class="text-[9px] uppercase font-bold text-stone-500 mb-2 block tracking-widest">Color Distintivo</label>
-                    <div class="flex gap-2 justify-between">
+                    <div class="grid grid-cols-6 gap-2">
                         <input type="radio" name="col-color" value="#78350f" id="c1" class="hidden peer/c1" checked>
-                        <label for="c1" class="w-6 h-6 rounded-full cursor-pointer border-2 border-transparent peer-checked/c1:border-stone-800 transition-all" style="background-color: #78350f;"></label>
+                        <label for="c1" class="w-5 h-5 rounded-full cursor-pointer border-2 border-transparent peer-checked/c1:border-stone-800 transition-all" style="background-color: #78350f;"></label>
                         
                         <input type="radio" name="col-color" value="#1e3a8a" id="c2" class="hidden peer/c2">
-                        <label for="c2" class="w-6 h-6 rounded-full cursor-pointer border-2 border-transparent peer-checked/c2:border-stone-800 transition-all" style="background-color: #1e3a8a;"></label>
+                        <label for="c2" class="w-5 h-5 rounded-full cursor-pointer border-2 border-transparent peer-checked/c2:border-stone-800 transition-all" style="background-color: #1e3a8a;"></label>
                         
                         <input type="radio" name="col-color" value="#064e3b" id="c3" class="hidden peer/c3">
-                        <label for="c3" class="w-6 h-6 rounded-full cursor-pointer border-2 border-transparent peer-checked/c3:border-stone-800 transition-all" style="background-color: #064e3b;"></label>
+                        <label for="c3" class="w-5 h-5 rounded-full cursor-pointer border-2 border-transparent peer-checked/c3:border-stone-800 transition-all" style="background-color: #064e3b;"></label>
                         
                         <input type="radio" name="col-color" value="#701a75" id="c4" class="hidden peer/c4">
-                        <label for="c4" class="w-6 h-6 rounded-full cursor-pointer border-2 border-transparent peer-checked/c4:border-stone-800 transition-all" style="background-color: #701a75;"></label>
+                        <label for="c4" class="w-5 h-5 rounded-full cursor-pointer border-2 border-transparent peer-checked/c4:border-stone-800 transition-all" style="background-color: #701a75;"></label>
                         
                         <input type="radio" name="col-color" value="#9f1239" id="c5" class="hidden peer/c5">
-                        <label for="c5" class="w-6 h-6 rounded-full cursor-pointer border-2 border-transparent peer-checked/c5:border-stone-800 transition-all" style="background-color: #9f1239;"></label>
+                        <label for="c5" class="w-5 h-5 rounded-full cursor-pointer border-2 border-transparent peer-checked/c5:border-stone-800 transition-all" style="background-color: #9f1239;"></label>
+
+                        <input type="radio" name="col-color" value="#ea580c" id="c6" class="hidden peer/c6">
+                        <label for="c6" class="w-5 h-5 rounded-full cursor-pointer border-2 border-transparent peer-checked/c6:border-stone-800 transition-all" style="background-color: #ea580c;"></label>
+
+                        <input type="radio" name="col-color" value="#0891b2" id="c7" class="hidden peer/c7">
+                        <label for="c7" class="w-5 h-5 rounded-full cursor-pointer border-2 border-transparent peer-checked/c7:border-stone-800 transition-all" style="background-color: #0891b2;"></label>
+
+                        <input type="radio" name="col-color" value="#4f46e5" id="c8" class="hidden peer/c8">
+                        <label for="c8" class="w-5 h-5 rounded-full cursor-pointer border-2 border-transparent peer-checked/c8:border-stone-800 transition-all" style="background-color: #4f46e5;"></label>
+
+                        <input type="radio" name="col-color" value="#65a30d" id="c9" class="hidden peer/c9">
+                        <label for="c9" class="w-5 h-5 rounded-full cursor-pointer border-2 border-transparent peer-checked/c9:border-stone-800 transition-all" style="background-color: #65a30d;"></label>
+
+                        <input type="radio" name="col-color" value="#be123c" id="c10" class="hidden peer/c10">
+                        <label for="c10" class="w-5 h-5 rounded-full cursor-pointer border-2 border-transparent peer-checked/c10:border-stone-800 transition-all" style="background-color: #be123c;"></label>
+
+                        <input type="radio" name="col-color" value="#57534e" id="c11" class="hidden peer/c11">
+                        <label for="c11" class="w-5 h-5 rounded-full cursor-pointer border-2 border-transparent peer-checked/c11:border-stone-800 transition-all" style="background-color: #57534e;"></label>
                     </div>
                 </div>
                 <button type="button" onclick="saveNewCollection()"
@@ -581,6 +599,10 @@
                                     class="text-lg font-bold italic text-stone-800 truncate max-w-md">Notebook</h2>
                             </div>
                             <div class="flex items-center gap-2">
+                                <button onclick="goToDocumentCollection()" title="Ver Colección de Fichas"
+                                    class="p-2 hover:bg-amber-100 text-amber-700 hover:text-amber-900 rounded-lg transition-all flex items-center gap-2">
+                                    <i data-lucide="book-copy" class="w-5 h-5"></i>
+                                </button>
                                 <button onclick="togglePresentationMode()" title="Modo Presentación"
                                     class="p-2 hover:bg-amber-100 text-stone-600 hover:text-amber-900 rounded-lg transition-all flex items-center gap-2">
                                     <i data-lucide="monitor-play" class="w-5 h-5"></i>
