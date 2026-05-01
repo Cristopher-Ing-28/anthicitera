@@ -132,7 +132,7 @@ async function manejarArchivoSeleccionado(data) {
 
 // --- BASE DE DATOS (INDEXEDDB) ---
 const initDB = () => {
-    const request = indexedDB.open('AnticitheraDB', 3);
+    const request = indexedDB.open('AnticitheraDB', 4);
     request.onupgradeneeded = (e) => {
         const dbInstance = e.target.result;
         if (!dbInstance.objectStoreNames.contains('resources')) {
@@ -144,12 +144,16 @@ const initDB = () => {
         if (!dbInstance.objectStoreNames.contains('activity')) {
             dbInstance.createObjectStore('activity', { keyPath: 'id' });
         }
+        if (!dbInstance.objectStoreNames.contains('collections')) {
+            dbInstance.createObjectStore('collections', { keyPath: 'id' });
+        }
     };
     request.onsuccess = (e) => {
         db = e.target.result;
         updateStats();
         loadActivity();
         renderResources();
+        if (typeof renderCollections === 'function') renderCollections();
     };
 };
 
@@ -558,7 +562,7 @@ const handleObsidianUpload = async (e) => {
     });
 
     tx.oncomplete = () => {
-        showToast("Nota de Obsidian importada al Bloc");
+        showToast("Nota de Obsidian importada al Motor de Fichas");
         renderLibrary();
         loadActivity();
     };
@@ -954,18 +958,38 @@ const deleteResource = (id) => {
     deleteResourceOrNote(id, 'resource');
 };
 
+let currentCollectionId = null;
+
 // --- GESTIÓN DE NOTAS ---
-const saveCurrentNote = () => {
+const saveCurrentNote = async () => {
     const title = document.getElementById('note-title').value || 'Sin Título';
     const content = document.getElementById('note-content').value;
 
-    if (!content) return showToast("La nota está vacía");
+    if (!content) return showToast("La ficha está vacía");
 
     const id = currentNoteId || 'note_' + Date.now();
+    
+    // Obtener la nota existente para preservar su colección si ya tenía una
+    let collectionId = currentCollectionId;
+    let collectionColor = null;
+
+    if (currentNoteId) {
+        const existingTx = db.transaction('notes', 'readonly');
+        const existing = await new Promise(r => {
+            existingTx.objectStore('notes').get(currentNoteId).onsuccess = (e) => r(e.target.result);
+        });
+        if (existing && existing.collectionId) {
+            collectionId = existing.collectionId;
+            collectionColor = existing.collectionColor;
+        }
+    }
+
     const note = {
         id,
         title,
         content,
+        collectionId,
+        collectionColor,
         updatedAt: new Date().toISOString()
     };
 
@@ -974,23 +998,44 @@ const saveCurrentNote = () => {
     tx.oncomplete = () => {
         currentNoteId = id;
         renderNotesList();
-        showToast("Reflexión sellada en IndexedDB");
+        showToast("Ficha sellada exitosamente");
     };
 };
 
+// --- GESTIÓN DE FICHAS Y COLECCIONES ---
 const renderNotesList = () => {
     const list = document.getElementById('notes-list');
+    if (!list) return;
     list.innerHTML = '';
+    
     const tx = db.transaction('notes', 'readonly');
     tx.objectStore('notes').openCursor().onsuccess = (e) => {
         const cursor = e.target.result;
         if (cursor) {
             const n = cursor.value;
+            
+            // Si hay una colección activa, filtrar
+            if (currentCollectionId && n.collectionId !== currentCollectionId) {
+                cursor.continue();
+                return;
+            }
+
             const item = document.createElement('div');
-            item.className = `p-3 rounded cursor-pointer transition-all border ${currentNoteId === n.id ? 'bg-white border-amber-300 shadow-sm' : 'border-transparent hover:bg-stone-200'}`;
+            item.draggable = true;
+            item.className = `p-3 rounded cursor-pointer transition-all border ficha-item ${currentNoteId === n.id ? 'bg-white border-amber-300 shadow-sm' : 'border-transparent hover:bg-stone-200'}`;
+            
+            item.ondragstart = (ev) => {
+                ev.dataTransfer.setData('text/plain', n.id);
+                item.classList.add('opacity-40');
+            };
+            item.ondragend = () => item.classList.remove('opacity-40');
+
             item.onclick = () => loadNote(n.id);
             item.innerHTML = `
-                        <h5 class="text-xs font-bold italic truncate">${n.title}</h5>
+                        <div class="flex items-center gap-2 mb-1">
+                             ${n.collectionColor ? `<div class="w-1.5 h-1.5 rounded-full" style="background-color: ${n.collectionColor}"></div>` : ''}
+                             <h5 class="text-xs font-bold italic truncate flex-1">${n.title}</h5>
+                        </div>
                         <p class="text-[9px] uppercase font-bold text-stone-400">${new Date(n.updatedAt).toLocaleDateString()}</p>
                     `;
             list.appendChild(item);
@@ -1012,7 +1057,7 @@ const loadNote = (id) => {
     };
 };
 
-// Escuchar clics en el bloc de notas para interceptar wikilinks
+// Escuchar clics en el Motor de Fichas para interceptar wikilinks
 document.getElementById('note-content').addEventListener('dblclick', function (e) {
     const text = this.value;
     const start = this.selectionStart;
@@ -1482,6 +1527,114 @@ function processDroppedFile(file) {
         handleOfficeUpload(fakeEvent);
     } else {
         showToast(`Formato .${ext} no soportado para importación.`);
+    }
+}
+
+// --- LÓGICA DE COLECCIONES ---
+
+function openNewCollectionModal() {
+    document.getElementById('collection-name').value = '';
+    document.getElementById('collection-modal').classList.remove('hidden');
+}
+
+function saveNewCollection() {
+    const name = document.getElementById('collection-name').value;
+    const color = document.querySelector('input[name="col-color"]:checked').value;
+
+    if (!name) return showToast("Asigna un nombre a la colección");
+
+    const collection = {
+        id: 'col_' + Date.now(),
+        name,
+        color,
+        createdAt: new Date().toISOString()
+    };
+
+    const tx = db.transaction('collections', 'readwrite');
+    tx.objectStore('collections').add(collection);
+    tx.oncomplete = () => {
+        closeModal('collection-modal');
+        renderCollections();
+        showToast("Colección creada");
+    };
+}
+
+function renderCollections() {
+    const grid = document.getElementById('collections-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    // Añadir botón de "Todas"
+    const allBtn = document.createElement('div');
+    allBtn.className = `collection-folder ${!currentCollectionId ? 'ring-2 ring-amber-700 bg-white' : ''}`;
+    allBtn.onclick = () => {
+        currentCollectionId = null;
+        renderCollections();
+        renderNotesList();
+    };
+    allBtn.innerHTML = `
+        <i data-lucide="layers" class="w-5 h-5 text-stone-400"></i>
+        <span>Todas</span>
+    `;
+    grid.appendChild(allBtn);
+
+    const tx = db.transaction('collections', 'readonly');
+    tx.objectStore('collections').openCursor().onsuccess = (e) => {
+        const cursor = e.target.result;
+        if (cursor) {
+            const col = cursor.value;
+            const folder = document.createElement('div');
+            folder.className = `collection-folder ${currentCollectionId === col.id ? 'ring-2 ring-amber-900 bg-white shadow-md' : ''}`;
+            folder.style.borderTop = `3px solid ${col.color}`;
+            
+            folder.onclick = () => {
+                currentCollectionId = (currentCollectionId === col.id) ? null : col.id;
+                renderCollections();
+                renderNotesList();
+            };
+
+            // Drag & Drop
+            folder.ondragover = (ev) => {
+                ev.preventDefault();
+                folder.classList.add('drag-over');
+            };
+            folder.ondragleave = () => folder.classList.remove('drag-over');
+            folder.ondrop = async (ev) => {
+                ev.preventDefault();
+                folder.classList.remove('drag-over');
+                const noteId = ev.dataTransfer.getData('text/plain');
+                if (noteId) {
+                    await moveNoteToCollection(noteId, col.id, col.color);
+                }
+            };
+
+            folder.innerHTML = `
+                <i data-lucide="folder" class="w-5 h-5" style="color: ${col.color}"></i>
+                <span style="color: ${col.color}">${col.name}</span>
+            `;
+            grid.appendChild(folder);
+            cursor.continue();
+        }
+        lucide.createIcons();
+    };
+}
+
+async function moveNoteToCollection(noteId, colId, colColor) {
+    const tx = db.transaction('notes', 'readwrite');
+    const store = tx.objectStore('notes');
+    
+    const note = await new Promise(r => {
+        store.get(noteId).onsuccess = (e) => r(e.target.result);
+    });
+
+    if (note) {
+        note.collectionId = colId;
+        note.collectionColor = colColor;
+        store.put(note);
+        tx.oncomplete = () => {
+            showToast("Ficha organizada");
+            renderNotesList();
+        };
     }
 }
 
