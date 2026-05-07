@@ -249,32 +249,16 @@
     <div id="pdf-viewer-overlay" class="hidden fixed inset-0 z-[350] bg-stone-900 flex flex-col">
         <div class="h-14 bg-stone-800 border-b border-stone-700 flex items-center justify-between px-4 text-white">
             <div class="flex items-center gap-4">
-                <button type="button" onclick="closePdfViewer()" class="p-2 hover:bg-stone-700 rounded"><i
-                        data-lucide="arrow-left" class="w-5 h-5"></i></button>
+                <button type="button" onclick="closePdfViewer()" class="p-2 hover:bg-stone-700 rounded"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
                 <h2 id="pdf-viewer-title" class="text-sm font-bold truncate max-w-xs">Documento</h2>
             </div>
-            <div class="flex items-center gap-4 bg-stone-700 rounded-full px-4 py-1">
-                <button type="button" onclick="changePage(-1)" class="hover:text-amber-400"><i
-                        data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                <span class="text-xs font-mono min-w-[60px] text-center"><span id="page-num">1</span> / <span
-                        id="page-count">-</span></span>
-                <button type="button" onclick="changePage(1)" class="hover:text-amber-400"><i
-                        data-lucide="chevron-right" class="w-4 h-4"></i></button>
-            </div>
             <div class="flex items-center gap-2">
-                <button type="button" onclick="zoomPdf(-0.2)" class="p-2 hover:bg-stone-700 rounded" title="Zoom Out"><i
-                        data-lucide="minus"></i></button>
-                <button type="button" onclick="zoomPdf(0.2)" class="p-2 hover:bg-stone-700 rounded" title="Zoom In"><i
-                        data-lucide="plus"></i></button>
-                <button type="button" onclick="rotatePdf()" class="p-2 hover:bg-stone-700 rounded" title="Rotar"><i
-                        data-lucide="rotate-cw"></i></button>
+                <button type="button" onclick="zoomPdf(-0.2)" class="p-2 hover:bg-stone-700 rounded" title="Zoom Out"><i data-lucide="minus"></i></button>
+                <button type="button" onclick="zoomPdf(0.2)" class="p-2 hover:bg-stone-700 rounded" title="Zoom In"><i data-lucide="plus"></i></button>
+                <button type="button" onclick="rotatePdf()" class="p-2 hover:bg-stone-700 rounded" title="Rotar"><i data-lucide="rotate-cw"></i></button>
             </div>
         </div>
-        <div id="pdf-render-container" class="flex-1 overflow-auto bg-stone-800">
-            <div class="pdf-page-container">
-                <canvas id="pdf-canvas"></canvas>
-                <div id="text-layer" class="textLayer"></div>
-            </div>
+        <div id="pdf-render-container" class="flex-1 overflow-auto bg-stone-800 p-8 flex flex-col">
         </div>
     </div>
 

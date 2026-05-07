@@ -68,14 +68,12 @@
  }
 
  /* Estilos Visor PDF */
- #pdf-render-container {
-     background: #525659;
-     overflow: auto;
-     display: flex;
-     justify-content: center;
-     padding: 20px;
-     position: relative;
- }
+#pdf-render-container {
+    background: #525659;
+    overflow: auto;
+    padding: 20px;
+    position: relative;
+}
 
  .pdf-page-container {
      position: relative;

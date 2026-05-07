@@ -15,13 +15,9 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 let db;
 let currentNoteId = null;
 let pdfDoc = null;
-let pageNum = 1;
 let scale = 1.3;
 let rotation = 0;
 let selectedText = "";
-const canvas = document.getElementById('pdf-canvas');
-const ctx = canvas.getContext('2d');
-const textLayerDiv = document.getElementById('text-layer');
 const fab = document.getElementById('selectionFAB');
 const floatingBtn = fab; // Compatibilidad heredada
 
@@ -176,27 +172,50 @@ async function openPdfViewer(resourceId) {
         const url = URL.createObjectURL(res.blob);
         const loadingTask = pdfjsLib.getDocument(url);
         pdfDoc = await loadingTask.promise;
-        document.getElementById('page-count').textContent = pdfDoc.numPages;
-        pageNum = 1;
-        renderPage(pageNum);
+
+        const container = document.getElementById('pdf-render-container');
+        container.innerHTML = ''; // Limpiamos el contenedor
+        container.scrollTop = 0;  // Volvemos arriba del todo
+
+        showToast("Cargando documento...");
+
+        // Bucle mágico: renderizamos todas las páginas una debajo de otra
+        for (let num = 1; num <= pdfDoc.numPages; num++) {
+            await renderPageContinuous(num, container);
+        }
     };
 }
 
-async function renderPage(num) {
+async function renderPageContinuous(num, container) {
     const page = await pdfDoc.getPage(num);
     const viewport = page.getViewport({ scale, rotation });
 
-    // Render Canvas
+    // Contenedor individual por cada página
+    const pageWrapper = document.createElement('div');
+    pageWrapper.className = 'pdf-page-container mb-6 mx-auto relative bg-white shadow-xl';
+    pageWrapper.style.width = `${viewport.width}px`;
+    pageWrapper.style.height = `${viewport.height}px`;
+
+    // Canvas exclusivo para esta página
+    const canvas = document.createElement('canvas');
+    canvas.className = 'block';
     canvas.height = viewport.height;
     canvas.width = viewport.width;
+    const ctx = canvas.getContext('2d');
+
+    // Capa de texto exclusiva (para poder seleccionar y crear fichas)
+    const textLayerDiv = document.createElement('div');
+    textLayerDiv.className = 'textLayer absolute inset-0 overflow-hidden opacity-20 pointer-events-auto leading-none mix-blend-multiply';
+
+    pageWrapper.appendChild(canvas);
+    pageWrapper.appendChild(textLayerDiv);
+    container.appendChild(pageWrapper);
+
+    // Renderizar imagen
     const renderContext = { canvasContext: ctx, viewport: viewport };
     await page.render(renderContext).promise;
 
-    // Render Text Layer
-    textLayerDiv.innerHTML = '';
-    textLayerDiv.style.height = `${viewport.height}px`;
-    textLayerDiv.style.width = `${viewport.width}px`;
-
+    // Renderizar texto seleccionable
     const textContent = await page.getTextContent();
     pdfjsLib.renderTextLayer({
         textContent: textContent,
@@ -204,20 +223,34 @@ async function renderPage(num) {
         viewport: viewport,
         textDivs: []
     });
-
-    document.getElementById('page-num').textContent = num;
 }
 
-function changePage(delta) {
-    if (!pdfDoc || pageNum + delta < 1 || pageNum + delta > pdfDoc.numPages) return;
-    pageNum += delta;
-    renderPage(pageNum);
+function zoomPdf(delta) { 
+    scale += delta; 
+    if(pdfDoc) {
+        // Al hacer zoom, volvemos a dibujar todas las páginas con el nuevo tamaño
+        const container = document.getElementById('pdf-render-container');
+        container.innerHTML = '';
+        for (let num = 1; num <= pdfDoc.numPages; num++) {
+            renderPageContinuous(num, container);
+        }
+    }
 }
 
-function zoomPdf(delta) { scale += delta; renderPage(pageNum); }
-function rotatePdf() { rotation = (rotation + 90) % 360; renderPage(pageNum); }
+function rotatePdf() { 
+    rotation = (rotation + 90) % 360; 
+    if(pdfDoc) {
+        const container = document.getElementById('pdf-render-container');
+        container.innerHTML = '';
+        for (let num = 1; num <= pdfDoc.numPages; num++) {
+            renderPageContinuous(num, container);
+        }
+    }
+}
+
 function closePdfViewer() {
     document.getElementById('pdf-viewer-overlay').classList.add('hidden');
+    document.getElementById('pdf-render-container').innerHTML = ''; // Limpiar memoria
     pdfDoc = null;
     floatingBtn.classList.add('hidden');
 }
@@ -227,8 +260,10 @@ document.addEventListener('mouseup', (e) => {
     const selection = window.getSelection();
     const text = selection.toString().trim();
 
-    // Caso 1: Selección en PDF
-    if (text && textLayerDiv && textLayerDiv.contains(selection.anchorNode)) {
+    // Caso 1: Selección en PDF (Buscamos si el clic ocurrió dentro de CUALQUIER elemento .textLayer)
+    const isTextLayer = e.target.closest('.textLayer');
+
+    if (text && isTextLayer) {
         selectedText = text;
         fab.style.left = `${e.pageX}px`;
         fab.style.top = `${e.pageY - 40}px`;
