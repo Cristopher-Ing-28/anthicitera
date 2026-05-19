@@ -15,127 +15,112 @@ const templatesData = {
             url: "https://www.overleaf.com/latex/templates/ieee-conference-template/grfzhhncsfqn"
         },
         {
-            name: "ACII 2022 Template (Affective Computing)",
+            name: "ASME Journal Article Template",
             source: "Overleaf",
-            typography: "Times New Roman",
-            margins: "IEEE Standard",
+            typography: "Cambria",
+            margins: "1 in (2.54 cm)",
             columns: 2,
-            url: "https://www.overleaf.com/latex/templates/acii-2022-template/gqhfwdctrpby"
+            url: "https://www.overleaf.com/latex/templates/asme-journal-article-template/yqcwrmkqqmqt"
         },
         {
-            name: "IEEE SIEDS 2026 Template",
+            name: "Wellcome Open Research Article Template",
             source: "Overleaf",
             typography: "Times New Roman",
-            margins: "IEEE Standard",
+            margins: "1.25 in (3.175 cm)",
             columns: 2,
-            url: "https://www.overleaf.com/latex/templates/sieds-template-2026/vdxyvwwwpdqw"
-        },
-        {
-            name: "IEEE INTELEC 2024 Template",
-            source: "Overleaf",
-            typography: "Times New Roman",
-            margins: "IEEE Standard",
-            columns: 1,
-            url: "https://www.overleaf.com/latex/templates/ieee-intelec2024-template/rbbrrwmnskbr"
+            url: "https://www.overleaf.com/latex/templates/wellcome-open-research-article-template/hsmhhbpxvvbj"
         }
     ],
     'Tesis': [
         {
-            name: "Classic Thesis Template",
+            name: "MIT Thesis Template (Official 2024)",
             source: "Overleaf",
-            typography: "Palatino / Minion Pro",
-            margins: "Left: 3.5cm / Right: 2.5cm",
+            typography: "Cambria",
+            margins: "1.25 in (3.175 cm)",
             columns: 1,
-            url: "https://www.overleaf.com/latex/templates/classic-thesis-style/ysqzqrmtqjqw"
+            url: "https://ja.overleaf.com/latex/templates/mit-thesis-template/fhmxxvxfhksh"
         },
         {
-            name: "MIT Thesis Template (Libraries 2024)",
+            name: "USM Postgraduate Thesis (APA 7th Edition)",
             source: "Overleaf",
-            typography: "Computer Modern",
-            margins: "MIT Standard",
+            typography: "Times New Roman",
+            margins: "USM Standard",
             columns: 1,
-            url: "https://www.overleaf.com/latex/templates/mit-thesis-template/wnpqzjmqfvjk"
+            url: "https://tr.overleaf.com/latex/templates/universiti-sains-malaysia-usm-thesis-template-version-2024/fcqpzznfhwwb"
+        },
+        {
+            name: "Towson University Thesis/Dissertation (IEEE Format)",
+            source: "Overleaf",
+            typography: "Times New Roman",
+            margins: "1 in (2.54 cm)",
+            columns: 1,
+            url: "https://tr.overleaf.com/latex/templates/towson-university-college-of-graduate-studies-thesis-slash-dissertation-template-ieee-format/zjjcjxfrtxct"
         }
     ],
     'Tesina': [
         {
-            name: "University Dissertation Template",
+            name: "University of Pennsylvania Ph.D. Dissertation LaTeX Template",
             source: "Overleaf",
             typography: "Times New Roman",
             margins: "2.54 cm (APA 7th)",
             columns: 1,
-            url: "https://www.overleaf.com/latex/templates/university-dissertation-template/fqzhqjmgvrcd"
+            url: "https://www.overleaf.com/latex/templates/university-of-pennsylvania-ph-dot-d-dissertation-latex-template/gwtjmqdbfxgm"
         },
         {
-            name: "Simple Monograph / Basic Article",
-            source: "Authorea",
-            typography: "Garamond",
-            margins: "3.0 cm (Wide)",
-            columns: 1,
-            url: "https://www.authorea.com/templates/simple-article-template"
-        },
-        {
-            name: "Reykjavik University IEEE Template",
+            name: "Dissertation Final Report Template",
             source: "Overleaf",
-            typography: "Times New Roman",
-            margins: "A4 Standard",
-            columns: 2,
-            url: "https://www.overleaf.com/latex/templates/ieee-conference-template-for-reykjavik-university/ssfhnqtdmgqs"
+            typography: "Garamond",
+            margins: "1 in (2.54 cm)",
+            columns: 1,
+            url: "https://www.overleaf.com/latex/templates/dissertation-final-report-template/xsshdwhbntpw"
+        },
+        {
+            name: "University of Chicago PhD Dissertation Template",
+            source: "Overleaf",
+            typography: "Latin Modern",
+            margins: "2.54 cm (1 inch)",
+            columns: 1,
+            url: "https://www.overleaf.com/latex/templates/university-of-chicago-phd-dissertation-template/syvxgkqhvqqt"
         }
     ],
     'Ensayo': [
         {
-            name: "APA 7th Edition Student Paper",
-            source: "Overleaf",
-            typography: "Times New Roman / Georgia",
-            margins: "2.54 cm (All sides)",
+            name: "Student Paper Setup Guide",
+            source: "APA Style Guide",
+            typography: "Times New Roman",
+            margins: "2.54 cm (1 inch)",
             columns: 1,
-            url: "https://www.overleaf.com/latex/templates/apa-7th-edition-student-paper/jpmkpjzfntgh"
+            url: "https://apastyle.apa.org/instructional-aids/student-paper-setup-guide.pdf"
         },
         {
             name: "MLA Style Essay Template",
             source: "Overleaf",
-            typography: "Times New Roman 12pt",
-            margins: "1.0 in (2.54 cm)",
+            typography: "Times New Roman",
+            margins: "2.54 cm (1 inch)",
             columns: 1,
-            url: "https://www.overleaf.com/latex/templates/mla-template-2024/txbhfkjflsjq"
+            url: "https://tr.overleaf.com/gallery/tagged/mla"
         }
     ],
     'Personalizado': [
         {
+            name: "Research Proposal Template (UQU)",
+            source: "Overleaf",
+            typography: "Computer Modern",
+            margins: "2.54 cm (1 inch)",
+            columns: 1,
+            url: "https://no.overleaf.com/latex/templates/uqu-research-proposal-template/hhfjkvfgpdrv"
+        },
+        {
             name: "Generic Academic Draft",
             source: "Authorea",
-            typography: "Inter / Sans-Serif",
-            margins: "2.0 cm (Moderate)",
+            typography: "Serif",
+            margins: "2.54 cm (1 inch)",
             columns: 1,
-            url: "https://www.authorea.com/templates/academic-draft"
-        },
-        {
-            name: "Minimalist Research Proposal",
-            source: "Overleaf",
-            typography: "Georgia",
-            margins: "2.5 cm (Normal)",
-            columns: 1,
-            url: "https://www.overleaf.com/latex/templates/research-proposal-template/lhqjwzqjmfpr"
-        },
-        {
-            name: "PIRE Fellows Template (OSDC)",
-            source: "Overleaf",
-            typography: "Times New Roman",
-            margins: "IEEE Letter",
-            columns: 2,
-            url: "https://www.overleaf.com/latex/templates/a-template-for-pire-fellows-to-present-research-results-using-the-open-science-data-cloud/kkncnjmgqgmz"
-        },
-        {
-            name: "Mechatronics Conference Template",
-            source: "Overleaf",
-            typography: "Times New Roman",
-            margins: "IEEE Standard",
-            columns: 2,
-            url: "https://www.overleaf.com/latex/templates/tempate-for-the-international-conference-on-mechatronics-mechatronika/pzbvgcwbgszh"
+            url: "https://www.authorea.com/"
         }
     ]
 };
+
 // Seleccionar tipo de documento y desplegar la línea para nombrar la librería
 function selectDocumentType(buttonEl, type) {
     window.selectedDocType = type;
@@ -309,7 +294,7 @@ function loadTemplates() {
     if (!container) return;
 
     const docType = window.selectedDocType || 'Artículo';
-    
+
     // Búsqueda insensible a mayúsculas/minúsculas y acentos
     const normalizeStr = str => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     const matchedKey = Object.keys(templatesData).find(key => normalizeStr(key) === normalizeStr(docType));
