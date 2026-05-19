@@ -150,6 +150,7 @@ const initDB = () => {
         loadActivity();
         renderResources();
         if (typeof renderCollections === 'function') renderCollections();
+        if (typeof checkActiveLibrary === 'function') checkActiveLibrary();
     };
 };
 
@@ -1382,6 +1383,9 @@ const navigateTo = (viewId) => {
     document.getElementById(`view-${viewId}`).classList.remove('hidden');
     document.getElementById(`nav-${viewId}`).classList.add('active');
 
+    if (viewId === 'terminal') {
+        if (typeof checkActiveLibrary === 'function') checkActiveLibrary();
+    }
     if (viewId === 'libreria') renderLibrary();
     if (viewId === 'notas') renderNotesList();
     if (viewId === 'laboratorio') {
@@ -1389,35 +1393,6 @@ const navigateTo = (viewId) => {
     }
 };
 
-const loadActivity = () => {
-    const container = document.getElementById('recent-activity');
-    const tx = db.transaction('activity', 'readonly');
-    const items = [];
-    tx.objectStore('activity').openCursor().onsuccess = (e) => {
-        const cursor = e.target.result;
-        if (cursor) {
-            items.push(cursor.value);
-            cursor.continue();
-        } else {
-            container.innerHTML = items.reverse().slice(0, 5).map(i => `
-                        <div class="flex items-center justify-between p-3 bg-white/50 rounded-lg border border-stone-200">
-                            <div class="flex items-center gap-3">
-                                <div class="w-1.5 h-1.5 rounded-full bg-amber-600"></div>
-                                <span class="font-bold text-stone-700 text-xs">${i.name}</span>
-                            </div>
-                            <span class="text-[9px] uppercase font-bold text-stone-400">${i.time}</span>
-                        </div>
-                    `).join('') || '<div class="p-4 text-xs italic text-stone-400 text-center">Sin actividad reciente registrada</div>';
-        }
-    };
-};
-
-const updateStats = () => {
-    const tx = db.transaction('resources', 'readonly');
-    tx.objectStore('resources').count().onsuccess = (e) => {
-        document.getElementById('stat-pdf-count').innerText = e.target.result;
-    };
-};
 
 const showToast = (msg) => {
     const t = document.getElementById('toast');

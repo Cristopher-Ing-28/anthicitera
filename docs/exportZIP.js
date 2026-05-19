@@ -12,6 +12,8 @@ async function exportarLibreriaAZip() {
         
         // Estructura del JSON de detalles
         const jsonDetalles = {
+            nombre_libreria: window.selectedLibraryName || "Sin_Nombre",
+            tipo_documento: window.selectedDocType || "Sin_Tipo",
             fecha_exportacion: new Date().toISOString(),
             total_recursos_binarios: 0,
             total_notas_fichas: 0,
@@ -68,7 +70,9 @@ async function exportarLibreriaAZip() {
         // 4. Generar el archivo ZIP y forzar su descarga
         const contenidoZip = await zip.generateAsync({ type: "blob" });
         
-        const nombreZip = `Anticithera_Export_${new Date().getTime()}.zip`;
+        const libName = (window.selectedLibraryName || "Anticithera").replace(/[^a-z0-9]/gi, '_');
+        const docType = (window.selectedDocType || "Export").replace(/[^a-z0-9]/gi, '_');
+        const nombreZip = `${libName}_${docType}_${new Date().getTime()}.zip`;
         saveAs(contenidoZip, nombreZip);
 
         showToast("¡Exportación completada con éxito!");
