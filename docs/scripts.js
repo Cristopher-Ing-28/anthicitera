@@ -1757,8 +1757,178 @@ function loadDarkModePreference() {
     }
 }
 
+// --- SISTEMA DE SESIÓN DE USUARIO ---
+
+let userSession = null;
+let sessionTimerInterval = null;
+
+function toggleUserSessionPanel() {
+    const panel = document.getElementById('userSessionPanel');
+    if (panel) {
+        panel.classList.toggle('hidden');
+    }
+}
+
+// Cerrar panel al hacer clic fuera
+document.addEventListener('click', (e) => {
+    const btn = document.getElementById('userSessionBtn');
+    const panel = document.getElementById('userSessionPanel');
+    if (btn && panel && !btn.contains(e.target) && !panel.contains(e.target)) {
+        panel.classList.add('hidden');
+    }
+});
+
+function showSessionForm(state) {
+    const initialActions = document.getElementById('session-actions-initial');
+    const loginForm = document.getElementById('session-form-login');
+    const registerForm = document.getElementById('session-form-register');
+
+    if (initialActions && loginForm && registerForm) {
+        initialActions.classList.add('hidden');
+        loginForm.classList.add('hidden');
+        registerForm.classList.add('hidden');
+
+        if (state === 'initial') {
+            initialActions.classList.remove('hidden');
+        } else if (state === 'login') {
+            loginForm.classList.remove('hidden');
+        } else if (state === 'register') {
+            registerForm.classList.remove('hidden');
+        }
+    }
+}
+
+function updateSessionUI() {
+    const unauthState = document.getElementById('session-unauth-state');
+    const authState = document.getElementById('session-auth-state');
+    const userAvatar = document.getElementById('userAvatar');
+    const authAvatar = document.getElementById('authAvatar');
+    const authUserName = document.getElementById('authUserName');
+    const authUserEmail = document.getElementById('authUserEmail');
+
+    if (userSession) {
+        if (unauthState) unauthState.classList.add('hidden');
+        if (authState) authState.classList.remove('hidden');
+
+        const initial = userSession.username.charAt(0).toUpperCase();
+        if (userAvatar) {
+            userAvatar.innerText = initial;
+            userAvatar.classList.remove('opacity-50');
+            userAvatar.classList.add('opacity-100');
+        }
+        if (authAvatar) authAvatar.innerText = initial;
+        if (authUserName) authUserName.innerText = userSession.username;
+        if (authUserEmail) authUserEmail.innerText = userSession.email;
+
+        startSessionTimer();
+    } else {
+        if (unauthState) unauthState.classList.remove('hidden');
+        if (authState) authState.classList.add('hidden');
+        
+        if (userAvatar) {
+            userAvatar.innerText = 'U';
+            userAvatar.classList.remove('opacity-100');
+            userAvatar.classList.add('opacity-50');
+        }
+        stopSessionTimer();
+    }
+    lucide.createIcons();
+}
+
+function handleSessionSubmit(e, action) {
+    e.preventDefault();
+    if (action === 'login') {
+        const usernameInput = document.getElementById('login-username');
+        const username = usernameInput ? usernameInput.value : 'Usuario';
+        const email = username.includes('@') ? username : `${username.toLowerCase()}@ejemplo.com`;
+        
+        loginUser(username, email);
+    } else if (action === 'register') {
+        const usernameInput = document.getElementById('register-username');
+        const emailInput = document.getElementById('register-email');
+        const username = usernameInput ? usernameInput.value : 'Usuario';
+        const email = emailInput ? emailInput.value : 'usuario@ejemplo.com';
+
+        loginUser(username, email);
+    }
+}
+
+function loginUser(username, email) {
+    userSession = {
+        username: username,
+        email: email,
+        startTime: Date.now()
+    };
+    localStorage.setItem('anticithera_session', JSON.stringify(userSession));
+    updateSessionUI();
+    showToast(`Sesión iniciada como ${username}`);
+    
+    // Limpiar formularios y volver al estado inicial
+    document.getElementById('session-form-login')?.reset();
+    document.getElementById('session-form-register')?.reset();
+    showSessionForm('initial');
+    document.getElementById('userSessionPanel')?.classList.add('hidden');
+}
+
+function loginWithGoogle() {
+    showToast("Conectando con Google...");
+    setTimeout(() => {
+        loginUser('Google User', 'google.user@gmail.com');
+    }, 800);
+}
+
+function logoutSession() {
+    userSession = null;
+    localStorage.removeItem('anticithera_session');
+    updateSessionUI();
+    showToast("Sesión cerrada");
+    document.getElementById('userSessionPanel')?.classList.add('hidden');
+}
+
+function startSessionTimer() {
+    stopSessionTimer();
+    updateTimerText();
+    sessionTimerInterval = setInterval(updateTimerText, 1000);
+}
+
+function stopSessionTimer() {
+    if (sessionTimerInterval) {
+        clearInterval(sessionTimerInterval);
+        sessionTimerInterval = null;
+    }
+}
+
+function updateTimerText() {
+    const timerSpan = document.getElementById('sessionTimer');
+    if (!timerSpan || !userSession) return;
+
+    const diffMs = Date.now() - userSession.startTime;
+    const diffSecs = Math.floor(diffMs / 1000);
+    const secs = String(diffSecs % 60).padStart(2, '0');
+    const mins = String(Math.floor(diffSecs / 60) % 60).padStart(2, '0');
+    const hours = String(Math.floor(diffSecs / 3600)).padStart(2, '0');
+
+    timerSpan.innerText = `${hours}:${mins}:${secs}`;
+}
+
+function checkActiveSession() {
+    const saved = localStorage.getItem('anticithera_session');
+    if (saved) {
+        try {
+            userSession = JSON.parse(saved);
+            if (!userSession.startTime) {
+                userSession.startTime = Date.now();
+            }
+            updateSessionUI();
+        } catch (e) {
+            localStorage.removeItem('anticithera_session');
+        }
+    }
+}
+
 window.onload = () => {
     initDB();
     loadDarkModePreference();
+    checkActiveSession();
     lucide.createIcons();
 };

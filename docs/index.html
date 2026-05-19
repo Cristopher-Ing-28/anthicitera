@@ -341,8 +341,109 @@
                 class="p-2 hover:bg-stone-300 rounded-full transition-all duration-300">
                 <i data-lucide="moon" class="w-4 h-4 text-stone-600" id="darkModeIcon"></i>
             </button>
-            <div class="w-8 h-8 rounded-full bg-stone-300 border border-stone-400 overflow-hidden">
-                <div class="w-full h-full bg-gradient-to-br from-amber-200 to-amber-600 opacity-50"></div>
+            <div class="relative">
+                <button type="button" onclick="toggleUserSessionPanel()" id="userSessionBtn"
+                    class="w-8 h-8 rounded-full bg-stone-300 border border-stone-400 overflow-hidden hover:ring-2 hover:ring-amber-700 transition-all focus:outline-none flex items-center justify-center">
+                    <div id="userAvatar" class="w-full h-full bg-gradient-to-br from-amber-200 to-amber-600 opacity-50 flex items-center justify-center text-amber-900 font-bold text-xs uppercase">
+                        U
+                    </div>
+                </button>
+
+                <!-- Panel de Sesión -->
+                <div id="userSessionPanel"
+                    class="hidden absolute right-0 top-full mt-2 w-72 bg-white border border-stone-300 shadow-2xl rounded-lg overflow-hidden z-[200] flex flex-col text-stone-800">
+                    
+                    <!-- Estado: No autenticado -->
+                    <div id="session-unauth-state" class="p-4 space-y-3">
+                        <h4 class="text-xs font-bold uppercase tracking-widest text-amber-900 mb-1">Acceso de Usuario</h4>
+                        <p class="text-[10px] text-stone-500 italic">Inicia sesión para registrar tus actividades de lectura.</p>
+                        
+                        <!-- Botones de Acción Iniciales -->
+                        <div id="session-actions-initial" class="space-y-2">
+                            <button type="button" onclick="showSessionForm('login')"
+                                class="w-full bg-stone-800 text-white py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-900 transition-all">
+                                Iniciar Sesión
+                            </button>
+                            <button type="button" onclick="showSessionForm('register')"
+                                class="w-full bg-white border border-stone-300 text-stone-700 py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-50 transition-all">
+                                Registrarse
+                            </button>
+                            <button type="button" onclick="loginWithGoogle()"
+                                class="w-full flex items-center justify-center gap-2 bg-white border border-stone-300 text-stone-700 py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-50 transition-all">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24">
+                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                                </svg>
+                                Registrarse con Google
+                            </button>
+                        </div>
+
+                        <!-- Formulario de Login (Oculto por defecto) -->
+                        <form id="session-form-login" class="hidden space-y-2.5 pt-2" onsubmit="handleSessionSubmit(event, 'login')">
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-stone-500 tracking-wider">Usuario / Correo</label>
+                                <input type="text" required id="login-username" class="w-full bg-stone-50 border border-stone-300 rounded p-1.5 text-xs outline-none focus:ring-1 focus:ring-amber-700">
+                            </div>
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-stone-500 tracking-wider">Contraseña</label>
+                                <input type="password" required id="login-password" class="w-full bg-stone-50 border border-stone-300 rounded p-1.5 text-xs outline-none focus:ring-1 focus:ring-amber-700">
+                            </div>
+                            <div class="flex gap-2 pt-1">
+                                <button type="button" onclick="showSessionForm('initial')" class="w-1/2 border border-stone-300 text-stone-600 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-50 transition-all">Volver</button>
+                                <button type="submit" class="w-1/2 bg-amber-900 text-white py-1.5 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-950 transition-all">Entrar</button>
+                            </div>
+                        </form>
+
+                        <!-- Formulario de Registro (Oculto por defecto) -->
+                        <form id="session-form-register" class="hidden space-y-2.5 pt-2" onsubmit="handleSessionSubmit(event, 'register')">
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-stone-500 tracking-wider">Nombre de Usuario</label>
+                                <input type="text" required id="register-username" class="w-full bg-stone-50 border border-stone-300 rounded p-1.5 text-xs outline-none focus:ring-1 focus:ring-amber-700">
+                            </div>
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-stone-500 tracking-wider">Correo Electrónico</label>
+                                <input type="email" required id="register-email" class="w-full bg-stone-50 border border-stone-300 rounded p-1.5 text-xs outline-none focus:ring-1 focus:ring-amber-700">
+                            </div>
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-stone-500 tracking-wider">Contraseña</label>
+                                <input type="password" required id="register-password" class="w-full bg-stone-50 border border-stone-300 rounded p-1.5 text-xs outline-none focus:ring-1 focus:ring-amber-700">
+                            </div>
+                            <div class="flex gap-2 pt-1">
+                                <button type="button" onclick="showSessionForm('initial')" class="w-1/2 border border-stone-300 text-stone-600 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-50 transition-all">Volver</button>
+                                <button type="submit" class="w-1/2 bg-amber-900 text-white py-1.5 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-950 transition-all">Registrar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Estado: Autenticado -->
+                    <div id="session-auth-state" class="hidden">
+                        <div class="p-4 bg-stone-100 border-b border-stone-200 flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-200 to-amber-600 opacity-80 flex items-center justify-center text-amber-900 font-bold text-sm shadow-sm" id="authAvatar">
+                                U
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-stone-800" id="authUserName">Usuario</span>
+                                <span class="text-[10px] text-stone-500" id="authUserEmail">usuario@ejemplo.com</span>
+                            </div>
+                        </div>
+                        <div class="p-4 space-y-4">
+                            <div>
+                                <p class="text-[9px] uppercase font-bold text-stone-500 tracking-widest mb-1">Tiempo de sesión actual</p>
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="clock" class="w-4 h-4 text-amber-700"></i>
+                                    <span class="text-sm font-bold text-stone-700" id="sessionTimer">00:00:00</span>
+                                </div>
+                            </div>
+                            <button type="button" onclick="logoutSession()"
+                                class="w-full flex items-center justify-center gap-2 bg-stone-100 text-stone-600 border border-stone-300 py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-200 transition-all mt-2">
+                                <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </header>
