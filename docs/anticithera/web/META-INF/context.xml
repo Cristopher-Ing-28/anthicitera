@@ -1,2 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/anticithera"/>
+<Context path="/anticithera">
+
+    <Resource name="jdbc/anticithera" 
+              auth="Container" 
+              type="javax.sql.DataSource" 
+              maxTotal="100" 
+              maxIdle="30" 
+              maxWaitMillis="10000" 
+              username="root" 
+              password="14980119" 
+              driverClassName="org.mariadb.jdbc.Driver" 
+              url="jdbc:mariadb://localhost:3304/anticithera" />
+
+</Context>
