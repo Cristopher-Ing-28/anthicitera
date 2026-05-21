@@ -1,113 +1,53 @@
 # Documentación de Gestión de Sesión (Anticithera)
 
-Este documento detalla el funcionamiento del sistema de sesión simulado implementado en la interfaz de **Anticithera**, explicando la estructura de almacenamiento actual y cómo migrar este diseño a una arquitectura cliente-servidor persistida en base de datos.
+Este documento detalla el funcionamiento del sistema de autenticación y gestión de sesiones basado en la API REST de **Jakarta EE** y la base de datos **MariaDB**, migrado desde el sistema de simulación en cliente anterior.
 
 ---
 
-## 1. Arquitectura Actual (Simulada / Cliente)
+## 1. Arquitectura del Sistema (Cliente-Servidor)
 
-Actualmente, toda la gestión de la sesión ocurre en el **lado del cliente** mediante JavaScript de forma reactiva y persistencia local.
+El flujo de control se ha descentralizado hacia el servidor de aplicaciones Tomcat y la base de datos MariaDB, garantizando persistencia real, seguridad en contraseñas y registro detallado de las sesiones.
 
 ```mermaid
 sequenceDiagram
-    participant Usuario
-    participant UI (index.html)
-    participant Script (scripts.js)
-    participant LocalStorage
-    
-    Usuario->>UI: Clic en botón de sesión
-    UI->>Script: toggleUserSessionPanel()
-    Script->>UI: Muestra el desplegable (No Autenticado)
-    
-    Usuario->>UI: Introduce datos y pulsa "Entrar"
-    UI->>Script: handleSessionSubmit(event, 'login')
-    Script->>Script: loginUser(username, email)
-    Note over Script: Registra startTime = Date.now()
-    Script->>LocalStorage: Guardar JSON bajo "anticithera_session"
-    Script->>Script: startSessionTimer()
-    Script->>UI: Actualiza avatar e inicia temporizador
-```
+    participant Cliente as Frontend (JS / Fetch)
+    participant Tomcat as Servidor API (Tomcat 8081)
+    participant MariaDB as Base de Datos (MariaDB 3304)
 
-### Dónde se guarda la información
-El estado se guarda en la clave `anticithera_session` del **LocalStorage** del navegador. Los datos almacenados tienen la siguiente estructura:
+    Note over Cliente: Registro
+    Cliente->>Tomcat: POST /api/auth/register { username, email, password }
+    Tomcat->>Tomcat: Hash SHA-256 de password
+    Tomcat->>MariaDB: INSERT INTO usuarios (username, email, password_hash)
+    Tomcat->>MariaDB: INSERT INTO sesiones_actividad (usuario_id, token_sesion, inicio_conexion)
+    Tomcat-->>Cliente: Response 201 { token, username, email, startTime }
 
-```json
-{
-  "username": "Cristopher",
-  "email": "cristopher@example.com",
-  "startTime": 1779212345678
-}
-```
-* **username**: Identificador visual del usuario.
-* **email**: Correo de la sesión.
-* **startTime**: Marca de tiempo en milisegundos (`Date.now()`) que define el inicio exacto de la sesión para poder calcular el tiempo transcurrido de forma correcta incluso si la pestaña se refresca.
+    Note over Cliente: Inicio de Sesión
+    Cliente->>Tomcat: POST /api/auth/login { username, password }
+    Tomcat->>Tomcat: Hash SHA-256 de password
+    Tomcat->>MariaDB: SELECT * FROM usuarios WHERE username o email
+    Tomcat->>MariaDB: INSERT INTO sesiones_actividad (usuario_id, token_sesion, inicio_conexion)
+    Tomcat-->>Cliente: Response 200 { token, username, email, startTime }
 
----
-
-## 2. Flujo de Control en JavaScript (`scripts.js`)
-
-La lógica está modularizada a través de las siguientes funciones clave:
-
-### A. Inicialización y Persistencia (`checkActiveSession`)
-Cuando la página carga, la función `checkActiveSession()` busca el objeto en el almacenamiento del navegador. Si existe, restaura el estado cargándolo en memoria e iniciando el temporizador.
-```javascript
-function checkActiveSession() {
-    const saved = localStorage.getItem('anticithera_session');
-    if (saved) {
-        try {
-            userSession = JSON.parse(saved);
-            updateSessionUI();
-        } catch (e) {
-            localStorage.removeItem('anticithera_session');
-        }
-    }
-}
-```
-
-### B. Temporizador Dinámico (`startSessionTimer` / `updateTimerText`)
-En lugar de almacenar un contador numérico de segundos (el cual se reiniciaría al refrescar la página), el tiempo transcurrido se calcula dinámicamente obteniendo la diferencia horaria entre el momento actual (`Date.now()`) y el `startTime` original:
-$$\text{Tiempo Transcurrido} = \text{Date.now()} - \text{startTime}$$
-
-```javascript
-function updateTimerText() {
-    if (!userSession) return;
-    const diffMs = Date.now() - userSession.startTime;
-    const diffSecs = Math.floor(diffMs / 1000);
-    const secs = String(diffSecs % 60).padStart(2, '0');
-    const mins = String(Math.floor(diffSecs / 60) % 60).padStart(2, '0');
-    const hours = String(Math.floor(diffSecs / 3600)).padStart(2, '0');
-    document.getElementById('sessionTimer').innerText = `${hours}:${mins}:${secs}`;
-}
+    Note over Cliente: Cierre de Sesión (Logout)
+    Cliente->>Tomcat: POST /api/auth/logout (Authorization: Bearer <token>)
+    Tomcat->>MariaDB: UPDATE sesiones_actividad SET fin_conexion = ahora, duracion_segundos = (fin - inicio)
+    Tomcat-->>Cliente: Response 200 { message }
 ```
 
 ---
 
-## 3. Hoja de Ruta para Implementación Real (Base de Datos)
+## 2. Configuración del Servidor y Base de Datos
 
-Para convertir esta simulación en un sistema real y seguro con base de datos, deberás realizar la transición a un modelo **Cliente-Servidor**.
+### A. Parámetros de Conexión
+* **Servidor Tomcat (API)**: Puerto `8081` (Contexto: `/anticithera`)
+* **Base de Datos MariaDB**: Puerto `3304`
+  * **Usuario**: `root`
+  * **Contraseña**: `14980119`
+  * **Nombre de base de datos**: `anticithera`
 
-### A. Arquitectura Recomendada (JWT o Cookies de Sesión)
-
-```mermaid
-sequenceDiagram
-    participant Cliente (Frontend)
-    participant Servidor API (Backend)
-    participant Base de Datos (DB)
-
-    Cliente->>Servidor API: POST /api/auth/login { username, password }
-    Servidor API->>DB: Consultar usuario y verificar Hash (e.g. bcrypt)
-    DB-->>Servidor API: Datos del usuario correctos
-    Servidor API->>DB: Registrar inicio de sesión y obtener session_id/startTime
-    Servidor API-->>Cliente: Responder con Token JWT o Set-Cookie (Session ID) + startTime
-    Note over Cliente: Guardar Token y startTime en LocalStorage/Cookie segura
-```
-
-### B. Diseño de Tabla en Base de Datos (Ejemplo SQL)
-
-Debes tener al menos dos tablas para gestionar usuarios y sus correspondientes registros de conexión (para contabilizar el tiempo de sesión de forma persistente e histórica):
-
+### B. Diseño de Tablas (SQL)
 ```sql
--- Tabla de Usuarios
+-- Tabla principal de Usuarios
 CREATE TABLE usuarios (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -116,65 +56,98 @@ CREATE TABLE usuarios (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla para Historial/Seguimiento de Sesiones
+-- Tabla para llevar el registro del tiempo de las sesiones
 CREATE TABLE sesiones_actividad (
     id SERIAL PRIMARY KEY,
-    usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    usuario_id BIGINT UNSIGNED,
     token_sesion VARCHAR(255) UNIQUE NOT NULL,
     inicio_conexion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fin_conexion TIMESTAMP,
-    duracion_segundos INT -- Se computa al hacer logout
+    duracion_segundos INT,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 ```
 
-### C. Cambios requeridos en el Frontend (`scripts.js`)
+---
 
-1. **Petición de Red (`Fetch`)**:
-   Reemplazar la función local `loginUser()` por una llamada HTTP asíncrona hacia tu servidor backend:
-   ```javascript
-   async function loginUser(username, password) {
-       try {
-           const response = await fetch('https://tu-api.com/api/auth/login', {
-               method: 'POST',
-               headers: { 'Content-Type': 'application/json' },
-               body: JSON.stringify({ username, password })
-           });
-           
-           if (!response.ok) throw new Error('Credenciales inválidas');
-           
-           const data = await response.json(); 
-           // data debe contener: { token, username, email, startTime }
-           
-           userSession = {
-               token: data.token,
-               username: data.username,
-               email: data.email,
-               startTime: new Date(data.startTime).getTime()
-           };
-           
-           localStorage.setItem('anticithera_session', JSON.stringify(userSession));
-           updateSessionUI();
-       } catch (error) {
-           showToast(error.message);
-       }
-   }
-   ```
+## 3. Implementación del Backend (Jakarta EE)
 
-2. **Cierre de sesión persistente (Logout)**:
-   Al presionar "Cerrar Sesión", no basta con borrar el `localStorage`; se debe avisar al servidor para registrar el fin de la sesión (`fin_conexion`) y calcular la duración final:
-   ```javascript
-   async function logoutSession() {
-       if (userSession && userSession.token) {
-           await fetch('https://tu-api.com/api/auth/logout', {
-               method: 'POST',
-               headers: { 
-                   'Authorization': `Bearer ${userSession.token}`,
-                   'Content-Type': 'application/json'
-               }
-           });
-       }
-       userSession = null;
-       localStorage.removeItem('anticithera_session');
-       updateSessionUI();
-   }
-   ```
+Se ha estructurado la API REST utilizando JAX-RS y persistencia JPA bajo el paquete por defecto del proyecto.
+
+### A. Configuración de Persistencia (`persistence.xml`)
+Ubicación: `src/conf/persistence.xml`. Define la unidad de persistencia `AnticitheraPU` enlazada con la base de datos MariaDB:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence" ...>
+  <persistence-unit name="AnticitheraPU" transaction-type="JTA">
+    <jta-data-source>jdbc/anticithera</jta-data-source>
+    <class>LibreriaUsuario</class>
+    <class>Usuario</class>
+    <class>SesionActividad</class>
+    <properties>
+      <property name="jakarta.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
+      <property name="jakarta.persistence.jdbc.url" value="jdbc:mariadb://localhost:3304/anticithera"/>
+      <property name="jakarta.persistence.jdbc.user" value="root"/>
+      <property name="jakarta.persistence.jdbc.password" value="14980119"/>
+    </properties>
+  </persistence-unit>
+</persistence>
+```
+
+### B. Configuración de Recurso JNDI en Tomcat (`context.xml`)
+Ubicación: `web/META-INF/context.xml`. Define la conexión pooling en el servidor:
+```xml
+<Context path="/anticithera">
+  <Resource name="jdbc/anticithera"
+            auth="Container"
+            type="javax.sql.DataSource"
+            driverClassName="org.mariadb.jdbc.Driver"
+            url="jdbc:mariadb://localhost:3304/anticithera?useSSL=false&amp;allowPublicKeyRetrieval=true"
+            username="root"
+            password="14980119"
+            maxTotal="20"
+            maxIdle="10"
+            maxWaitMillis="-1"/>
+</Context>
+```
+
+### C. Endpoints de Autenticación (`UsuarioResource.java`)
+Se exponen las siguientes rutas en el path base `/api/auth`:
+
+1. **`POST /register`**: Crea un nuevo registro en `usuarios`, cifra la contraseña con **SHA-256** mediante `HashUtil` y abre la sesión del usuario.
+2. **`POST /login`**: Compara la contraseña cifrada contra el hash en la DB. Si concuerdan, crea un token UUID y lo guarda en `sesiones_actividad`.
+3. **`POST /logout`**: Recibe el token mediante la cabecera `Authorization: Bearer <token>`, establece la fecha/hora de salida y calcula la diferencia en segundos (`duracion_segundos`).
+
+### D. Soporte CORS (`CorsFilter.java`)
+Se incluye un filtro `@Provider` que intercepta las peticiones y añade las cabeceras CORS (`Access-Control-Allow-Origin: *`, `Methods`, `Headers`), permitiendo que el cliente realice llamadas REST desde cualquier puerto (por ejemplo, Live Server en el puerto 5500) o a través de `file://`.
+
+---
+
+## 4. Integración del Frontend (`scripts.js`)
+
+La constante `API_BASE_URL` detecta el origen de la app o redirige a la instancia Tomcat `http://localhost:8081/anticithera/api`.
+
+### A. Envío de Peticiones de Autenticación
+Las peticiones a la API REST envían datos en formato JSON y manejan los tokens y horas de inicio reales de la conexión:
+```javascript
+// Ejemplo de inicio de sesión real
+const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+});
+```
+
+### B. Cierre de sesión persistente
+Al hacer logout, el frontend consume el endpoint correspondiente enviando el token en la cabecera de autenticación:
+```javascript
+await fetch(`${API_BASE_URL}/auth/logout`, {
+    method: 'POST',
+    headers: {
+        'Authorization': `Bearer ${userSession.token}`
+    }
+});
+```
+
+---
+*Nota: Si el servidor Tomcat está apagado o no responde, el frontend no iniciará sesión simulada; en su lugar, disparará un mensaje emergente de error (`alert`) detallando la URL de la API y el error de conexión para facilitar la depuración inmediata del sistema.*

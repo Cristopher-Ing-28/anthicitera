@@ -1810,49 +1810,156 @@ function updateSessionUI() {
     lucide.createIcons();
 }
 
-function handleSessionSubmit(e, action) {
+const API_BASE_URL = window.location.origin.includes('8081') 
+    ? `${window.location.origin}/anticithera/api` 
+    : 'http://localhost:8081/anticithera/api';
+
+async function handleSessionSubmit(e, action) {
     e.preventDefault();
     if (action === 'login') {
         const usernameInput = document.getElementById('login-username');
-        const username = usernameInput ? usernameInput.value : 'Usuario';
-        const email = username.includes('@') ? username : `${username.toLowerCase()}@ejemplo.com`;
+        const passwordInput = document.getElementById('login-password');
+        const username = usernameInput ? usernameInput.value : '';
+        const password = passwordInput ? passwordInput.value : '';
         
-        loginUser(username, email);
+        if (!username || !password) {
+            showToast("Usuario y contraseña requeridos");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Error al iniciar sesión');
+            }
+
+            userSession = {
+                token: data.token,
+                username: data.username,
+                email: data.email,
+                startTime: new Date(data.startTime).getTime()
+            };
+
+            localStorage.setItem('anticithera_session', JSON.stringify(userSession));
+            updateSessionUI();
+            showToast(`Sesión iniciada como ${data.username}`);
+
+            document.getElementById('session-form-login')?.reset();
+            showSessionForm('initial');
+            document.getElementById('userSessionPanel')?.classList.add('hidden');
+        } catch (error) {
+            console.error("Error de login:", error);
+            alert(`[DEBUG ERROR] No se pudo conectar al servidor Tomcat en: ${API_BASE_URL}\n\nAsegúrate de que Tomcat esté corriendo en el puerto 8081.\nDetalle: ${error.message}`);
+            showToast("Error de inicio de sesión");
+        }
     } else if (action === 'register') {
         const usernameInput = document.getElementById('register-username');
         const emailInput = document.getElementById('register-email');
-        const username = usernameInput ? usernameInput.value : 'Usuario';
-        const email = emailInput ? emailInput.value : 'usuario@ejemplo.com';
+        const passwordInput = document.getElementById('register-password');
+        const username = usernameInput ? usernameInput.value : '';
+        const email = emailInput ? emailInput.value : '';
+        const password = passwordInput ? passwordInput.value : '';
 
-        loginUser(username, email);
+        if (!username || !email || !password) {
+            showToast("Todos los campos son requeridos");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email, password })
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Error al registrar usuario');
+            }
+
+            userSession = {
+                token: data.token,
+                username: data.username,
+                email: data.email,
+                startTime: new Date(data.startTime).getTime()
+            };
+
+            localStorage.setItem('anticithera_session', JSON.stringify(userSession));
+            updateSessionUI();
+            showToast(`Registro exitoso. Sesión iniciada.`);
+
+            document.getElementById('session-form-register')?.reset();
+            showSessionForm('initial');
+            document.getElementById('userSessionPanel')?.classList.add('hidden');
+        } catch (error) {
+            console.error("Error de registro:", error);
+            alert(`[DEBUG ERROR] No se pudo conectar al servidor Tomcat en: ${API_BASE_URL}\n\nAsegúrate de que Tomcat esté corriendo en el puerto 8081.\nDetalle: ${error.message}`);
+            showToast("Error de registro");
+        }
     }
 }
 
-function loginUser(username, email) {
-    userSession = {
-        username: username,
-        email: email,
-        startTime: Date.now()
-    };
-    localStorage.setItem('anticithera_session', JSON.stringify(userSession));
-    updateSessionUI();
-    showToast(`Sesión iniciada como ${username}`);
-    
-    // Limpiar formularios y volver al estado inicial
-    document.getElementById('session-form-login')?.reset();
-    document.getElementById('session-form-register')?.reset();
-    showSessionForm('initial');
-    document.getElementById('userSessionPanel')?.classList.add('hidden');
-}
-
-function loginWithGoogle() {
+async function loginWithGoogle() {
     showToast("Conectando con Google...");
-    setTimeout(() => {
-        loginUser('Google User', 'google.user@gmail.com');
-    }, 800);
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: 'Google_User', email: 'google.user@gmail.com', password: 'google_dummy_password' })
+        });
+        let data;
+        if (response.status === 409) {
+            const loginResp = await fetch(`${API_BASE_URL}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: 'google.user@gmail.com', password: 'google_dummy_password' })
+            });
+            data = await loginResp.json();
+        } else {
+            data = await response.json();
+        }
+
+        userSession = {
+            token: data.token,
+            username: data.username,
+            email: data.email,
+            startTime: new Date(data.startTime).getTime()
+        };
+        localStorage.setItem('anticithera_session', JSON.stringify(userSession));
+        updateSessionUI();
+        showToast("Sesión iniciada con Google");
+        document.getElementById('userSessionPanel')?.classList.add('hidden');
+    } catch (e) {
+        console.error("Error en conexión con Tomcat para login Google:", e);
+        alert(`[DEBUG ERROR] No se pudo conectar al servidor Tomcat en: ${API_BASE_URL} para iniciar sesión con Google.\n\nAsegúrate de que Tomcat esté iniciado en el puerto 8081 y corriendo.\nDetalle: ${e.message}`);
+        showToast("Error de conexión con el servidor");
+    }
 }
 
-function logoutSession() {
+async function logoutSession() {
+    if (userSession && userSession.token) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${userSession.token}`
+                }
+            });
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Error al cerrar sesión en el servidor');
+            }
+        } catch (error) {
+            console.error("Error al notificar cierre de sesión al servidor:", error);
+            alert(`[DEBUG ERROR] Falló la desconexión en el servidor Tomcat en: ${API_BASE_URL}\n\nDetalle: ${error.message}`);
+        }
+    }
     userSession = null;
     localStorage.removeItem('anticithera_session');
     updateSessionUI();
