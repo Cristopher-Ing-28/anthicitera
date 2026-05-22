@@ -75,6 +75,31 @@ async function exportarLibreriaAZip() {
         const nombreZip = `${libName}_${docType}_${new Date().getTime()}.zip`;
         saveAs(contenidoZip, nombreZip);
 
+        // Subir al servidor si hay sesión activa
+        if (typeof userSession !== 'undefined' && userSession && userSession.token) {
+            showToast("Subiendo copia al servidor...");
+            const formData = new FormData();
+            formData.append('file', contenidoZip);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/files/upload?fileName=${encodeURIComponent(nombreZip)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${userSession.token}`
+                    },
+                    body: contenidoZip // Enviamos el blob directamente
+                });
+
+                if (response.ok) {
+                    showToast("¡Copia guardada en tu cuenta!");
+                } else {
+                    console.error("Error al subir el ZIP");
+                }
+            } catch (err) {
+                console.error("Error de red al subir ZIP:", err);
+            }
+        }
+
         showToast("¡Exportación completada con éxito!");
 
     } catch (error) {
@@ -114,8 +139,45 @@ async function menuImportarZip() {
             showToast("Error de red. Verifica que la URL del ZIP sea pública y directa.");
         }
     } else if (url !== null) {
-        // Opción B: Abrir el selector de archivos local
-        document.getElementById('zipUploadInput').click();
+        // Opción B: Listar archivos del servidor si hay sesión, o abrir local
+        if (typeof userSession !== 'undefined' && userSession && userSession.token) {
+            try {
+                showToast("Consultando tus respaldos en el servidor...");
+                const response = await fetch(`${API_BASE_URL}/files/list`, {
+                    headers: { 'Authorization': `Bearer ${userSession.token}` }
+                });
+                const zips = await response.json();
+
+                if (zips.length > 0) {
+                    let mensaje = "RESPALDOS EN EL SERVIDOR\n\nSelecciona el número del respaldo a cargar:\n";
+                    zips.forEach((z, i) => {
+                        mensaje += `${i + 1}. ${z.nombreArchivo} (${z.fechaCreacion})\n`;
+                    });
+                    mensaje += "\nO escribe 'L' para subir un archivo local.";
+
+                    const seleccion = prompt(mensaje);
+                    if (seleccion && seleccion.toUpperCase() === 'L') {
+                        document.getElementById('zipUploadInput').click();
+                    } else if (seleccion && !isNaN(seleccion) && zips[seleccion - 1]) {
+                        const zipId = zips[seleccion - 1].id;
+                        showToast("Descargando respaldo...");
+                        const dlResp = await fetch(`${API_BASE_URL}/files/download/${zipId}`, {
+                            headers: { 'Authorization': `Bearer ${userSession.token}` }
+                        });
+                        const blob = await dlResp.blob();
+                        procesarZipRestauracion(blob);
+                    }
+                } else {
+                    showToast("No tienes respaldos en el servidor. Abriendo selector local...");
+                    document.getElementById('zipUploadInput').click();
+                }
+            } catch (err) {
+                console.error("Error al listar ZIPs:", err);
+                document.getElementById('zipUploadInput').click();
+            }
+        } else {
+            document.getElementById('zipUploadInput').click();
+        }
     }
 }
 
