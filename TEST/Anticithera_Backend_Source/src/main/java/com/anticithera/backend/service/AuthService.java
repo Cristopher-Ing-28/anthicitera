@@ -16,8 +16,46 @@ public class AuthService {
     @PersistenceContext
     private EntityManager em;
 
+    /**
+     * Verifica si un usuario con el nombre de usuario dado ya existe
+     */
+    public boolean usernameExists(String username) {
+        try {
+            em.createQuery("SELECT u FROM Usuario u WHERE u.username = :username", Usuario.class)
+                    .setParameter("username", username)
+                    .getSingleResult();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Verifica si un usuario con el email dado ya existe
+     */
+    public boolean emailExists(String email) {
+        try {
+            em.createQuery("SELECT u FROM Usuario u WHERE u.email = :email", Usuario.class)
+                    .setParameter("email", email)
+                    .getSingleResult();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     @Transactional
-    public Usuario register(String username, String email, String password) {
+    public Usuario register(String username, String email, String password) throws Exception {
+        // Validar que el usuario no exista
+        if (usernameExists(username)) {
+            throw new IllegalArgumentException("El nombre de usuario '" + username + "' ya está registrado");
+        }
+        
+        // Validar que el email no exista
+        if (emailExists(email)) {
+            throw new IllegalArgumentException("El email '" + email + "' ya está registrado");
+        }
+        
         Usuario user = new Usuario();
         user.setUsername(username);
         user.setEmail(email);

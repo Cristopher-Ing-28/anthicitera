@@ -1887,8 +1887,7 @@ async function handleSessionSubmit(e, action) {
             document.getElementById('userSessionPanel')?.classList.add('hidden');
         } catch (error) {
             console.error("Error de login:", error);
-            alert(`[DEBUG ERROR] No se pudo conectar al servidor Tomcat en: ${API_BASE_URL}\n\nAsegúrate de que Tomcat esté corriendo en el puerto 8081.\nDetalle: ${error.message}`);
-            showToast("Error de inicio de sesión");
+            showToast(error.message || "Error al iniciar sesión");
         }
     } else if (action === 'register') {
         const usernameInput = document.getElementById('register-username');
@@ -1931,8 +1930,7 @@ async function handleSessionSubmit(e, action) {
             document.getElementById('userSessionPanel')?.classList.add('hidden');
         } catch (error) {
             console.error("Error de registro:", error);
-            alert(`[DEBUG ERROR] No se pudo conectar al servidor Tomcat en: ${API_BASE_URL}\n\nAsegúrate de que Tomcat esté corriendo en el puerto 8081.\nDetalle: ${error.message}`);
-            showToast("Error de registro");
+            showToast(error.message || "Error al registrar usuario");
         }
     }
 }
@@ -1968,9 +1966,8 @@ async function loginWithGoogle() {
         showToast("Sesión iniciada con Google");
         document.getElementById('userSessionPanel')?.classList.add('hidden');
     } catch (e) {
-        console.error("Error en conexión con Tomcat para login Google:", e);
-        alert(`[DEBUG ERROR] No se pudo conectar al servidor Tomcat en: ${API_BASE_URL} para iniciar sesión con Google.\n\nAsegúrate de que Tomcat esté iniciado en el puerto 8081 y corriendo.\nDetalle: ${e.message}`);
-        showToast("Error de conexión con el servidor");
+        console.error("Error en conexión con Google:", e);
+        showToast(e.message || "Error al conectar con Google");
     }
 }
 

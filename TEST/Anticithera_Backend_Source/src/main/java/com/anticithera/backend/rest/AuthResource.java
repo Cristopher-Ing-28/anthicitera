@@ -25,7 +25,9 @@ public class AuthResource {
         String password = credentials.get("password");
 
         if (username == null || email == null || password == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Faltan datos").build();
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(Map.of("error", "Faltan datos requeridos: username, email, password"))
+                    .build();
         }
 
         try {
@@ -36,9 +38,17 @@ public class AuthResource {
             response.put("token", token);
             response.put("username", user.getUsername());
             response.put("email", user.getEmail());
+            response.put("startTime", System.currentTimeMillis());
             return Response.ok(response).build();
+        } catch (IllegalArgumentException e) {
+            // Error de validación (usuario o email ya existen)
+            return Response.status(Response.Status.CONFLICT)
+                    .entity(Map.of("error", e.getMessage()))
+                    .build();
         } catch (Exception e) {
-            return Response.status(Response.Status.CONFLICT).entity("Usuario o email ya existe").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(Map.of("error", "Error al registrar usuario: " + e.getMessage()))
+                    .build();
         }
     }
 
@@ -55,9 +65,12 @@ public class AuthResource {
             response.put("token", token);
             response.put("username", user.getUsername());
             response.put("email", user.getEmail());
+            response.put("startTime", System.currentTimeMillis());
             return Response.ok(response).build();
         } else {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Credenciales inválidas").build();
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(Map.of("error", "Credenciales inválidas"))
+                    .build();
         }
     }
 
