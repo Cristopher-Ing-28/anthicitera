@@ -12,6 +12,32 @@ let pickerApiLoaded = false;
 // --- CONFIGURACIÓN PDF.JS ---
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
+// --- FUNCIONES PROTEGIDAS PARA STORAGE (Manejo de Tracking Prevention) ---
+const safeStorage = {
+    setItem: (key, value) => {
+        try {
+            localStorage.setItem(key, value);
+        } catch (e) {
+            console.warn('localStorage bloqueado por Tracking Prevention o privacidad:', e);
+        }
+    },
+    getItem: (key) => {
+        try {
+            return localStorage.getItem(key);
+        } catch (e) {
+            console.warn('localStorage bloqueado por Tracking Prevention o privacidad:', e);
+            return null;
+        }
+    },
+    removeItem: (key) => {
+        try {
+            localStorage.removeItem(key);
+        } catch (e) {
+            console.warn('localStorage bloqueado por Tracking Prevention o privacidad:', e);
+        }
+    }
+};
+
 let db;
 let currentNoteId = null;
 let pdfDoc = null;
@@ -1405,11 +1431,13 @@ const showToast = (msg) => {
     }, 3000);
 };
 
-const closeModal = (id) => document.getElementById(id).classList.add('hidden');
+const closeModal = (id) => {
+    const elem = document.getElementById(id);
+    if (elem) elem.classList.add('hidden');
+};
 
-setInterval(() => {
-    document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-}, 1000);
+// Nota: El elemento con ID 'clock' no existe en el HTML
+// Si necesitas mostrar la hora, agrega un elemento con id="clock" en el HTML
 
 // --- EXPLORADOR DE ARCHIVOS LOCAL (File System Access API) ---
 const btnOpenFolder = document.getElementById('btn-open-folder');
@@ -1711,7 +1739,7 @@ async function moveNoteToCollection(noteId, colId, colColor) {
 function toggleDarkMode() {
     const body = document.body;
     const isDark = body.classList.toggle('dark-mode');
-    localStorage.setItem('darkMode', isDark);
+    safeStorage.setItem('darkMode', isDark);
     
     // Cambiar icono
     const icon = document.getElementById('darkModeIcon');
@@ -1724,11 +1752,15 @@ function toggleDarkMode() {
 }
 
 function loadDarkModePreference() {
-    const isDark = localStorage.getItem('darkMode') === 'true';
-    if (isDark) {
-        document.body.classList.add('dark-mode');
-        const icon = document.getElementById('darkModeIcon');
-        if (icon) icon.setAttribute('data-lucide', 'sun');
+    try {
+        const isDark = safeStorage.getItem('darkMode') === 'true';
+        if (isDark) {
+            document.body.classList.add('dark-mode');
+            const icon = document.getElementById('darkModeIcon');
+            if (icon) icon.setAttribute('data-lucide', 'sun');
+        }
+    } catch (e) {
+        console.warn('Error cargando preferencia de modo oscuro:', e);
     }
 }
 
@@ -1846,7 +1878,7 @@ async function handleSessionSubmit(e, action) {
                 startTime: new Date(data.startTime).getTime()
             };
 
-            localStorage.setItem('anticithera_session', JSON.stringify(userSession));
+            safeStorage.setItem('anticithera_session', JSON.stringify(userSession));
             updateSessionUI();
             showToast(`Sesión iniciada como ${data.username}`);
 
@@ -1890,7 +1922,7 @@ async function handleSessionSubmit(e, action) {
                 startTime: new Date(data.startTime).getTime()
             };
 
-            localStorage.setItem('anticithera_session', JSON.stringify(userSession));
+            safeStorage.setItem('anticithera_session', JSON.stringify(userSession));
             updateSessionUI();
             showToast(`Registro exitoso. Sesión iniciada.`);
 
@@ -1931,7 +1963,7 @@ async function loginWithGoogle() {
             email: data.email,
             startTime: new Date(data.startTime).getTime()
         };
-        localStorage.setItem('anticithera_session', JSON.stringify(userSession));
+        safeStorage.setItem('anticithera_session', JSON.stringify(userSession));
         updateSessionUI();
         showToast("Sesión iniciada con Google");
         document.getElementById('userSessionPanel')?.classList.add('hidden');
@@ -1961,7 +1993,7 @@ async function logoutSession() {
         }
     }
     userSession = null;
-    localStorage.removeItem('anticithera_session');
+    safeStorage.removeItem('anticithera_session');
     updateSessionUI();
     showToast("Sesión cerrada");
     document.getElementById('userSessionPanel')?.classList.add('hidden');
@@ -1994,7 +2026,7 @@ function updateTimerText() {
 }
 
 function checkActiveSession() {
-    const saved = localStorage.getItem('anticithera_session');
+    const saved = safeStorage.getItem('anticithera_session');
     if (saved) {
         try {
             userSession = JSON.parse(saved);
@@ -2003,7 +2035,7 @@ function checkActiveSession() {
             }
             updateSessionUI();
         } catch (e) {
-            localStorage.removeItem('anticithera_session');
+            safeStorage.removeItem('anticithera_session');
         }
     }
 }
