@@ -1811,8 +1811,8 @@ function updateSessionUI() {
 }
 
 const API_BASE_URL = window.location.origin.includes('8081') 
-    ? `${window.location.origin}/anticithera-backend/api` 
-    : 'http://natsuki-eva:8081/anticithera-backend/api';
+    ? `${window.location.origin}/anticithera/api` 
+    : 'http://localhost:8081/anticithera/api';
 
 async function handleSessionSubmit(e, action) {
     e.preventDefault();
