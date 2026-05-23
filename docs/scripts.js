@@ -1842,9 +1842,9 @@ function updateSessionUI() {
     lucide.createIcons();
 }
 
-const API_BASE_URL = window.location.origin.includes('8081') 
+const API_BASE_URL = window.location.origin.includes('8181') 
     ? `${window.location.origin}/anticithera/api` 
-    : 'http://localhost:8081/anticithera/api';
+    : 'http://localhost:8181/anticithera/api';
 
 async function handleSessionSubmit(e, action) {
     e.preventDefault();
