@@ -1,0 +1,68 @@
+INSTRUCCIONES PARA CONFIGURAR EL GLASSFISH:
+Paso 1: Copiar el Driver JDBC a GlassFish
+
+Antes de tocar cualquier configuración, GlassFish necesita el conector para saber cómo hablar con MariaDB.
+
+    Descarga el archivo del conector (por ejemplo, mariadb-java-client-3.x.x.jar).
+
+    Copia y pega el archivo .jar suelto en la ruta exacta de tu dominio:
+    C:\Users\Cristopher\GlassFish_Server\glassfish\domains\domain1\lib\ext\
+
+    Crucial: Reinicia el servidor por completo para que detecte la nueva librería. Desde PowerShell (asegurando tu ruta de Java):
+    PowerShell
+
+    $env:AS_JAVA="C:\Program Files\Java\jdk-25.0.2"
+    .\asadmin.bat stop-domain
+    .\asadmin.bat start-domain
+
+Paso 2: Configurar el Connection Pool en la Consola Web
+
+    Abre tu navegador e ingresa al panel de administración: http://localhost:4848.
+
+    En el menú de la izquierda, navega a Resources > JDBC > JDBC Connection Pools y haz clic en New (Nuevo).
+
+    Configura los datos principales de la pestaña General:
+
+        Pool Name: AnticitheraPool
+
+        Resource Type: javax.sql.DataSource
+
+        Datasource Classname: org.mariadb.jdbc.MariaDbDataSource (Asegúrate de dejar el campo "Driver Classname" completamente vacío).
+
+Paso 3: Configurar las Propiedades de Conexión de la Base de Datos
+
+En la pestaña Additional Properties (Propiedades Adicionales) del pool que acabas de crear, añade o modifica los siguientes valores con los datos de tu servidor Natsuki-EVA:
+
+    Url: jdbc:mariadb://localhost:3306/anticithera (o usando jdbc:mariadb://Natsuki-EVA:3306/anticithera).
+
+    User: Tu usuario de MariaDB (ej. root).
+
+    Password: Tu contraseña de MariaDB.
+
+👉 Validación: Regresa a la pestaña General y haz clic en el botón Ping en la parte superior. No avances hasta que muestre el mensaje de éxito "Ping Succeeded".
+Paso 4: Crear el Recurso JDBC (DataSource JNDI)
+
+Para que tu código Java/JPA encuentre esta conexión, debes asignarle el nombre JNDI que definiste en tu proyecto.
+
+    En el menú izquierdo, ve a Resources > JDBC > JDBC Resources y haz clic en New.
+
+    Llena los campos exactamente así:
+
+        JNDI Name: jdbc/AnticitheraDS
+
+        Pool Name: Selecciona AnticitheraPool de la lista desplegable.
+
+    Haz clic en Save (Guardar).
+
+Paso 5: Sincronizar el Proyecto Backend (persistence.xml)
+
+En el código fuente de tu backend, abre el archivo src/main/resources/META-INF/persistence.xml y asegúrate de que apunte al JNDI estándar que acabas de registrar en GlassFish:
+XML
+
+<persistence-unit name="AnticitheraPU" transaction-type="JTA">
+    <jta-data-source>jdbc/AnticitheraDS</jta-data-source>
+    <properties>
+        <property name="eclipselink.target-database" value="MariaDB"/>
+        <property name="eclipselink.ddl-generation" value="none"/>
+    </properties>
+</persistence-unit>
