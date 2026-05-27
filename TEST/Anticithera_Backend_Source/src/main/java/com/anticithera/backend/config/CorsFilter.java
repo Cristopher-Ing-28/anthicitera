@@ -3,12 +3,14 @@ package com.anticithera.backend.config;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
+import jakarta.ws.rs.container.PreMatching;
 import jakarta.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 @Provider
+@PreMatching
 public class CorsFilter implements ContainerResponseFilter {
 
     // Orígenes permitidos
