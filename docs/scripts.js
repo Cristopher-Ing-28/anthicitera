@@ -1842,7 +1842,7 @@ function updateSessionUI() {
     lucide.createIcons();
 }
 
-const API_BASE_URL = window.location.origin.includes('8181') 
+const API_BASE_URL = window.location.origin.includes('8080') 
     ? `${window.location.origin}/anticithera/api`
     : 'https://brilliant-shrivel-excretory.ngrok-free.dev/anticithera/api';
 
