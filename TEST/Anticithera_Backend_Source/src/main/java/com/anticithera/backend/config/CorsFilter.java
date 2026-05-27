@@ -24,10 +24,10 @@ public class CorsFilter implements ContainerResponseFilter {
         
         // Verificar si el origen está permitido
         if (origin != null && isOriginAllowed(origin)) {
-            responseContext.getHeaders().add("Access-Control-Allow-Origin", origin);
-            responseContext.getHeaders().add("Access-Control-Allow-Credentials", "true");
-            responseContext.getHeaders().add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization, x-requested-with");
-            responseContext.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
+            responseContext.getHeaders().putSingle("Access-Control-Allow-Origin", origin);
+            responseContext.getHeaders().putSingle("Access-Control-Allow-Credentials", "true");
+            responseContext.getHeaders().putSingle("Access-Control-Allow-Headers", "origin, content-type, accept, authorization, x-requested-with");
+            responseContext.getHeaders().putSingle("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
         }
     }
 
