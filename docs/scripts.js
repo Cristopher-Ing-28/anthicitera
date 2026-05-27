@@ -1843,8 +1843,8 @@ function updateSessionUI() {
 }
 
 const API_BASE_URL = window.location.origin.includes('8181') 
-    ? `${window.location.origin}/anticithera/api` 
-    : 'https://brilliant-shrivel-excretory.ngrok-free.dev ';
+    ? `${window.location.origin}/anticithera/api`
+    : 'https://brilliant-shrivel-excretory.ngrok-free.dev/anticithera/api';
 
 async function handleSessionSubmit(e, action) {
     e.preventDefault();
