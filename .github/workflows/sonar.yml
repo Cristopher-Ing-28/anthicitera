@@ -35,4 +35,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Lo genera GitHub en automático
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Tu token guardado en los Secrets de tu GitHub
+        working-directory: ./Anticithera_Backend_Source
         run: mvn clean verify sonar:sonar -Dsonar.projectKey=Cristopher-Ing-28_anthicitera -Dsonar.organization=cristopher-ing-28

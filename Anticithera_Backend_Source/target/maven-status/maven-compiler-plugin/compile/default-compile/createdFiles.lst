@@ -1,0 +1,9 @@
+com\anticithera\backend\config\CorsFilter.class
+com\anticithera\backend\rest\FileResource.class
+com\anticithera\backend\rest\AuthResource.class
+com\anticithera\backend\service\FileService.class
+com\anticithera\backend\config\RestApplication.class
+com\anticithera\backend\entity\SesionActividad.class
+com\anticithera\backend\entity\ExportacionZip.class
+com\anticithera\backend\entity\Usuario.class
+com\anticithera\backend\service\AuthService.class
