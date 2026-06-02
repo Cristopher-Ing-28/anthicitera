@@ -2,6 +2,8 @@ package com.anticithera.backend.service;
 
 import com.anticithera.backend.entity.SesionActividad;
 import com.anticithera.backend.entity.Usuario;
+import com.anticithera.backend.service.AuthService;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.BeforeEach;
@@ -91,5 +93,73 @@ class AuthServiceTest {
 
         assertNull(token);
         verify(em, never()).persist(any(SesionActividad.class));
+    }
+
+    @Test
+    void usernameExists_True_WhenExists() {
+        when(em.createQuery(any(String.class), eq(Usuario.class))).thenReturn(usuarioQuery);
+        when(usuarioQuery.setParameter("username", "testuser")).thenReturn(usuarioQuery);
+        when(usuarioQuery.getSingleResult()).thenReturn(usuarioPrueba);
+
+        boolean exists = authService.usernameExists("testuser");
+
+        assertTrue(exists);
+    }
+
+    @Test
+    void usernameExists_False_WhenNoResult() {
+        when(em.createQuery(any(String.class), eq(Usuario.class))).thenReturn(usuarioQuery);
+        when(usuarioQuery.setParameter("username", "missinguser")).thenReturn(usuarioQuery);
+        when(usuarioQuery.getSingleResult()).thenThrow(new jakarta.persistence.NoResultException());
+
+        boolean exists = authService.usernameExists("missinguser");
+
+        assertFalse(exists);
+    }
+
+    @Test
+    void emailExists_True_WhenExists() {
+        when(em.createQuery(any(String.class), eq(Usuario.class))).thenReturn(usuarioQuery);
+        when(usuarioQuery.setParameter("email", "test@email.com")).thenReturn(usuarioQuery);
+        when(usuarioQuery.getSingleResult()).thenReturn(usuarioPrueba);
+
+        boolean exists = authService.emailExists("test@email.com");
+
+        assertTrue(exists);
+    }
+
+    @Test
+    void login_ReturnsNull_WhenUserNotFoundException() {
+        when(em.createQuery(any(String.class), eq(Usuario.class))).thenReturn(usuarioQuery);
+        when(usuarioQuery.setParameter("username", "unknown")).thenReturn(usuarioQuery);
+        // Fuerza el bloque catch interno de login
+        when(usuarioQuery.getSingleResult()).thenThrow(new RuntimeException("DB Error"));
+
+        String token = authService.login("unknown", "password");
+
+        assertNull(token);
+    }
+
+    @Test
+    void logout_HandlesException_WhenTokenNotFound() {
+        when(em.createQuery(any(String.class), eq(SesionActividad.class))).thenReturn(sesionQuery);
+        when(sesionQuery.setParameter("token", "invalid-token")).thenReturn(sesionQuery);
+        // Fuerza el bloque catch interno de logout
+        when(sesionQuery.getSingleResult()).thenThrow(new jakarta.persistence.NoResultException());
+
+        // No debe lanzar excepción hacia afuera porque el catch la absorbe
+        assertDoesNotThrow(() -> authService.logout("invalid-token"));
+        verify(em, never()).merge(any());
+    }
+
+    @Test
+    void getUserByToken_ReturnsNull_WhenExceptionOccurs() {
+        when(em.createQuery(any(String.class), eq(Usuario.class))).thenReturn(usuarioQuery);
+        when(usuarioQuery.setParameter("token", "fake")).thenReturn(usuarioQuery);
+        when(usuarioQuery.getSingleResult()).thenThrow(new jakarta.persistence.NoResultException());
+
+        Usuario user = authService.getUserByToken("fake");
+
+        assertNull(user);
     }
 }
