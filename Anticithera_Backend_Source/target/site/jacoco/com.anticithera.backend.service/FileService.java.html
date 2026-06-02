@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FileService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">anticithera-backend</a> &gt; <a href="index.source.html" class="el_package">com.anticithera.backend.service</a> &gt; <span class="el_source">FileService.java</span></div><h1>FileService.java</h1><pre class="source lang-java linenums">package com.anticithera.backend.service;
+
+import com.anticithera.backend.entity.ExportacionZip;
+import com.anticithera.backend.entity.Usuario;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@ApplicationScoped
+<span class="nc" id="L16">public class FileService {</span>
+
+    @PersistenceContext
+    private EntityManager em;
+
+    private static final String UPLOAD_DIR = &quot;/home/ubuntu/anticithera_uploads/&quot;;
+
+    @Transactional
+    public ExportacionZip saveZip(Usuario user, String fileName, InputStream inputStream) throws Exception {
+<span class="nc" id="L25">        File uploadDir = new File(UPLOAD_DIR);</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">        if (!uploadDir.exists()) uploadDir.mkdirs();</span>
+
+<span class="nc" id="L28">        String filePath = UPLOAD_DIR + user.getId() + &quot;_&quot; + System.currentTimeMillis() + &quot;_&quot; + fileName;</span>
+<span class="nc" id="L29">        try (FileOutputStream outputStream = new FileOutputStream(filePath)) {</span>
+<span class="nc" id="L30">            byte[] buffer = new byte[4096];</span>
+            int bytesRead;
+<span class="nc bnc" id="L32" title="All 2 branches missed.">            while ((bytesRead = inputStream.read(buffer)) != -1) {</span>
+<span class="nc" id="L33">                outputStream.write(buffer, 0, bytesRead);</span>
+            }
+        }
+
+<span class="nc" id="L37">        ExportacionZip export = new ExportacionZip();</span>
+<span class="nc" id="L38">        export.setUsuario(user);</span>
+<span class="nc" id="L39">        export.setNombreArchivo(fileName);</span>
+<span class="nc" id="L40">        export.setRutaArchivo(filePath);</span>
+<span class="nc" id="L41">        export.setFechaCreacion(LocalDateTime.now());</span>
+<span class="nc" id="L42">        em.persist(export);</span>
+<span class="nc" id="L43">        return export;</span>
+    }
+
+    public List&lt;ExportacionZip&gt; getUserZips(Usuario user) {
+<span class="nc" id="L47">        return em.createQuery(&quot;SELECT e FROM ExportacionZip e WHERE e.usuario = :user ORDER BY e.fechaCreacion DESC&quot;, ExportacionZip.class)</span>
+<span class="nc" id="L48">                .setParameter(&quot;user&quot;, user)</span>
+<span class="nc" id="L49">                .getResultList();</span>
+    }
+    
+    public ExportacionZip getZipById(Long id) {
+<span class="nc" id="L53">        return em.find(ExportacionZip.class, id);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

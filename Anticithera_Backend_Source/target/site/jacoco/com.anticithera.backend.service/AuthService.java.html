@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">anticithera-backend</a> &gt; <a href="index.source.html" class="el_package">com.anticithera.backend.service</a> &gt; <span class="el_source">AuthService.java</span></div><h1>AuthService.java</h1><pre class="source lang-java linenums">package com.anticithera.backend.service;
+
+import com.anticithera.backend.entity.Usuario;
+import com.anticithera.backend.entity.SesionActividad;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
+import org.mindrot.jbcrypt.BCrypt;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@ApplicationScoped
+<span class="nc" id="L14">public class AuthService {</span>
+
+    @PersistenceContext
+    private EntityManager em;
+
+    /**
+     * Verifica si un usuario con el nombre de usuario dado ya existe
+     */
+    public boolean usernameExists(String username) {
+        try {
+<span class="nc" id="L24">            em.createQuery(&quot;SELECT u FROM Usuario u WHERE u.username = :username&quot;, Usuario.class)</span>
+<span class="nc" id="L25">                    .setParameter(&quot;username&quot;, username)</span>
+<span class="nc" id="L26">                    .getSingleResult();</span>
+<span class="nc" id="L27">            return true;</span>
+<span class="nc" id="L28">        } catch (Exception e) {</span>
+<span class="nc" id="L29">            return false;</span>
+        }
+    }
+
+    /**
+     * Verifica si un usuario con el email dado ya existe
+     */
+    public boolean emailExists(String email) {
+        try {
+<span class="nc" id="L38">            em.createQuery(&quot;SELECT u FROM Usuario u WHERE u.email = :email&quot;, Usuario.class)</span>
+<span class="nc" id="L39">                    .setParameter(&quot;email&quot;, email)</span>
+<span class="nc" id="L40">                    .getSingleResult();</span>
+<span class="nc" id="L41">            return true;</span>
+<span class="nc" id="L42">        } catch (Exception e) {</span>
+<span class="nc" id="L43">            return false;</span>
+        }
+    }
+
+    @Transactional
+    public Usuario register(String username, String email, String password) throws Exception {
+        // Validar que el usuario no exista
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        if (usernameExists(username)) {</span>
+<span class="nc" id="L51">            throw new IllegalArgumentException(&quot;El nombre de usuario '&quot; + username + &quot;' ya está registrado&quot;);</span>
+        }
+        
+        // Validar que el email no exista
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        if (emailExists(email)) {</span>
+<span class="nc" id="L56">            throw new IllegalArgumentException(&quot;El email '&quot; + email + &quot;' ya está registrado&quot;);</span>
+        }
+        
+<span class="nc" id="L59">        Usuario user = new Usuario();</span>
+<span class="nc" id="L60">        user.setUsername(username);</span>
+<span class="nc" id="L61">        user.setEmail(email);</span>
+<span class="nc" id="L62">        user.setPasswordHash(BCrypt.hashpw(password, BCrypt.gensalt()));</span>
+<span class="nc" id="L63">        user.setCreatedAt(LocalDateTime.now());</span>
+<span class="nc" id="L64">        em.persist(user);</span>
+<span class="nc" id="L65">        return user;</span>
+    }
+
+    @Transactional
+    public String login(String username, String password) {
+        try {
+<span class="nc" id="L71">            Usuario user = em.createQuery(&quot;SELECT u FROM Usuario u WHERE u.username = :username&quot;, Usuario.class)</span>
+<span class="nc" id="L72">                    .setParameter(&quot;username&quot;, username)</span>
+<span class="nc" id="L73">                    .getSingleResult();</span>
+
+<span class="nc bnc" id="L75" title="All 2 branches missed.">            if (BCrypt.checkpw(password, user.getPasswordHash())) {</span>
+<span class="nc" id="L76">                String token = UUID.randomUUID().toString();</span>
+<span class="nc" id="L77">                SesionActividad sesion = new SesionActividad();</span>
+<span class="nc" id="L78">                sesion.setUsuario(user);</span>
+<span class="nc" id="L79">                sesion.setTokenSesion(token);</span>
+<span class="nc" id="L80">                sesion.setInicioConexion(LocalDateTime.now());</span>
+<span class="nc" id="L81">                em.persist(sesion);</span>
+<span class="nc" id="L82">                return token;</span>
+            }
+<span class="nc" id="L84">        } catch (Exception e) {</span>
+            // Usuario no encontrado o error
+<span class="nc" id="L86">        }</span>
+<span class="nc" id="L87">        return null;</span>
+    }
+
+    @Transactional
+    public void logout(String token) {
+        try {
+<span class="nc" id="L93">            SesionActividad sesion = em.createQuery(&quot;SELECT s FROM SesionActividad s WHERE s.tokenSesion = :token&quot;, SesionActividad.class)</span>
+<span class="nc" id="L94">                    .setParameter(&quot;token&quot;, token)</span>
+<span class="nc" id="L95">                    .getSingleResult();</span>
+            
+<span class="nc" id="L97">            sesion.setFinConexion(LocalDateTime.now());</span>
+            // Calcular duración si es necesario
+<span class="nc" id="L99">            em.merge(sesion);</span>
+<span class="nc" id="L100">        } catch (Exception e) {</span>
+            // Sesión no encontrada
+<span class="nc" id="L102">        }</span>
+<span class="nc" id="L103">    }</span>
+    
+    public Usuario getUserByToken(String token) {
+        try {
+<span class="nc" id="L107">            return em.createQuery(&quot;SELECT s.usuario FROM SesionActividad s WHERE s.tokenSesion = :token AND s.finConexion IS NULL&quot;, Usuario.class)</span>
+<span class="nc" id="L108">                    .setParameter(&quot;token&quot;, token)</span>
+<span class="nc" id="L109">                    .getSingleResult();</span>
+<span class="nc" id="L110">        } catch (Exception e) {</span>
+<span class="nc" id="L111">            return null;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

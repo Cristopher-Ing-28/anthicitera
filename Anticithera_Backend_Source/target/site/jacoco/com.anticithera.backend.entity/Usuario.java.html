@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Usuario.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">anticithera-backend</a> &gt; <a href="index.source.html" class="el_package">com.anticithera.backend.entity</a> &gt; <span class="el_source">Usuario.java</span></div><h1>Usuario.java</h1><pre class="source lang-java linenums">package com.anticithera.backend.entity;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Entity
+@Table(name = &quot;usuarios&quot;)
+<span class="fc" id="L9">public class Usuario {</span>
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false, length = 50)
+    private String username;
+
+    @Column(unique = true, nullable = false, length = 100)
+    private String email;
+
+    @Column(name = &quot;password_hash&quot;, nullable = false, length = 255)
+    private String passwordHash;
+
+    @Column(name = &quot;created_at&quot;, columnDefinition = &quot;TIMESTAMP DEFAULT CURRENT_TIMESTAMP&quot;)
+    private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = &quot;usuario&quot;, cascade = CascadeType.ALL)
+    private List&lt;SesionActividad&gt; sesiones;
+
+    @OneToMany(mappedBy = &quot;usuario&quot;, cascade = CascadeType.ALL)
+    private List&lt;ExportacionZip&gt; exportaciones;
+
+    // Getters y Setters
+<span class="nc" id="L33">    public Long getId() { return id; }</span>
+<span class="nc" id="L34">    public void setId(Long id) { this.id = id; }</span>
+<span class="nc" id="L35">    public String getUsername() { return username; }</span>
+<span class="nc" id="L36">    public void setUsername(String username) { this.username = username; }</span>
+<span class="nc" id="L37">    public String getEmail() { return email; }</span>
+<span class="nc" id="L38">    public void setEmail(String email) { this.email = email; }</span>
+<span class="nc" id="L39">    public String getPasswordHash() { return passwordHash; }</span>
+<span class="nc" id="L40">    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }</span>
+<span class="nc" id="L41">    public LocalDateTime getCreatedAt() { return createdAt; }</span>
+<span class="nc" id="L42">    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }</span>
+<span class="nc" id="L43">    public List&lt;SesionActividad&gt; getSesiones() { return sesiones; }</span>
+<span class="nc" id="L44">    public void setSesiones(List&lt;SesionActividad&gt; sesiones) { this.sesiones = sesiones; }</span>
+<span class="nc" id="L45">    public List&lt;ExportacionZip&gt; getExportaciones() { return exportaciones; }</span>
+<span class="nc" id="L46">    public void setExportaciones(List&lt;ExportacionZip&gt; exportaciones) { this.exportaciones = exportaciones; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
