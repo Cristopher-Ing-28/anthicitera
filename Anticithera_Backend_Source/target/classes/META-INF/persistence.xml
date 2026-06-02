@@ -8,8 +8,8 @@
         <class>com.anticithera.backend.entity.SesionActividad</class>
         <class>com.anticithera.backend.entity.ExportacionZip</class>
         <properties>
-            <property name="jakarta.persistence.schema-generation.database.action" value="update"/>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect"/>
+             <property name="eclipselink.target-database" value="MariaDB"/>
+             <property name="eclipselink.ddl-generation" value="none"/>
         </properties>
     </persistence-unit>
 </persistence>

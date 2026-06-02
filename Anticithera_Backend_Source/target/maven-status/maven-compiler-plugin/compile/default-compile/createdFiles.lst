@@ -1,4 +1,5 @@
 com\anticithera\backend\config\CorsFilter.class
+com\anticithera\backend\config\OptionsResource.class
 com\anticithera\backend\rest\FileResource.class
 com\anticithera\backend\rest\AuthResource.class
 com\anticithera\backend\service\FileService.class
