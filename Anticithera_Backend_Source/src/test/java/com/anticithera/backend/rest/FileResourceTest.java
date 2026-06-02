@@ -108,4 +108,72 @@ class FileResourceTest {
             assertEquals(404, response.getStatus());
         }
     }
+
+    @Test
+    void uploadZip_InternalServerError_WhenExceptionOccurs() throws Exception {
+        when(authService.getUserByToken("mi-token-secreto")).thenReturn(usuarioValido);
+        
+        InputStream stream = new ByteArrayInputStream("datos".getBytes());
+        when(fileService.saveZip(eq(usuarioValido), eq("error.zip"), any(InputStream.class)))
+                .thenThrow(new RuntimeException("Fallo de escritura en disco"));
+
+        try (MockedStatic<Response> mockedResponse = Mockito.mockStatic(Response.class)) {
+            Response.ResponseBuilder builder = mock(Response.ResponseBuilder.class);
+            Response mockRes = mock(Response.class);
+
+            mockedResponse.when(() -> Response.status(Response.Status.INTERNAL_SERVER_ERROR)).thenReturn(builder);
+            when(builder.entity(any())).thenReturn(builder);
+            when(builder.build()).thenReturn(mockRes);
+            when(mockRes.getStatus()).thenReturn(500);
+
+            Response response = fileResource.uploadZip(tokenValido, "error.zip", stream);
+
+            assertEquals(500, response.getStatus());
+        }
+    }
+
+    @Test
+    void uploadZip_Unauthorized_WhenHeaderIsNull() {
+        try (MockedStatic<Response> mockedResponse = Mockito.mockStatic(Response.class)) {
+            Response.ResponseBuilder builder = mock(Response.ResponseBuilder.class);
+            Response mockRes = mock(Response.class);
+
+            mockedResponse.when(() -> Response.status(Response.Status.UNAUTHORIZED)).thenReturn(builder);
+            when(builder.build()).thenReturn(mockRes);
+            when(mockRes.getStatus()).thenReturn(401);
+
+            InputStream stream = new ByteArrayInputStream(new byte[0]);
+            // Enviamos un header null para forzar la rama del 'validateUser' malformado
+            Response response = fileResource.uploadZip(null, "test.zip", stream);
+
+            assertEquals(401, response.getStatus());
+        }
+    }
+
+    @Test
+    void downloadZip_Success_WhenFileBelongsToUser() {
+        when(authService.getUserByToken("mi-token-secreto")).thenReturn(usuarioValido);
+
+        ExportacionZip zipPropio = new ExportacionZip();
+        zipPropio.setUsuario(usuarioValido); // Mismo usuario de la sesión
+        zipPropio.setNombreArchivo("mi_archivo.zip");
+        // Apuntamos temporalmente a una ruta simulada
+        zipPropio.setRutaArchivo(System.getProperty("java.io.tmpdir") + java.io.File.separator + "temp.zip");
+
+        when(fileService.getZipById(50L)).thenReturn(zipPropio);
+
+        try (MockedStatic<Response> mockedResponse = Mockito.mockStatic(Response.class)) {
+            Response.ResponseBuilder builder = mock(Response.ResponseBuilder.class);
+            Response mockRes = mock(Response.class);
+
+            mockedResponse.when(() -> Response.ok(any(java.io.File.class))).thenReturn(builder);
+            when(builder.header(anyString(), any())).thenReturn(builder);
+            when(builder.build()).thenReturn(mockRes);
+            when(mockRes.getStatus()).thenReturn(200);
+
+            Response response = fileResource.downloadZip(tokenValido, 50L);
+
+            assertEquals(200, response.getStatus());
+        }
+    }
 }

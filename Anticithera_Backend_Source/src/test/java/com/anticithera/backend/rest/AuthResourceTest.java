@@ -102,4 +102,66 @@ class AuthResourceTest {
             assertEquals(401, response.getStatus());
         }
     }
+
+    @Test
+    void register_InternalServerError_WhenServiceFails() {
+        Map<String, String> credentials = new HashMap<>();
+        credentials.put("username", "user");
+        credentials.put("email", "email@test.com");
+        credentials.put("password", "pass");
+
+        try (MockedStatic<Response> mockedResponse = Mockito.mockStatic(Response.class)) {
+            Response.ResponseBuilder builder = mock(Response.ResponseBuilder.class);
+            Response mockRes = mock(Response.class);
+
+            try {
+                when(authService.register("user", "email@test.com", "pass"))
+                        .thenThrow(new RuntimeException("Error fatal de BD"));
+            } catch (Exception ignored) {}
+
+            mockedResponse.when(() -> Response.status(Response.Status.INTERNAL_SERVER_ERROR)).thenReturn(builder);
+            when(builder.entity(any())).thenReturn(builder);
+            when(builder.build()).thenReturn(mockRes);
+            when(mockRes.getStatus()).thenReturn(500);
+
+            Response response = authResource.register(credentials);
+
+            assertEquals(500, response.getStatus());
+        }
+    }
+
+    @Test
+    void logout_Success_WithValidToken() {
+        try (MockedStatic<Response> mockedResponse = Mockito.mockStatic(Response.class)) {
+            Response.ResponseBuilder builder = mock(Response.ResponseBuilder.class);
+            Response mockRes = mock(Response.class);
+
+            mockedResponse.when(Response::ok).thenReturn(builder);
+            when(builder.build()).thenReturn(mockRes);
+            when(mockRes.getStatus()).thenReturn(200);
+
+            Response response = authResource.logout("Bearer token-valido-123");
+
+            assertEquals(200, response.getStatus());
+            verify(authService, times(1)).logout("token-valido-123");
+        }
+    }
+
+    @Test
+    void logout_BadRequest_WhenHeaderIsMissingOrInvalid() {
+        try (MockedStatic<Response> mockedResponse = Mockito.mockStatic(Response.class)) {
+            Response.ResponseBuilder builder = mock(Response.ResponseBuilder.class);
+            Response mockRes = mock(Response.class);
+
+            mockedResponse.when(() -> Response.status(Response.Status.BAD_REQUEST)).thenReturn(builder);
+            when(builder.build()).thenReturn(mockRes);
+            when(mockRes.getStatus()).thenReturn(400);
+
+            // Cabezal inválido que no empieza con 'Bearer '
+            Response response = authResource.logout("TokenMalformado123");
+
+            assertEquals(400, response.getStatus());
+            verify(authService, never()).logout(anyString());
+        }
+    }
 }
