@@ -1,0 +1,38 @@
+name: SonarCloud Analysis
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    name: Build and analyze
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar código del repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Crucial para que Sonar pueda ver el historial de commits
+
+      - name: Configurar Java 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25' # Cambia a '21' si tu backend usa Java 21
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Cache de paquetes de SonarCloud
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Ejecutar pruebas y compilar con Sonar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Lo genera GitHub en automático
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Tu token guardado en los Secrets de tu GitHub
+        run: mvn clean verify sonar:sonar -Dsonar.projectKey=Cristopher-Ing-28_anthicitera -Dsonar.organization=cristopher-ing-28
