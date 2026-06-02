@@ -12,7 +12,7 @@ import java.util.Map;
 @Path(&quot;/auth&quot;)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-<span class="nc" id="L15">public class AuthResource {</span>
+<span class="fc" id="L15">public class AuthResource {</span>
 
     @Inject
     private AuthService authService;
@@ -20,14 +20,14 @@ import java.util.Map;
     @POST
     @Path(&quot;/register&quot;)
     public Response register(Map&lt;String, String&gt; credentials) {
-<span class="nc" id="L23">        String username = credentials.get(&quot;username&quot;);</span>
-<span class="nc" id="L24">        String email = credentials.get(&quot;email&quot;);</span>
-<span class="nc" id="L25">        String password = credentials.get(&quot;password&quot;);</span>
+<span class="fc" id="L23">        String username = credentials.get(&quot;username&quot;);</span>
+<span class="fc" id="L24">        String email = credentials.get(&quot;email&quot;);</span>
+<span class="fc" id="L25">        String password = credentials.get(&quot;password&quot;);</span>
 
-<span class="nc bnc" id="L27" title="All 6 branches missed.">        if (username == null || email == null || password == null) {</span>
-<span class="nc" id="L28">            return Response.status(Response.Status.BAD_REQUEST)</span>
-<span class="nc" id="L29">                    .entity(Map.of(&quot;error&quot;, &quot;Faltan datos requeridos: username, email, password&quot;))</span>
-<span class="nc" id="L30">                    .build();</span>
+<span class="pc bpc" id="L27" title="4 of 6 branches missed.">        if (username == null || email == null || password == null) {</span>
+<span class="fc" id="L28">            return Response.status(Response.Status.BAD_REQUEST)</span>
+<span class="fc" id="L29">                    .entity(Map.of(&quot;error&quot;, &quot;Faltan datos requeridos: username, email, password&quot;))</span>
+<span class="fc" id="L30">                    .build();</span>
         }
 
         try {
@@ -55,22 +55,22 @@ import java.util.Map;
     @POST
     @Path(&quot;/login&quot;)
     public Response login(Map&lt;String, String&gt; credentials) {
-<span class="nc" id="L58">        String username = credentials.get(&quot;username&quot;);</span>
-<span class="nc" id="L59">        String password = credentials.get(&quot;password&quot;);</span>
+<span class="fc" id="L58">        String username = credentials.get(&quot;username&quot;);</span>
+<span class="fc" id="L59">        String password = credentials.get(&quot;password&quot;);</span>
 
-<span class="nc" id="L61">        String token = authService.login(username, password);</span>
-<span class="nc bnc" id="L62" title="All 2 branches missed.">        if (token != null) {</span>
-<span class="nc" id="L63">            Usuario user = authService.getUserByToken(token);</span>
-<span class="nc" id="L64">            Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L65">            response.put(&quot;token&quot;, token);</span>
-<span class="nc" id="L66">            response.put(&quot;username&quot;, user.getUsername());</span>
-<span class="nc" id="L67">            response.put(&quot;email&quot;, user.getEmail());</span>
-<span class="nc" id="L68">            response.put(&quot;startTime&quot;, System.currentTimeMillis());</span>
-<span class="nc" id="L69">            return Response.ok(response).build();</span>
+<span class="fc" id="L61">        String token = authService.login(username, password);</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (token != null) {</span>
+<span class="fc" id="L63">            Usuario user = authService.getUserByToken(token);</span>
+<span class="fc" id="L64">            Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L65">            response.put(&quot;token&quot;, token);</span>
+<span class="fc" id="L66">            response.put(&quot;username&quot;, user.getUsername());</span>
+<span class="fc" id="L67">            response.put(&quot;email&quot;, user.getEmail());</span>
+<span class="fc" id="L68">            response.put(&quot;startTime&quot;, System.currentTimeMillis());</span>
+<span class="fc" id="L69">            return Response.ok(response).build();</span>
         } else {
-<span class="nc" id="L71">            return Response.status(Response.Status.UNAUTHORIZED)</span>
-<span class="nc" id="L72">                    .entity(Map.of(&quot;error&quot;, &quot;Credenciales inválidas&quot;))</span>
-<span class="nc" id="L73">                    .build();</span>
+<span class="fc" id="L71">            return Response.status(Response.Status.UNAUTHORIZED)</span>
+<span class="fc" id="L72">                    .entity(Map.of(&quot;error&quot;, &quot;Credenciales inválidas&quot;))</span>
+<span class="fc" id="L73">                    .build();</span>
         }
     }
 

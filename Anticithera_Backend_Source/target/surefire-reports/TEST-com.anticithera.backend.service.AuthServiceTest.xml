@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.anticithera.backend.config.CorsFilterTest" time="1.07" tests="2" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.anticithera.backend.service.AuthServiceTest" time="0.538" tests="4" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="25"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -60,119 +60,8 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="69.0"/>
   </properties>
-  <testcase name="testFilter_AllowedOrigin" classname="com.anticithera.backend.config.CorsFilterTest" time="1.024">
-    <system-err><![CDATA[Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
-java.lang.instrument.IllegalClassFormatException: Error while instrumenting com/sun/tools/attach/VirtualMachine with JaCoCo 0.8.11.202310140853/f33756c.
-	at org.jacoco.agent.rt.internal_4742761.CoverageTransformer.transform(CoverageTransformer.java:94)
-	at java.instrument/java.lang.instrument.ClassFileTransformer.transform(ClassFileTransformer.java:257)
-	at java.instrument/sun.instrument.TransformerManager.transform(TransformerManager.java:188)
-	at java.instrument/sun.instrument.InstrumentationImpl.transform(InstrumentationImpl.java:594)
-	at java.base/java.lang.ClassLoader.defineClass2(Native Method)
-	at java.base/java.lang.ClassLoader.defineClass(ClassLoader.java:1052)
-	at java.base/java.security.SecureClassLoader.defineClass(SecureClassLoader.java:176)
-	at java.base/jdk.internal.loader.BuiltinClassLoader.defineClass(BuiltinClassLoader.java:735)
-	at java.base/jdk.internal.loader.BuiltinClassLoader.findClassInModuleOrNull(BuiltinClassLoader.java:678)
-	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClassOrNull(BuiltinClassLoader.java:604)
-	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:578)
-	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:490)
-	at java.base/java.lang.Class.forName0(Native Method)
-	at java.base/java.lang.Class.forName(Class.java:547)
-	at net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider$Accessor$Simple.of(ByteBuddyAgent.java:955)
-	at net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider$ForModularizedVm.attempt(ByteBuddyAgent.java:1079)
-	at net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider$Compound.attempt(ByteBuddyAgent.java:1259)
-	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:593)
-	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:579)
-	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:531)
-	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:508)
-	at org.mockito.internal.PremainAttachAccess.getInstrumentation(PremainAttachAccess.java:80)
-	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<clinit>(InlineDelegateByteBuddyMockMaker.java:138)
-	at org.mockito.internal.creation.bytebuddy.InlineByteBuddyMockMaker.<init>(InlineByteBuddyMockMaker.java:23)
-	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
-	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
-	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:483)
-	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:103)
-	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.getDefaultPlugin(DefaultMockitoPlugins.java:79)
-	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:75)
-	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:49)
-	at org.mockito.internal.configuration.plugins.PluginRegistry.<init>(PluginRegistry.java:29)
-	at org.mockito.internal.configuration.plugins.Plugins.<clinit>(Plugins.java:26)
-	at org.mockito.internal.MockitoCore.<clinit>(MockitoCore.java:71)
-	at org.mockito.Mockito.<clinit>(Mockito.java:1777)
-	at org.mockito.junit.jupiter.MockitoExtension.beforeEach(MockitoExtension.java:156)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeBeforeEachCallbacks$2(TestMethodTestDescriptor.java:167)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeBeforeMethodsOrCallbacksUntilExceptionOccurs$6(TestMethodTestDescriptor.java:203)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeBeforeMethodsOrCallbacksUntilExceptionOccurs(TestMethodTestDescriptor.java:203)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeBeforeEachCallbacks(TestMethodTestDescriptor.java:166)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:133)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:69)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:198)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:169)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:93)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:58)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:141)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:57)
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
-	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
-	at org.apache.maven.surefire.junitplatform.LauncherAdapter.executeWithoutCancellationToken(LauncherAdapter.java:60)
-	at org.apache.maven.surefire.junitplatform.LauncherAdapter.execute(LauncherAdapter.java:52)
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:203)
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:168)
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:136)
-	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
-	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
-	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
-	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
-Caused by: java.io.IOException: Error while instrumenting com/sun/tools/attach/VirtualMachine with JaCoCo 0.8.11.202310140853/f33756c.
-	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrumentError(Instrumenter.java:161)
-	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:111)
-	at org.jacoco.agent.rt.internal_4742761.CoverageTransformer.transform(CoverageTransformer.java:92)
-	... 91 more
-Caused by: java.lang.IllegalArgumentException: Unsupported class file major version 69
-	at org.jacoco.agent.rt.internal_4742761.asm.ClassReader.<init>(ClassReader.java:200)
-	at org.jacoco.agent.rt.internal_4742761.asm.ClassReader.<init>(ClassReader.java:180)
-	at org.jacoco.agent.rt.internal_4742761.asm.ClassReader.<init>(ClassReader.java:166)
-	at org.jacoco.agent.rt.internal_4742761.core.internal.instr.InstrSupport.classReaderFor(InstrSupport.java:280)
-	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:77)
-	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:109)
-	... 92 more
-WARNING: A Java agent has been loaded dynamically (C:\Users\Cristopher\.m2\repository\net\bytebuddy\byte-buddy-agent\1.17.7\byte-buddy-agent-1.17.7.jar)
-WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
-WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
-WARNING: Dynamic loading of agents will be disallowed by default in a future release
-java.lang.instrument.IllegalClassFormatException: Error while instrumenting jakarta/ws/rs/container/ContainerRequestContext$MockitoMock$Co6AepOK with JaCoCo 0.8.11.202310140853/f33756c.
+  <testcase name="register_ThrowsException_WhenUsernameExists" classname="com.anticithera.backend.service.AuthServiceTest" time="0.195">
+    <system-err><![CDATA[java.lang.instrument.IllegalClassFormatException: Error while instrumenting jakarta/persistence/EntityManager$MockitoMock$MGRwVpbh with JaCoCo 0.8.11.202310140853/f33756c.
 	at org.jacoco.agent.rt.internal_4742761.CoverageTransformer.transform(CoverageTransformer.java:94)
 	at java.instrument/java.lang.instrument.ClassFileTransformer.transform(ClassFileTransformer.java:257)
 	at java.instrument/sun.instrument.TransformerManager.transform(TransformerManager.java:188)
@@ -281,7 +170,7 @@ java.lang.instrument.IllegalClassFormatException: Error while instrumenting jaka
 	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
-Caused by: java.io.IOException: Error while instrumenting jakarta/ws/rs/container/ContainerRequestContext$MockitoMock$Co6AepOK with JaCoCo 0.8.11.202310140853/f33756c.
+Caused by: java.io.IOException: Error while instrumenting jakarta/persistence/EntityManager$MockitoMock$MGRwVpbh with JaCoCo 0.8.11.202310140853/f33756c.
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrumentError(Instrumenter.java:161)
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:111)
 	at org.jacoco.agent.rt.internal_4742761.CoverageTransformer.transform(CoverageTransformer.java:92)
@@ -294,7 +183,7 @@ Caused by: java.lang.IllegalArgumentException: Unsupported class file major vers
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:77)
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:109)
 	... 108 more
-java.lang.instrument.IllegalClassFormatException: Error while instrumenting jakarta/ws/rs/container/ContainerRequestContext$MockitoMock$Co6AepOK$auxiliary$sRXEKaNQ with JaCoCo 0.8.11.202310140853/f33756c.
+java.lang.instrument.IllegalClassFormatException: Error while instrumenting jakarta/persistence/EntityManager$MockitoMock$MGRwVpbh$auxiliary$PHTM6lQt with JaCoCo 0.8.11.202310140853/f33756c.
 	at org.jacoco.agent.rt.internal_4742761.CoverageTransformer.transform(CoverageTransformer.java:94)
 	at java.instrument/java.lang.instrument.ClassFileTransformer.transform(ClassFileTransformer.java:257)
 	at java.instrument/sun.instrument.TransformerManager.transform(TransformerManager.java:188)
@@ -403,7 +292,7 @@ java.lang.instrument.IllegalClassFormatException: Error while instrumenting jaka
 	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
-Caused by: java.io.IOException: Error while instrumenting jakarta/ws/rs/container/ContainerRequestContext$MockitoMock$Co6AepOK$auxiliary$sRXEKaNQ with JaCoCo 0.8.11.202310140853/f33756c.
+Caused by: java.io.IOException: Error while instrumenting jakarta/persistence/EntityManager$MockitoMock$MGRwVpbh$auxiliary$PHTM6lQt with JaCoCo 0.8.11.202310140853/f33756c.
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrumentError(Instrumenter.java:161)
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:111)
 	at org.jacoco.agent.rt.internal_4742761.CoverageTransformer.transform(CoverageTransformer.java:92)
@@ -416,7 +305,7 @@ Caused by: java.lang.IllegalArgumentException: Unsupported class file major vers
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:77)
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:109)
 	... 108 more
-java.lang.instrument.IllegalClassFormatException: Error while instrumenting jakarta/ws/rs/container/ContainerRequestContext$MockitoMock$Co6AepOK$auxiliary$xAXdOF2M with JaCoCo 0.8.11.202310140853/f33756c.
+java.lang.instrument.IllegalClassFormatException: Error while instrumenting jakarta/persistence/EntityManager$MockitoMock$MGRwVpbh$auxiliary$3PY8zBjn with JaCoCo 0.8.11.202310140853/f33756c.
 	at org.jacoco.agent.rt.internal_4742761.CoverageTransformer.transform(CoverageTransformer.java:94)
 	at java.instrument/java.lang.instrument.ClassFileTransformer.transform(ClassFileTransformer.java:257)
 	at java.instrument/sun.instrument.TransformerManager.transform(TransformerManager.java:188)
@@ -525,7 +414,7 @@ java.lang.instrument.IllegalClassFormatException: Error while instrumenting jaka
 	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
-Caused by: java.io.IOException: Error while instrumenting jakarta/ws/rs/container/ContainerRequestContext$MockitoMock$Co6AepOK$auxiliary$xAXdOF2M with JaCoCo 0.8.11.202310140853/f33756c.
+Caused by: java.io.IOException: Error while instrumenting jakarta/persistence/EntityManager$MockitoMock$MGRwVpbh$auxiliary$3PY8zBjn with JaCoCo 0.8.11.202310140853/f33756c.
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrumentError(Instrumenter.java:161)
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:111)
 	at org.jacoco.agent.rt.internal_4742761.CoverageTransformer.transform(CoverageTransformer.java:92)
@@ -538,7 +427,7 @@ Caused by: java.lang.IllegalArgumentException: Unsupported class file major vers
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:77)
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:109)
 	... 108 more
-java.lang.instrument.IllegalClassFormatException: Error while instrumenting jakarta/ws/rs/container/ContainerResponseContext$MockitoMock$9RXiww4o with JaCoCo 0.8.11.202310140853/f33756c.
+java.lang.instrument.IllegalClassFormatException: Error while instrumenting jakarta/persistence/TypedQuery$MockitoMock$7GdHvK41 with JaCoCo 0.8.11.202310140853/f33756c.
 	at org.jacoco.agent.rt.internal_4742761.CoverageTransformer.transform(CoverageTransformer.java:94)
 	at java.instrument/java.lang.instrument.ClassFileTransformer.transform(ClassFileTransformer.java:257)
 	at java.instrument/sun.instrument.TransformerManager.transform(TransformerManager.java:188)
@@ -647,7 +536,7 @@ java.lang.instrument.IllegalClassFormatException: Error while instrumenting jaka
 	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
-Caused by: java.io.IOException: Error while instrumenting jakarta/ws/rs/container/ContainerResponseContext$MockitoMock$9RXiww4o with JaCoCo 0.8.11.202310140853/f33756c.
+Caused by: java.io.IOException: Error while instrumenting jakarta/persistence/TypedQuery$MockitoMock$7GdHvK41 with JaCoCo 0.8.11.202310140853/f33756c.
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrumentError(Instrumenter.java:161)
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:111)
 	at org.jacoco.agent.rt.internal_4742761.CoverageTransformer.transform(CoverageTransformer.java:92)
@@ -660,7 +549,7 @@ Caused by: java.lang.IllegalArgumentException: Unsupported class file major vers
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:77)
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:109)
 	... 108 more
-java.lang.instrument.IllegalClassFormatException: Error while instrumenting jakarta/ws/rs/container/ContainerResponseContext$MockitoMock$9RXiww4o$auxiliary$17N7lQAK with JaCoCo 0.8.11.202310140853/f33756c.
+java.lang.instrument.IllegalClassFormatException: Error while instrumenting jakarta/persistence/TypedQuery$MockitoMock$7GdHvK41$auxiliary$sBgoSdri with JaCoCo 0.8.11.202310140853/f33756c.
 	at org.jacoco.agent.rt.internal_4742761.CoverageTransformer.transform(CoverageTransformer.java:94)
 	at java.instrument/java.lang.instrument.ClassFileTransformer.transform(ClassFileTransformer.java:257)
 	at java.instrument/sun.instrument.TransformerManager.transform(TransformerManager.java:188)
@@ -769,7 +658,7 @@ java.lang.instrument.IllegalClassFormatException: Error while instrumenting jaka
 	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
-Caused by: java.io.IOException: Error while instrumenting jakarta/ws/rs/container/ContainerResponseContext$MockitoMock$9RXiww4o$auxiliary$17N7lQAK with JaCoCo 0.8.11.202310140853/f33756c.
+Caused by: java.io.IOException: Error while instrumenting jakarta/persistence/TypedQuery$MockitoMock$7GdHvK41$auxiliary$sBgoSdri with JaCoCo 0.8.11.202310140853/f33756c.
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrumentError(Instrumenter.java:161)
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:111)
 	at org.jacoco.agent.rt.internal_4742761.CoverageTransformer.transform(CoverageTransformer.java:92)
@@ -782,7 +671,7 @@ Caused by: java.lang.IllegalArgumentException: Unsupported class file major vers
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:77)
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:109)
 	... 108 more
-java.lang.instrument.IllegalClassFormatException: Error while instrumenting jakarta/ws/rs/container/ContainerResponseContext$MockitoMock$9RXiww4o$auxiliary$nE3Iq4N0 with JaCoCo 0.8.11.202310140853/f33756c.
+java.lang.instrument.IllegalClassFormatException: Error while instrumenting jakarta/persistence/TypedQuery$MockitoMock$7GdHvK41$auxiliary$MTPp3u5b with JaCoCo 0.8.11.202310140853/f33756c.
 	at org.jacoco.agent.rt.internal_4742761.CoverageTransformer.transform(CoverageTransformer.java:94)
 	at java.instrument/java.lang.instrument.ClassFileTransformer.transform(ClassFileTransformer.java:257)
 	at java.instrument/sun.instrument.TransformerManager.transform(TransformerManager.java:188)
@@ -891,7 +780,7 @@ java.lang.instrument.IllegalClassFormatException: Error while instrumenting jaka
 	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
-Caused by: java.io.IOException: Error while instrumenting jakarta/ws/rs/container/ContainerResponseContext$MockitoMock$9RXiww4o$auxiliary$nE3Iq4N0 with JaCoCo 0.8.11.202310140853/f33756c.
+Caused by: java.io.IOException: Error while instrumenting jakarta/persistence/TypedQuery$MockitoMock$7GdHvK41$auxiliary$MTPp3u5b with JaCoCo 0.8.11.202310140853/f33756c.
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrumentError(Instrumenter.java:161)
 	at org.jacoco.agent.rt.internal_4742761.core.instr.Instrumenter.instrument(Instrumenter.java:111)
 	at org.jacoco.agent.rt.internal_4742761.CoverageTransformer.transform(CoverageTransformer.java:92)
@@ -906,5 +795,7 @@ Caused by: java.lang.IllegalArgumentException: Unsupported class file major vers
 	... 108 more
 ]]></system-err>
   </testcase>
-  <testcase name="testFilter_DisallowedOrigin" classname="com.anticithera.backend.config.CorsFilterTest" time="0.01"/>
+  <testcase name="login_Success" classname="com.anticithera.backend.service.AuthServiceTest" time="0.116"/>
+  <testcase name="login_Failure_WrongPassword" classname="com.anticithera.backend.service.AuthServiceTest" time="0.114"/>
+  <testcase name="register_Success" classname="com.anticithera.backend.service.AuthServiceTest" time="0.11"/>
 </testsuite>

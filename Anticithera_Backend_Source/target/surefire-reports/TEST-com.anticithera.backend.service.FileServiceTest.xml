@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.anticithera.backend.entity.EntityTest" time="0.007" tests="2" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.anticithera.backend.service.FileServiceTest" time="0.012" tests="2" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="25"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -60,6 +60,6 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="69.0"/>
   </properties>
-  <testcase name="testSesionActividad" classname="com.anticithera.backend.entity.EntityTest" time="0.003"/>
-  <testcase name="testExportacionZip" classname="com.anticithera.backend.entity.EntityTest" time="0.002"/>
+  <testcase name="saveZip_Success" classname="com.anticithera.backend.service.FileServiceTest" time="0.008"/>
+  <testcase name="getUserZips_Success" classname="com.anticithera.backend.service.FileServiceTest" time="0.003"/>
 </testsuite>

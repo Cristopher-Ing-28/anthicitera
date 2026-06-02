@@ -18,7 +18,10 @@ public class FileService {
     @PersistenceContext
     private EntityManager em;
 
-    private static final String UPLOAD_DIR = "/home/ubuntu/anticithera_uploads/";
+    private static final String UPLOAD_DIR = System.getProperty("user.home") 
+        + java.io.File.separator 
+        + "anticithera_uploads" 
+        + java.io.File.separator;
 
     @Transactional
     public ExportacionZip saveZip(Usuario user, String fileName, InputStream inputStream) throws Exception {

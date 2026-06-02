@@ -13,44 +13,47 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @ApplicationScoped
-<span class="nc" id="L16">public class FileService {</span>
+<span class="fc" id="L16">public class FileService {</span>
 
     @PersistenceContext
     private EntityManager em;
 
-    private static final String UPLOAD_DIR = &quot;/home/ubuntu/anticithera_uploads/&quot;;
+<span class="fc" id="L21">    private static final String UPLOAD_DIR = System.getProperty(&quot;user.home&quot;) </span>
+        + java.io.File.separator 
+        + &quot;anticithera_uploads&quot; 
+        + java.io.File.separator;
 
     @Transactional
     public ExportacionZip saveZip(Usuario user, String fileName, InputStream inputStream) throws Exception {
-<span class="nc" id="L25">        File uploadDir = new File(UPLOAD_DIR);</span>
-<span class="nc bnc" id="L26" title="All 2 branches missed.">        if (!uploadDir.exists()) uploadDir.mkdirs();</span>
+<span class="fc" id="L28">        File uploadDir = new File(UPLOAD_DIR);</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        if (!uploadDir.exists()) uploadDir.mkdirs();</span>
 
-<span class="nc" id="L28">        String filePath = UPLOAD_DIR + user.getId() + &quot;_&quot; + System.currentTimeMillis() + &quot;_&quot; + fileName;</span>
-<span class="nc" id="L29">        try (FileOutputStream outputStream = new FileOutputStream(filePath)) {</span>
-<span class="nc" id="L30">            byte[] buffer = new byte[4096];</span>
+<span class="fc" id="L31">        String filePath = UPLOAD_DIR + user.getId() + &quot;_&quot; + System.currentTimeMillis() + &quot;_&quot; + fileName;</span>
+<span class="fc" id="L32">        try (FileOutputStream outputStream = new FileOutputStream(filePath)) {</span>
+<span class="fc" id="L33">            byte[] buffer = new byte[4096];</span>
             int bytesRead;
-<span class="nc bnc" id="L32" title="All 2 branches missed.">            while ((bytesRead = inputStream.read(buffer)) != -1) {</span>
-<span class="nc" id="L33">                outputStream.write(buffer, 0, bytesRead);</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">            while ((bytesRead = inputStream.read(buffer)) != -1) {</span>
+<span class="fc" id="L36">                outputStream.write(buffer, 0, bytesRead);</span>
             }
         }
 
-<span class="nc" id="L37">        ExportacionZip export = new ExportacionZip();</span>
-<span class="nc" id="L38">        export.setUsuario(user);</span>
-<span class="nc" id="L39">        export.setNombreArchivo(fileName);</span>
-<span class="nc" id="L40">        export.setRutaArchivo(filePath);</span>
-<span class="nc" id="L41">        export.setFechaCreacion(LocalDateTime.now());</span>
-<span class="nc" id="L42">        em.persist(export);</span>
-<span class="nc" id="L43">        return export;</span>
+<span class="fc" id="L40">        ExportacionZip export = new ExportacionZip();</span>
+<span class="fc" id="L41">        export.setUsuario(user);</span>
+<span class="fc" id="L42">        export.setNombreArchivo(fileName);</span>
+<span class="fc" id="L43">        export.setRutaArchivo(filePath);</span>
+<span class="fc" id="L44">        export.setFechaCreacion(LocalDateTime.now());</span>
+<span class="fc" id="L45">        em.persist(export);</span>
+<span class="fc" id="L46">        return export;</span>
     }
 
     public List&lt;ExportacionZip&gt; getUserZips(Usuario user) {
-<span class="nc" id="L47">        return em.createQuery(&quot;SELECT e FROM ExportacionZip e WHERE e.usuario = :user ORDER BY e.fechaCreacion DESC&quot;, ExportacionZip.class)</span>
-<span class="nc" id="L48">                .setParameter(&quot;user&quot;, user)</span>
-<span class="nc" id="L49">                .getResultList();</span>
+<span class="fc" id="L50">        return em.createQuery(&quot;SELECT e FROM ExportacionZip e WHERE e.usuario = :user ORDER BY e.fechaCreacion DESC&quot;, ExportacionZip.class)</span>
+<span class="fc" id="L51">                .setParameter(&quot;user&quot;, user)</span>
+<span class="fc" id="L52">                .getResultList();</span>
     }
     
     public ExportacionZip getZipById(Long id) {
-<span class="nc" id="L53">        return em.find(ExportacionZip.class, id);</span>
+<span class="nc" id="L56">        return em.find(ExportacionZip.class, id);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
