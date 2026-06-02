@@ -1,2 +1,5 @@
 com\anticithera\backend\entity\EntityTest.class
 com\anticithera\backend\config\CorsFilterTest.class
+com\anticithera\backend\testutil\ReflectionTestUtils.class
+com\anticithera\backend\testutil\TypedQueryStub.class
+com\anticithera\backend\testutil\EntityManagerStub.class
