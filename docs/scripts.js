@@ -991,7 +991,7 @@ const displayItems = (items) => {
                             <p class="text-[10px] uppercase font-bold text-stone-400">${typeLabel} • ${new Date(item.updatedAt || item.createdAt).toLocaleDateString()}</p>
                             ${item.folder ? `<span class="tag-badge tag-${item.folder} w-fit">${item.folder}</span>` : ''}
                         </div>
-                        ${item.entryType === 'resource' ? `<button onclick="filterFichasByRef('${item.name.replace(/'/g, "\\'")}')" class="text-[9px] font-bold text-amber-900 hover:underline">Fichas</button>` : ''}
+                        ${item.entryType === 'resource' ? `<button onclick="filterFichasByRef('${item.name.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}')" class="text-[9px] font-bold text-amber-900 hover:underline">Fichas</button>` : ''}
                     </div>
                 `;
         grid.appendChild(card);
