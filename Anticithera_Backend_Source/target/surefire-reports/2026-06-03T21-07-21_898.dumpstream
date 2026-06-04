@@ -1,4 +1,4 @@
-# Created at 2026-06-03T19:53:14.744
+# Created at 2026-06-03T21:07:22.323
 Boot Manifest-JAR contains absolute paths in classpath 'F:\Sexto Semestre\Ing Software 2\anthicitera\Anticithera_Backend_Source\target\test-classes'
 Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
 'other' has different root
