@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.anticithera.backend.service.AuthServiceTest
 -------------------------------------------------------------------------------
-Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.348 s -- in com.anticithera.backend.service.AuthServiceTest
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.163 s -- in com.anticithera.backend.service.AuthServiceTest

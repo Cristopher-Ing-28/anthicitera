@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.anticithera.backend.config.CorsFilterTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.003 s -- in com.anticithera.backend.config.CorsFilterTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.848 s -- in com.anticithera.backend.config.CorsFilterTest
