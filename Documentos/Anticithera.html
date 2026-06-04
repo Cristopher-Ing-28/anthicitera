@@ -1029,7 +1029,7 @@ async function manejarArchivoSeleccionado(data) {
                             <div class="p-3 bg-stone-50 rounded border border-stone-200 relative group">
                                 <div class="flex justify-between items-center mb-1">
                                     <span class="text-[9px] font-bold text-stone-400 uppercase">${format}</span>
-                                    <button onclick="copyText(this, \`${text.replace(/`/g, '\\`').replace(/\n/g, '\\n')}\`)" class="text-stone-300 hover:text-amber-800 transition-colors">
+                                    <button onclick="copyText(this, \`${text.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\n/g, '\\n')}\`)" class="text-stone-300 hover:text-amber-800 transition-colors">
                                         <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                                     </button>
                                 </div>
