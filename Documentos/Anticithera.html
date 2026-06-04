@@ -1764,14 +1764,25 @@ async function manejarArchivoSeleccionado(data) {
             }
             else if (format === 'pdf') {
                 const printContainer = document.getElementById('print-section');
-                printContainer.innerHTML = `
-                    <h1>${title}</h1>
-                    <div class="note-content">${marked.parse(content)}</div>
-                    <div class="metadata">
-                        Exportado desde Anticithera Hub - ${new Date().toLocaleString()}<br>
-                        Local ID: ${currentNoteId || 'N/A'}
-                    </div>
-                `;
+                printContainer.innerHTML = '';
+
+                const h1 = document.createElement('h1');
+                h1.textContent = title;
+
+                const noteContent = document.createElement('div');
+                noteContent.className = 'note-content';
+                noteContent.innerHTML = marked.parse(content);
+
+                const metadata = document.createElement('div');
+                metadata.className = 'metadata';
+                metadata.appendChild(document.createTextNode(`Exportado desde Anticithera Hub - ${new Date().toLocaleString()}`));
+                metadata.appendChild(document.createElement('br'));
+                metadata.appendChild(document.createTextNode(`Local ID: ${currentNoteId || 'N/A'}`));
+
+                printContainer.appendChild(h1);
+                printContainer.appendChild(noteContent);
+                printContainer.appendChild(metadata);
+
                 window.print();
             }
            else if (format === 'docx') {
