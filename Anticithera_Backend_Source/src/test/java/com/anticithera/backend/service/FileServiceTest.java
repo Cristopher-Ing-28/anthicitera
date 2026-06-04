@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.DisplayName;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -85,4 +86,41 @@ class FileServiceTest {
         assertNotNull(zips);
         assertEquals(1, zips.size());
     }
+    @Test
+    @DisplayName("Debe lanzar excepción si el nombre del archivo es malicioso (Path Traversal)")
+    void saveZip_WithPathTraversal_ShouldThrowException() {
+        // Arrange: Simulamos un nombre de archivo diseñado para escapar directorios
+        String maliciousFileName = "../../../etc/passwd.zip";
+        InputStream inputStream = new ByteArrayInputStream("datos".getBytes());
+
+        // Act & Assert: Intentamos guardar el archivo y verificamos que el sistema lo rechace
+        // Nota: Si usas una excepción específica como SecurityException o IOException, cámbiala aquí
+        assertThrows(Exception.class, () -> {
+            fileService.saveZip(usuario, maliciousFileName, inputStream);
+        });
+    }
+    @Test
+    @DisplayName("Debe lanzar excepción si el InputStream de datos es nulo")
+    void saveZip_WithNullInputStream_ShouldThrowException() {
+        // Arrange
+        String fileName = "archivo_valido.zip";
+
+        // Act & Assert: Pasamos un 'null' en lugar del InputStream
+        assertThrows(Exception.class, () -> {
+            fileService.saveZip(usuario, fileName, null);
+        });
+    }
+    
+    @Test
+    @DisplayName("Debe lanzar excepción si el nombre del archivo es nulo")
+    void saveZip_WithNullFileName_ShouldThrowException() {
+        // Arrange
+        InputStream inputStream = new ByteArrayInputStream("datos".getBytes());
+
+        // Act & Assert: Pasamos un 'null' en el nombre del archivo
+        assertThrows(Exception.class, () -> {
+            fileService.saveZip(usuario, null, inputStream);
+        });
+    }
+    
 }

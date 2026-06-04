@@ -57,13 +57,13 @@ import java.util.List;
     }
 
     private String sanitizeFileName(String fileName) {
-<span class="pc bpc" id="L60" title="1 of 2 branches missed.">        if (fileName == null) {</span>
-<span class="nc" id="L61">            throw new IllegalArgumentException(&quot;Invalid filename&quot;);</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (fileName == null) {</span>
+<span class="fc" id="L61">            throw new IllegalArgumentException(&quot;Invalid filename&quot;);</span>
         }
 
 <span class="fc" id="L64">        String trimmed = fileName.trim();</span>
-<span class="pc bpc" id="L65" title="4 of 8 branches missed.">        if (trimmed.isEmpty() || trimmed.contains(&quot;..&quot;) || trimmed.contains(&quot;/&quot;) || trimmed.contains(&quot;\\&quot;)) {</span>
-<span class="nc" id="L66">            throw new IllegalArgumentException(&quot;Invalid filename&quot;);</span>
+<span class="pc bpc" id="L65" title="3 of 8 branches missed.">        if (trimmed.isEmpty() || trimmed.contains(&quot;..&quot;) || trimmed.contains(&quot;/&quot;) || trimmed.contains(&quot;\\&quot;)) {</span>
+<span class="fc" id="L66">            throw new IllegalArgumentException(&quot;Invalid filename&quot;);</span>
         }
 
 <span class="fc" id="L69">        return trimmed;</span>
