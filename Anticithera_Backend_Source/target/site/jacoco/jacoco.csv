@@ -7,5 +7,5 @@ anticithera-backend,com.anticithera.backend.config,RestApplication,3,0,0,0,1,0,1
 anticithera-backend,com.anticithera.backend.entity,SesionActividad,7,38,0,0,2,11,2,11,2,11
 anticithera-backend,com.anticithera.backend.entity,Usuario,17,35,0,0,5,10,5,10,5,10
 anticithera-backend,com.anticithera.backend.entity,ExportacionZip,0,38,0,0,0,11,0,11,0,11
-anticithera-backend,com.anticithera.backend.rest,FileResource,44,98,4,10,7,23,5,8,1,5
+anticithera-backend,com.anticithera.backend.rest,FileResource,19,123,4,10,2,28,4,9,0,6
 anticithera-backend,com.anticithera.backend.rest,AuthResource,54,126,3,9,12,31,3,7,0,4

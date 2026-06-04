@@ -1,5 +1,6 @@
 package com.anticithera.backend.rest;
 
+import java.time.LocalDateTime;
 import com.anticithera.backend.entity.ExportacionZip;
 import com.anticithera.backend.entity.Usuario;
 import com.anticithera.backend.service.AuthService;
@@ -66,7 +67,19 @@ class FileResourceTest {
     @Test
     void listZips_Success_WhenTokenValid() {
         when(authService.getUserByToken("mi-token-secreto")).thenReturn(usuarioValido);
-        when(fileService.getUserZips(usuarioValido)).thenReturn(new ArrayList<>());
+        
+        // --- LA SOLUCIÓN: Crear un ZIP falso en lugar de una lista vacía ---
+        ExportacionZip mockZip = new ExportacionZip();
+        mockZip.setId(1L);
+        mockZip.setNombreArchivo("backup.zip");
+        // Nota: Si tu fecha es de tipo LocalDateTime, usa LocalDateTime.now() en vez de new java.util.Date()
+        mockZip.setFechaCreacion(LocalDateTime.now()); 
+        
+        ArrayList<ExportacionZip> listaConUnZip = new ArrayList<>();
+        listaConUnZip.add(mockZip);
+        
+        when(fileService.getUserZips(usuarioValido)).thenReturn(listaConUnZip);
+        // -------------------------------------------------------------------
 
         try (MockedStatic<Response> mockedResponse = Mockito.mockStatic(Response.class)) {
             Response.ResponseBuilder builder = mock(Response.ResponseBuilder.class);
