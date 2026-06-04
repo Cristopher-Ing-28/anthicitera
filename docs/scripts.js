@@ -1226,8 +1226,19 @@ const filterFichasByRef = (refName) => {
 };
 
 // --- EXPORTACIÓN DE NOTAS ---
+const escapeHtml = (text) => {
+    const str = String(text);
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+};
+
 function exportNote(format) {
     const title = document.getElementById('note-title').value || 'Sin_Titulo';
+    const safeTitle = escapeHtml(title);
     const content = document.getElementById('note-content').value;
 
     if (!content) return showToast("No hay contenido para exportar");
@@ -1240,7 +1251,7 @@ function exportNote(format) {
     else if (format === 'pdf') {
         const printContainer = document.getElementById('print-section');
         printContainer.innerHTML = `
-                    <h1>${title}</h1>
+                    <h1>${safeTitle}</h1>
                     <div class="note-content">${marked.parse(content)}</div>
                     <div class="metadata">
                         Exportado desde Anticithera Hub - ${new Date().toLocaleString()}<br>
@@ -1253,9 +1264,9 @@ function exportNote(format) {
         // Generamos un HTML robusto que Word reconozca como documento
         const htmlContent = `
                     <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-                    <head><meta charset='utf-8'><title>${title}</title></head>
+                    <head><meta charset='utf-8'><title>${safeTitle}</title></head>
                     <body style="font-family: 'Times New Roman', serif;">
-                        <h1 style="text-align: center; border-bottom: 1px solid black; padding-bottom: 10px;">${title}</h1>
+                        <h1 style="text-align: center; border-bottom: 1px solid black; padding-bottom: 10px;">${safeTitle}</h1>
                         <div style="margin-top: 20px; line-height: 1.5;">${marked.parse(content)}</div>
                         <p style="margin-top: 50px; font-size: 10pt; color: #666;">Exportado desde Anticithera Hub - ${new Date().toLocaleDateString()}</p>
                     ${'</'}body>
