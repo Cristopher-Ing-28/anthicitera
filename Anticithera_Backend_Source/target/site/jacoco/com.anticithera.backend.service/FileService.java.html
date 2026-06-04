@@ -8,52 +8,75 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @ApplicationScoped
-<span class="fc" id="L16">public class FileService {</span>
+<span class="fc" id="L17">public class FileService {</span>
 
     @PersistenceContext
     private EntityManager em;
 
-<span class="fc" id="L21">    private static final String UPLOAD_DIR = System.getProperty(&quot;user.home&quot;) </span>
+<span class="fc" id="L22">    private static final String UPLOAD_DIR = System.getProperty(&quot;user.home&quot;) </span>
         + java.io.File.separator 
         + &quot;anticithera_uploads&quot; 
         + java.io.File.separator;
 
     @Transactional
     public ExportacionZip saveZip(Usuario user, String fileName, InputStream inputStream) throws Exception {
-<span class="fc" id="L28">        File uploadDir = new File(UPLOAD_DIR);</span>
-<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        if (!uploadDir.exists()) uploadDir.mkdirs();</span>
+<span class="fc" id="L29">        File uploadDir = new File(UPLOAD_DIR);</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if (!uploadDir.exists()) uploadDir.mkdirs();</span>
 
-<span class="fc" id="L31">        String filePath = UPLOAD_DIR + user.getId() + &quot;_&quot; + System.currentTimeMillis() + &quot;_&quot; + fileName;</span>
-<span class="fc" id="L32">        try (FileOutputStream outputStream = new FileOutputStream(filePath)) {</span>
-<span class="fc" id="L33">            byte[] buffer = new byte[4096];</span>
+<span class="fc" id="L32">        String safeFileName = sanitizeFileName(fileName);</span>
+<span class="fc" id="L33">        String storedFileName = user.getId() + &quot;_&quot; + System.currentTimeMillis() + &quot;_&quot; + safeFileName;</span>
+<span class="fc" id="L34">        File destinationFile = new File(uploadDir, storedFileName);</span>
+
+<span class="fc" id="L36">        String uploadDirCanonicalPath = uploadDir.getCanonicalPath();</span>
+<span class="fc" id="L37">        String destinationCanonicalPath = destinationFile.getCanonicalPath();</span>
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">        if (!destinationCanonicalPath.startsWith(uploadDirCanonicalPath + File.separator)) {</span>
+<span class="nc" id="L39">            throw new IllegalArgumentException(&quot;Invalid file path&quot;);</span>
+        }
+
+<span class="fc" id="L42">        try (FileOutputStream outputStream = new FileOutputStream(destinationFile)) {</span>
+<span class="fc" id="L43">            byte[] buffer = new byte[4096];</span>
             int bytesRead;
-<span class="fc bfc" id="L35" title="All 2 branches covered.">            while ((bytesRead = inputStream.read(buffer)) != -1) {</span>
-<span class="fc" id="L36">                outputStream.write(buffer, 0, bytesRead);</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">            while ((bytesRead = inputStream.read(buffer)) != -1) {</span>
+<span class="fc" id="L46">                outputStream.write(buffer, 0, bytesRead);</span>
             }
         }
 
-<span class="fc" id="L40">        ExportacionZip export = new ExportacionZip();</span>
-<span class="fc" id="L41">        export.setUsuario(user);</span>
-<span class="fc" id="L42">        export.setNombreArchivo(fileName);</span>
-<span class="fc" id="L43">        export.setRutaArchivo(filePath);</span>
-<span class="fc" id="L44">        export.setFechaCreacion(LocalDateTime.now());</span>
-<span class="fc" id="L45">        em.persist(export);</span>
-<span class="fc" id="L46">        return export;</span>
+<span class="fc" id="L50">        ExportacionZip export = new ExportacionZip();</span>
+<span class="fc" id="L51">        export.setUsuario(user);</span>
+<span class="fc" id="L52">        export.setNombreArchivo(safeFileName);</span>
+<span class="fc" id="L53">        export.setRutaArchivo(destinationCanonicalPath);</span>
+<span class="fc" id="L54">        export.setFechaCreacion(LocalDateTime.now());</span>
+<span class="fc" id="L55">        em.persist(export);</span>
+<span class="fc" id="L56">        return export;</span>
+    }
+
+    private String sanitizeFileName(String fileName) {
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">        if (fileName == null) {</span>
+<span class="nc" id="L61">            throw new IllegalArgumentException(&quot;Invalid filename&quot;);</span>
+        }
+
+<span class="fc" id="L64">        String trimmed = fileName.trim();</span>
+<span class="pc bpc" id="L65" title="4 of 8 branches missed.">        if (trimmed.isEmpty() || trimmed.contains(&quot;..&quot;) || trimmed.contains(&quot;/&quot;) || trimmed.contains(&quot;\\&quot;)) {</span>
+<span class="nc" id="L66">            throw new IllegalArgumentException(&quot;Invalid filename&quot;);</span>
+        }
+
+<span class="fc" id="L69">        return trimmed;</span>
     }
 
     public List&lt;ExportacionZip&gt; getUserZips(Usuario user) {
-<span class="fc" id="L50">        return em.createQuery(&quot;SELECT e FROM ExportacionZip e WHERE e.usuario = :user ORDER BY e.fechaCreacion DESC&quot;, ExportacionZip.class)</span>
-<span class="fc" id="L51">                .setParameter(&quot;user&quot;, user)</span>
-<span class="fc" id="L52">                .getResultList();</span>
+<span class="fc" id="L73">        return em.createQuery(&quot;SELECT e FROM ExportacionZip e WHERE e.usuario = :user ORDER BY e.fechaCreacion DESC&quot;, ExportacionZip.class)</span>
+<span class="fc" id="L74">                .setParameter(&quot;user&quot;, user)</span>
+<span class="fc" id="L75">                .getResultList();</span>
     }
     
     public ExportacionZip getZipById(Long id) {
-<span class="nc" id="L56">        return em.find(ExportacionZip.class, id);</span>
+<span class="nc" id="L79">        return em.find(ExportacionZip.class, id);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
