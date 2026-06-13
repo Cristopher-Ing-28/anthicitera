@@ -298,6 +298,7 @@
             <div class="relative flex-1 group">
                 <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400"></i>
                 <input type="text" id="globalSearchInput"
+                    data-i18n-placeholder="search_placeholder"
                     placeholder="Buscar en toda la biblioteca (PDFs, Fichas, Investigaciones...)"
                     oninput="handleGlobalSearch(this.value)"
                     class="w-full bg-[#fdfaf1] border border-stone-300 rounded-full py-1.5 pl-10 pr-4 text-xs focus:ring-1 focus:ring-amber-700 outline-none transition-all">
@@ -337,6 +338,11 @@
         </div>
 
         <div class="flex items-center gap-4">
+            <select id="languageSelector" onchange="loadLanguage(this.value)" class="bg-transparent border border-stone-400 text-stone-700 text-xs rounded outline-none py-1 px-2 cursor-pointer focus:ring-1 focus:ring-amber-700">
+                <option value="es">ES</option>
+                <option value="en">EN</option>
+            </select>
+            
             <button type="button" onclick="toggleDarkMode()" id="darkModeBtn" title="Cambiar Modo"
                 class="p-2 hover:bg-stone-300 rounded-full transition-all duration-300">
                 <i data-lucide="moon" class="w-4 h-4 text-stone-600" id="darkModeIcon"></i>
@@ -451,21 +457,20 @@
     <div class="flex flex-1 overflow-hidden">
         <aside class="w-64 bg-[#f0e6cd] border-r border-stone-300 flex flex-col">
             <nav class="p-6 space-y-1">
-                <button type="button" onclick="navigateTo('terminal')" id="nav-terminal"
-                    class="sidebar-item w-full flex items-center gap-3 px-4 py-2.5 rounded text-sm font-medium active">
-                    <i data-lucide="terminal" class="w-4 h-4"></i> Terminal
-                </button>
+                <button type="button" onclick="navigateTo('terminal')" id="nav-terminal" class="sidebar-item w-full flex items-center gap-3 px-4 py-2.5 rounded text-sm font-medium active">
+    <i data-lucide="terminal" class="w-4 h-4"></i> <span data-i18n="nav_terminal">Terminal</span>
+</button>
                 <button type="button" onclick="navigateTo('libreria')" id="nav-libreria"
                     class="sidebar-item w-full flex items-center gap-3 px-4 py-2.5 rounded text-sm font-medium">
-                    <i data-lucide="library" class="w-4 h-4"></i> La Librería
+                    <i data-lucide="library" class="w-4 h-4"></i> <span data-i18n="nav_libreria">La Librería</span>
                 </button>
                 <button type="button" onclick="navigateTo('notas')" id="nav-notas"
                     class="sidebar-item w-full flex items-center gap-3 px-4 py-2.5 rounded text-sm font-medium">
-                    <i data-lucide="pen-tool" class="w-4 h-4"></i> Motor de Fichas
+                    <i data-lucide="pen-tool" class="w-4 h-4"></i> <span data-i18n="nav_notas">Motor de Fichas</span>
                 </button>
                 <button type="button" onclick="navigateTo('laboratorio')" id="nav-laboratorio"
                     class="sidebar-item w-full flex items-center gap-3 px-4 py-2.5 rounded text-sm font-medium">
-                    <i data-lucide="flask-conical" class="w-4 h-4"></i> Laboratorio
+                    <i data-lucide="flask-conical" class="w-4 h-4"></i> <span data-i18n="nav_laboratorio">Laboratorio</span>
                 </button>
             </nav>
 

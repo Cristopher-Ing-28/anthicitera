@@ -1,0 +1,10 @@
+{
+  "nav_terminal": "Terminal",
+  "nav_libreria": "La Librería",
+  "nav_notas": "Motor de Fichas",
+  "nav_laboratorio": "Laboratorio",
+  "btn_crear_ficha": "Crear Ficha",
+  "search_placeholder": "Buscar en toda la biblioteca (PDFs, Fichas, Investigaciones...)",
+  "toast_downloading": "Descargando de Drive:",
+  "toast_unsupported": "Formato no soportado. Sube solo Documentos (Word/PDF)."
+}

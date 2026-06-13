@@ -1,0 +1,10 @@
+{
+  "nav_terminal": "Terminal",
+  "nav_libreria": "Library",
+  "nav_notas": "Notes Engine",
+  "nav_laboratorio": "Laboratory",
+  "btn_crear_ficha": "Create Card",
+  "search_placeholder": "Search the entire library (PDFs, Cards, Research...)",
+  "toast_downloading": "Downloading from Drive:",
+  "toast_unsupported": "Unsupported format. Upload only Documents (Word/PDF)."
+}

@@ -8,7 +8,6 @@ const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
 let tokenClient;
 let accessToken = null;
 let pickerApiLoaded = false;
-
 // --- CONFIGURACIÓN PDF.JS ---
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
@@ -46,6 +45,44 @@ let rotation = 0;
 let selectedText = "";
 const fab = document.getElementById('selectionFAB');
 const floatingBtn = fab; // Compatibilidad heredada
+// --- MOTOR DE INTERNACIONALIZACIÓN (i18n) ---
+let currentLanguage = safeStorage.getItem('anticithera_lang') || 'es';
+let translations = {};
+
+async function loadLanguage(lang) {
+    try {
+        const response = await fetch(`./locales/${lang}.json`);
+        translations = await response.json();
+        currentLanguage = lang;
+        safeStorage.setItem('anticithera_lang', lang);
+        applyTranslations();
+    } catch (error) {
+        console.error("Error cargando el idioma:", error);
+    }
+}
+
+function applyTranslations() {
+    // Traducir elementos de texto normales
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (translations[key]) {
+            element.innerText = translations[key];
+        }
+    });
+
+    // Traducir placeholders (como la barra de búsqueda)
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+        const key = element.getAttribute('data-i18n-placeholder');
+        if (translations[key]) {
+            element.placeholder = translations[key];
+        }
+    });
+}
+
+// Función auxiliar para traducir textos dinámicos dentro de JavaScript (como los Toasts)
+function t(key) {
+    return translations[key] || key;
+}
 
 // --- INICIALIZACIÓN DE LIBRERÍAS DE GOOGLE DRIVE ---
 window.addEventListener('load', () => {
@@ -2052,5 +2089,6 @@ window.onload = () => {
     initDB();
     loadDarkModePreference();
     checkActiveSession();
+    loadLanguage(currentLanguage); // <-- AÑADE ESTA LÍNEA
     lucide.createIcons();
 };
