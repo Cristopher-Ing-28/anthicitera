@@ -154,12 +154,12 @@ function createLibrary() {
     const name = nameInput ? nameInput.value.trim() : '';
 
     if (!name) {
-        showToast("Por favor, ingresa un nombre para la librería.");
+        showToast(t("toast_lib_name_required"));
         return;
     }
 
     if (!window.selectedDocType) {
-        showToast("Por favor, selecciona un tipo de documento primero.");
+        showToast(t("toast_lib_type_required"));
         return;
     }
 
@@ -168,7 +168,7 @@ function createLibrary() {
     localStorage.setItem('anticithera_library_type', window.selectedDocType);
 
     showTerminalDashboard();
-    showToast(`Librería "${name}" creada con éxito.`);
+    showToast(t("toast_lib_created").replace("{name}", name));
 }
 
 // Volver al modo de configuración de la librería
@@ -186,7 +186,8 @@ function editLibrarySettings() {
         // Reactivar el botón del tipo correspondiente
         const buttons = document.querySelectorAll('.doc-type-btn');
         buttons.forEach(btn => {
-            if (btn.innerText === window.selectedDocType) {
+            const onclickAttr = btn.getAttribute('onclick') || '';
+            if (onclickAttr.includes(`'${window.selectedDocType}'`) || onclickAttr.includes(`"${window.selectedDocType}"`)) {
                 btn.classList.remove('bg-stone-800/40', 'text-[#d2c1a5]', 'border-stone-700/60');
                 btn.classList.add('bg-[#8c7456]', 'text-white', 'border-amber-500');
             }
@@ -205,6 +206,18 @@ function showTerminalWelcome() {
     if (dashboard) dashboard.classList.add('hidden');
 }
 
+function translateDocType(type) {
+    const mapping = {
+        'Artículo': 'terminal_welcome_art',
+        'Tesis': 'terminal_welcome_tesis',
+        'Tesina': 'terminal_welcome_tesina',
+        'Ensayo': 'terminal_welcome_ensayo',
+        'Personalizado': 'terminal_welcome_custom'
+    };
+    const key = mapping[type];
+    return key ? t(key) : type;
+}
+
 // Mostrar vista de Dashboard del Proyecto
 function showTerminalDashboard() {
     const welcome = document.getElementById('terminal-welcome-state');
@@ -216,7 +229,7 @@ function showTerminalDashboard() {
     const nameEl = document.getElementById('dashboard-library-name');
     const typeEl = document.getElementById('dashboard-document-type');
     if (nameEl) nameEl.innerText = window.selectedLibraryName;
-    if (typeEl) typeEl.innerText = `TIPO: ${window.selectedDocType.toUpperCase()}`;
+    if (typeEl) typeEl.innerText = `${t("terminal_dashboard_type")}${translateDocType(window.selectedDocType).toUpperCase()}`;
 
     // Cargar estadísticas, documentos y plantillas sugeridas
     updateStats();
@@ -265,6 +278,9 @@ function loadRecentDocs() {
                 else if (i.type.includes('ipynb')) iconName = 'code-2';
                 else if (i.type.includes('docx') || i.type.includes('word')) iconName = 'file-edit';
 
+                const recentText = currentLanguage === 'es' ? 'Reciente' : 'Recent';
+                const viewText = currentLanguage === 'es' ? 'Ver' : 'View';
+
                 return `
                     <div class="flex items-center justify-between p-3 bg-white/50 rounded-xl border border-stone-200 hover:bg-white transition-all shadow-sm">
                         <div class="flex items-center gap-3">
@@ -273,15 +289,15 @@ function loadRecentDocs() {
                             </div>
                             <div class="min-w-0">
                                 <span class="font-bold text-stone-800 text-xs block leading-tight truncate max-w-[180px]">${i.name}</span>
-                                <span class="text-[9px] text-stone-500 font-medium">${i.date || 'Reciente'} • ${i.type.toUpperCase()}</span>
+                                <span class="text-[9px] text-stone-500 font-medium">${i.date || recentText} • ${i.type.toUpperCase()}</span>
                             </div>
                         </div>
                         <button onclick="navigateTo('libreria')" class="text-[9px] uppercase font-bold text-amber-900 tracking-wider hover:underline flex-shrink-0">
-                            Ver
+                            ${viewText}
                         </button>
                     </div>
                 `;
-            }).join('') || '<div class="p-4 text-xs italic text-stone-400 text-center">No hay documentos en la librería todavía.</div>';
+            }).join('') || `<div class="p-4 text-xs italic text-stone-400 text-center">${t("terminal_dashboard_no_docs")}</div>`;
 
             lucide.createIcons();
         }
@@ -304,7 +320,7 @@ function loadTemplates() {
     container.innerHTML = `
         <div class="flex flex-col items-center justify-center py-8 space-y-2">
             <div class="w-5 h-5 border-2 border-amber-600 border-t-transparent rounded-full animate-spin"></div>
-            <span class="text-[9px] uppercase font-bold text-stone-400 tracking-widest">Buscando plantillas...</span>
+            <span class="text-[9px] uppercase font-bold text-stone-400 tracking-widest">${t("terminal_dashboard_templates_loading")}</span>
         </div>
     `;
 
@@ -328,11 +344,11 @@ function loadTemplates() {
                     <!-- Detalles del diseño (Tipografía / Márgenes) -->
                     <div class="grid grid-cols-2 gap-3 py-1.5 border-t border-b border-stone-200/50 text-[9px] text-stone-500">
                         <div class="min-w-0">
-                            <span class="font-bold block text-stone-600 uppercase text-[7px] tracking-wider mb-0.5">Tipografía</span>
+                            <span class="font-bold block text-stone-600 uppercase text-[7px] tracking-wider mb-0.5">${t("template_typography")}</span>
                             <span class="flex items-center gap-1 truncate"><i data-lucide="type" class="w-3.5 h-3.5 text-stone-400 flex-shrink-0"></i> ${tmpl.typography}</span>
                         </div>
                         <div class="min-w-0">
-                            <span class="font-bold block text-stone-600 uppercase text-[7px] tracking-wider mb-0.5">Márgenes</span>
+                            <span class="font-bold block text-stone-600 uppercase text-[7px] tracking-wider mb-0.5">${t("template_margins")}</span>
                             <span class="flex items-center gap-1 truncate"><i data-lucide="square" class="w-3.5 h-3.5 text-stone-400 flex-shrink-0"></i> ${tmpl.margins}</span>
                         </div>
                     </div>

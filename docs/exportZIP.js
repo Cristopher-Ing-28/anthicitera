@@ -1,11 +1,11 @@
 async function exportarLibreriaAZip() {
     // Validar que la base de datos esté lista llamando directamente a la variable global 'db'
     if (typeof db === 'undefined' || !db) {
-        showToast("La base de datos aún no está lista.");
+        showToast(t("toast_db_not_ready"));
         return;
     }
 
-    showToast("Preparando exportación masiva... Esto puede tardar unos segundos.");
+    showToast(t("toast_prep_export"));
 
     try {
         const zip = new JSZip();
@@ -77,7 +77,7 @@ async function exportarLibreriaAZip() {
 
         // Subir al servidor si hay sesión activa
         if (typeof userSession !== 'undefined' && userSession && userSession.token) {
-            showToast("Subiendo copia al servidor...");
+            showToast(t("toast_uploading_backup"));
             const formData = new FormData();
             formData.append('file', contenidoZip);
 
@@ -91,7 +91,7 @@ async function exportarLibreriaAZip() {
                 });
 
                 if (response.ok) {
-                    showToast("¡Copia guardada en tu cuenta!");
+                    showToast(t("toast_backup_saved"));
                 } else {
                     console.error("Error al subir el ZIP");
                 }
@@ -100,11 +100,11 @@ async function exportarLibreriaAZip() {
             }
         }
 
-        showToast("¡Exportación completada con éxito!");
+        showToast(t("toast_export_success"));
 
     } catch (error) {
         console.error("Error crítico durante la exportación:", error);
-        showToast("Ocurrió un error al generar el ZIP.");
+        showToast(t("toast_export_error"));
     }
 }
 
@@ -124,43 +124,43 @@ function obtenerTodosDeIndexedDB(storeName) {
 
 async function menuImportarZip() {
     // Le damos al usuario la opción de pegar una URL o dejarlo en blanco para archivo local
-    const url = prompt("RESTUARACIÓN DE LIBRERÍA\n\nPara importar desde un repositorio de GitHub, pega aquí el enlace directo (.zip).\n\nPara subir un archivo ZIP desde tu computadora, deja este campo vacío y presiona Aceptar.");
+    const url = prompt(t("prompt_restore_zip"));
 
     if (url !== null && url.trim() !== "") {
         // Opción A: Descargar y restaurar desde URL (Ej. GitHub)
         try {
-            showToast("Descargando ZIP desde la URL...");
+            showToast(t("toast_downloading_zip"));
             const response = await fetch(url);
             if (!response.ok) throw new Error("No se pudo acceder a la URL");
             const blob = await response.blob();
             procesarZipRestauracion(blob);
         } catch (error) {
             console.error(error);
-            showToast("Error de red. Verifica que la URL del ZIP sea pública y directa.");
+            showToast(t("toast_network_error_zip"));
         }
     } else if (url !== null) {
         // Opción B: Listar archivos del servidor si hay sesión, o abrir local
         if (typeof userSession !== 'undefined' && userSession && userSession.token) {
             try {
-                showToast("Consultando tus respaldos en el servidor...");
+                showToast(t("toast_querying_backups"));
                 const response = await fetch(`${API_BASE_URL}/files/list`, {
                     headers: { 'Authorization': `Bearer ${userSession.token}` }
                 });
                 const zips = await response.json();
 
                 if (zips.length > 0) {
-                    let mensaje = "RESPALDOS EN EL SERVIDOR\n\nSelecciona el número del respaldo a cargar:\n";
+                    let mensaje = t("prompt_backups_list");
                     zips.forEach((z, i) => {
                         mensaje += `${i + 1}. ${z.nombreArchivo} (${z.fechaCreacion})\n`;
                     });
-                    mensaje += "\nO escribe 'L' para subir un archivo local.";
+                    mensaje += t("prompt_backups_list_local_opt");
 
                     const seleccion = prompt(mensaje);
                     if (seleccion && seleccion.toUpperCase() === 'L') {
                         document.getElementById('zipUploadInput').click();
                     } else if (seleccion && !isNaN(seleccion) && zips[seleccion - 1]) {
                         const zipId = zips[seleccion - 1].id;
-                        showToast("Descargando respaldo...");
+                        showToast(t("toast_downloading_backup"));
                         const dlResp = await fetch(`${API_BASE_URL}/files/download/${zipId}`, {
                             headers: { 'Authorization': `Bearer ${userSession.token}` }
                         });
@@ -168,7 +168,7 @@ async function menuImportarZip() {
                         procesarZipRestauracion(blob);
                     }
                 } else {
-                    showToast("No tienes respaldos en el servidor. Abriendo selector local...");
+                    showToast(t("toast_no_backups"));
                     document.getElementById('zipUploadInput').click();
                 }
             } catch (err) {
@@ -190,14 +190,13 @@ function manejarArchivoZipLocal(event) {
 }
 
 // El motor principal de descompresión e indexación
-// El motor principal de descompresión e indexación
 async function procesarZipRestauracion(blobZip) {
     if (typeof db === 'undefined' || !db) {
-        showToast("La base de datos aún no está lista.");
+        showToast(t("toast_db_not_ready"));
         return;
     }
 
-    showToast("Extrayendo archivos y restaurando librería...");
+    showToast(t("toast_restoring"));
 
     try {
         const zip = await JSZip.loadAsync(blobZip);
@@ -205,7 +204,7 @@ async function procesarZipRestauracion(blobZip) {
         // 1. Verificar el formato de Anticithera
         const archivoDetalles = zip.file("detalles_exportacion.json");
         if (!archivoDetalles) {
-            showToast("Error: El ZIP no tiene el formato de Anticithera.");
+            showToast(t("toast_zip_invalid_format"));
             return;
         }
 
@@ -237,11 +236,12 @@ async function procesarZipRestauracion(blobZip) {
                         createdAt: item.fecha_creacion || new Date().toISOString()
                     });
 
+                    const justNowText = currentLanguage === 'es' ? 'Justo ahora' : 'Just now';
                     txRes.objectStore('activity').put({
                         id: Date.now() + Math.random(),
                         name: `Restaurado: ${item.nombre}`,
                         type: 'restore',
-                        time: 'Justo ahora'
+                        time: justNowText
                     });
                     elementosRestaurados++;
                 }
@@ -277,12 +277,12 @@ async function procesarZipRestauracion(blobZip) {
             if (typeof updateStats === 'function') updateStats();
             if (typeof renderNotesList === 'function') renderNotesList();
 
-            showToast(`¡Restauración exitosa! ${elementosRestaurados} elementos recuperados.`);
+            showToast(t("toast_restoration_success").replace("{count}", elementosRestaurados));
             lucide.createIcons();
         }, 800);
 
     } catch (error) {
         console.error("Error crítico durante la restauración:", error);
-        showToast("Ocurrió un error al descomprimir y leer el archivo ZIP.");
+        showToast(t("toast_decompress_error"));
     }
 }

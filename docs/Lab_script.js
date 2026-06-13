@@ -66,7 +66,7 @@ async function loadNotebooksList() {
     const listContainer = document.getElementById('lab-notebooks-list');
     if (!listContainer) return;
 
-    listContainer.innerHTML = '<div class="text-center py-10"><p class="text-[10px] uppercase font-bold text-stone-400 animate-pulse">Buscando notebooks...</p></div>';
+    listContainer.innerHTML = `<div class="text-center py-10"><p class="text-[10px] uppercase font-bold text-stone-400 animate-pulse">${t("lab_loading_notebooks")}</p></div>`;
 
     try {
         const tx = db.transaction('resources', 'readonly');
@@ -86,7 +86,7 @@ async function loadNotebooksList() {
         };
     } catch (err) {
         console.error("Error al cargar lista de notebooks:", err);
-        listContainer.innerHTML = '<p class="text-red-500 text-[10px] text-center">Error al cargar recursos</p>';
+        listContainer.innerHTML = `<p class="text-red-500 text-[10px] text-center">${t("lab_error_resources")}</p>`;
     }
 }
 
@@ -95,7 +95,7 @@ function renderNotebooksSidebar(notebooks) {
     if (notebooks.length === 0) {
         listContainer.innerHTML = `
             <div class="text-center py-10">
-                <p class="text-[10px] uppercase font-bold text-stone-400 italic">No hay notebooks importados</p>
+                <p class="text-[10px] uppercase font-bold text-stone-400 italic">${t("lab_no_notebooks")}</p>
             </div>`;
         return;
     }
@@ -136,10 +136,10 @@ function togglePresentationMode() {
         const icon = btn.querySelector('i');
         if (isPresentation) {
             icon.setAttribute('data-lucide', 'monitor-off');
-            btn.title = "Salir de Modo Presentación";
+            btn.title = t("lab_view_presentation_exit_title");
         } else {
             icon.setAttribute('data-lucide', 'monitor-play');
-            btn.title = "Modo Presentación";
+            btn.title = t("lab_view_presentation_title");
         }
         if (window.lucide) lucide.createIcons();
     }
@@ -199,7 +199,7 @@ async function openNotebookInLab(id) {
     const container = document.getElementById('lab-notebook-content');
     const titleEl = document.getElementById('lab-notebook-title');
 
-    container.innerHTML = '<div class="py-20 flex flex-col items-center justify-center animate-pulse"><i data-lucide="cpu" class="w-12 h-12 text-amber-800 mb-4 animate-bounce"></i><p class="text-sm font-bold uppercase text-stone-500 tracking-widest">Renderizando notebook...</p></div>';
+    container.innerHTML = `<div class="py-20 flex flex-col items-center justify-center animate-pulse"><i data-lucide="cpu" class="w-12 h-12 text-amber-800 mb-4 animate-bounce"></i><p class="text-sm font-bold uppercase text-stone-500 tracking-widest">${t("lab_rendering")}</p></div>`;
     if (typeof lucide !== 'undefined') lucide.createIcons();
 
     try {
@@ -298,12 +298,12 @@ async function openNotebookInLab(id) {
 
             } catch (parseErr) {
                 console.error("Error al renderizar notebook:", parseErr);
-                container.innerHTML = `<div class="p-8 text-red-800 bg-red-50 border border-red-200 rounded-xl font-bold">Error al procesar el notebook: ${escapeHtml(parseErr.message)}</div>`;
+                container.innerHTML = `<div class="p-8 text-red-800 bg-red-50 border border-red-200 rounded-xl font-bold">${t("lab_render_error")}${escapeHtml(parseErr.message)}</div>`;
             }
         };
     } catch (err) {
         console.error("Error crítico de lectura:", err);
-        container.innerHTML = `<div class="p-8 text-red-800 bg-red-50 border border-red-200 rounded-xl font-bold">Error fatal al cargar el notebook: ${escapeHtml(err.message)}</div>`;
+        container.innerHTML = `<div class="p-8 text-red-800 bg-red-50 border border-red-200 rounded-xl font-bold">${t("lab_load_error")}${escapeHtml(err.message)}</div>`;
     }
 }
 

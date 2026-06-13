@@ -77,6 +77,25 @@ function applyTranslations() {
             element.placeholder = translations[key];
         }
     });
+
+    // Traducir títulos/tooltips
+    document.querySelectorAll('[data-i18n-title]').forEach(element => {
+        const key = element.getAttribute('data-i18n-title');
+        if (translations[key]) {
+            element.title = translations[key];
+        }
+    });
+
+    // Actualizar el valor del selector para sincronización
+    const selector = document.getElementById('languageSelector');
+    if (selector) selector.value = currentLanguage;
+
+    // Recargar la vista activa para refrescar elementos dinámicos
+    const activeNav = document.querySelector('.sidebar-item.active');
+    if (activeNav) {
+        const viewId = activeNav.id.replace('nav-', '');
+        navigateTo(viewId);
+    }
 }
 
 // Función auxiliar para traducir textos dinámicos dentro de JavaScript (como los Toasts)
@@ -141,7 +160,7 @@ async function manejarArchivoSeleccionado(data) {
         let fileName = doc.name;
         const mimeType = doc.mimeType;
 
-        showToast(`Descargando de Drive: ${fileName}...`);
+        showToast(`${t("toast_downloading")} ${fileName}...`);
 
         try {
             let url;
@@ -152,7 +171,7 @@ async function manejarArchivoSeleccionado(data) {
 
             } else if (mimeType === 'application/vnd.google-apps.spreadsheet' || mimeType === 'application/vnd.google-apps.presentation') {
                 // Bloqueamos Hojas de cálculo y Presentaciones
-                showToast("Formato no soportado. Sube solo Documentos (Word/PDF).");
+                showToast(t("toast_unsupported"));
                 return; // Rompemos la función aquí
 
             } else {
@@ -184,7 +203,7 @@ async function manejarArchivoSeleccionado(data) {
 
         } catch (error) {
             console.error("Error en la integración con Google Drive:", error);
-            showToast("Hubo un problema descargando el archivo de Drive.");
+            showToast(t("toast_drive_error"));
         }
     }
 }
@@ -226,7 +245,7 @@ async function openPdfViewer(resourceId) {
     req.onsuccess = async () => {
         const res = req.result;
         if (!res || !res.blob) {
-            showToast("No hay archivo binario disponible.");
+            showToast(t("toast_no_binary"));
             return;
         }
 
@@ -241,7 +260,7 @@ async function openPdfViewer(resourceId) {
         container.innerHTML = ''; // Limpiamos el contenedor
         container.scrollTop = 0;  // Volvemos arriba del todo
 
-        showToast("Cargando documento...");
+        showToast(t("toast_loading_doc"));
 
         // Bucle mágico: renderizamos todas las páginas una debajo de otra
         for (let num = 1; num <= pdfDoc.numPages; num++) {
@@ -385,16 +404,18 @@ const saveFicha = async () => {
     const pg = document.getElementById('ficha-page').value;
     const text = document.getElementById('ficha-text-preview').innerText;
 
-    if (!comment) return showToast("El comentario es obligatorio");
+    if (!comment) return showToast(t("toast_comment_required"));
 
     // Lógica Universal: Asegurar que exista una colección para este documento
     const collection = await getOrCreateCollectionForDocument(ref);
 
     const id = 'note_ficha_' + Date.now();
+    const cardWord = currentLanguage === 'es' ? 'FICHA' : 'CARD';
+    const pageWord = currentLanguage === 'es' ? 'Pág.' : 'Page';
     const note = {
         id,
-        title: `FICHA: ${ref} (Pág. ${pg})`,
-        content: `FRAGMENTO:\n"${text}"\n\nCOMENTARIO:\n${comment}\n\nORIGEN: ${ref} | PÁGINA: ${pg}`,
+        title: `${cardWord}: ${ref} (${pageWord} ${pg})`,
+        content: `${t("modal_ficha_fragment").toUpperCase()}:\n"${text}"\n\n${t("modal_ficha_comment").toUpperCase()}:\n${comment}\n\n${t("modal_ficha_ref").toUpperCase()}: ${ref} | ${t("modal_ficha_page").toUpperCase()}: ${pg}`,
         type: 'ficha',
         collectionId: collection.id,
         collectionColor: collection.color,
@@ -405,7 +426,7 @@ const saveFicha = async () => {
     tx.objectStore('notes').put(note);
     tx.oncomplete = () => {
         closeModal('ficha-modal');
-        showToast(`Ficha almacenada en colección: ${ref}`);
+        showToast(`${t("toast_ficha_saved")}${ref}`);
         window.getSelection().removeAllRanges();
         if (currentView === 'notas') renderNotesList();
     };
@@ -451,7 +472,7 @@ async function getOrCreateCollectionForDocument(docName) {
  */
 async function goToDocumentCollection() {
     const docName = document.getElementById('lab-notebook-title').innerText;
-    if (!docName || docName === 'Notebook') return showToast("No hay un documento activo");
+    if (!docName || docName === 'Notebook') return showToast(t("toast_no_active_doc"));
 
     const collection = await getOrCreateCollectionForDocument(docName);
     
@@ -460,7 +481,7 @@ async function goToDocumentCollection() {
     renderCollections();
     renderNotesList();
     
-    showToast(`Mostrando fichas de: ${docName}`);
+    showToast(`${t("toast_showing_fichas")}${docName}`);
 }
 
 // --- EXTRACCIÓN DE METADATOS (CROSSREF / OPENALEX) ---
@@ -539,29 +560,29 @@ function showMetadataModal(resourceId) {
         body.innerHTML = `
                     <div class="grid grid-cols-2 gap-4 border-b border-stone-100 pb-6">
                         <div class="col-span-2">
-                            <span class="text-[10px] uppercase font-bold text-stone-400 block mb-1">Título del Artículo</span>
+                            <span class="text-[10px] uppercase font-bold text-stone-400 block mb-1">${t("modal_metadata_lbl_title")}</span>
                             <h4 class="text-xl font-bold italic text-stone-800">${m.title}</h4>
                         </div>
                         <div>
-                            <span class="text-[10px] uppercase font-bold text-stone-400 block mb-1">Autores</span>
+                            <span class="text-[10px] uppercase font-bold text-stone-400 block mb-1">${t("modal_metadata_lbl_authors")}</span>
                             <p class="text-sm text-stone-600">${m.authors}</p>
                         </div>
                         <div>
-                            <span class="text-[10px] uppercase font-bold text-stone-400 block mb-1">Publicación / Revista</span>
+                            <span class="text-[10px] uppercase font-bold text-stone-400 block mb-1">${t("modal_metadata_lbl_journal")}</span>
                             <p class="text-sm text-stone-600">${m.journal}</p>
                         </div>
                         <div>
-                            <span class="text-[10px] uppercase font-bold text-stone-400 block mb-1">Año</span>
+                            <span class="text-[10px] uppercase font-bold text-stone-400 block mb-1">${t("modal_metadata_lbl_year")}</span>
                             <p class="text-sm text-stone-600">${m.year}</p>
                         </div>
                         <div>
-                            <span class="text-[10px] uppercase font-bold text-stone-400 block mb-1">DOI Identificador</span>
+                            <span class="text-[10px] uppercase font-bold text-stone-400 block mb-1">${t("modal_metadata_lbl_doi")}</span>
                             <p class="text-sm text-stone-600 mono">${m.doi}</p>
                         </div>
                     </div>
                     
                     <div class="space-y-4 pt-4">
-                        <h5 class="text-xs font-bold uppercase tracking-widest text-amber-900">Formatos de Citación</h5>
+                        <h5 class="text-xs font-bold uppercase tracking-widest text-amber-900">${t("modal_metadata_citation_formats")}</h5>
                         ${Object.entries(citations).map(([format, text]) => `
                             <div class="p-3 bg-stone-50 rounded border border-stone-200 relative group">
                                 <div class="flex justify-between items-center mb-1">
@@ -590,7 +611,7 @@ function copyText(btn, text) {
         btn.innerHTML = icon;
         lucide.createIcons();
     }, 2000);
-    showToast("Cita copiada al portapapeles");
+    showToast(t("toast_citation_copied"));
 }
 
 // --- IMPORTACIÓN POR DOI ---
@@ -598,11 +619,11 @@ async function importByDoi() {
     const doi = document.getElementById('doiInput').value.trim();
     if (!doi) return;
 
-    showToast("Consultando DOI...");
+    showToast(t("toast_querying_doi"));
     const meta = await fetchAcademicMetadata(doi);
 
     if (!meta) {
-        showToast("No se pudo resolver el DOI.");
+        showToast(t("toast_doi_unresolved"));
         return;
     }
 
@@ -620,11 +641,13 @@ async function importByDoi() {
 
     const tx = db.transaction(['resources', 'activity'], 'readwrite');
     tx.objectStore('resources').add(resource);
+    const importedText = currentLanguage === 'es' ? 'Importado' : 'Imported';
+    const justNowText = currentLanguage === 'es' ? 'Justo ahora' : 'Just now';
     tx.objectStore('activity').add({
         id: Date.now(),
-        name: `Importado: ${meta.title.substring(0, 20)}...`,
+        name: `${importedText}: ${meta.title.substring(0, 20)}...`,
         type: 'doi-import',
-        time: 'Justo ahora'
+        time: justNowText
     });
 
     tx.oncomplete = () => {
@@ -632,7 +655,7 @@ async function importByDoi() {
         loadActivity();
         updateStats();
         document.getElementById('doiInput').value = '';
-        showToast("DOI importado exitosamente");
+        showToast(t("toast_doi_imported"));
         showMetadataModal(resource.id);
     };
 }
@@ -642,7 +665,7 @@ const handleFileUpload = async (e) => {
     const file = e.target.files ? e.target.files[0] : null;
     if (!file) return;
 
-    showToast("Procesando PDF...");
+    showToast(t("toast_processing_pdf"));
 
     const resourceId = 'res_' + Date.now();
     const resource = {
@@ -657,18 +680,20 @@ const handleFileUpload = async (e) => {
 
     const tx = db.transaction(['resources', 'activity'], 'readwrite');
     tx.objectStore('resources').add(resource);
+    const uploadText = currentLanguage === 'es' ? 'Subida' : 'Upload';
+    const recentText = currentLanguage === 'es' ? 'Reciente' : 'Recent';
     tx.objectStore('activity').add({
         id: Date.now(),
-        name: `Subida: ${file.name}`,
+        name: `${uploadText}: ${file.name}`,
         type: 'upload',
-        time: 'Reciente'
+        time: recentText
     });
 
     tx.oncomplete = () => {
         renderLibrary();
         loadActivity();
         updateStats();
-        showToast("Archivo almacenado en biblioteca");
+        showToast(t("toast_pdf_stored"));
     };
 };
 
@@ -678,7 +703,7 @@ const handleObsidianUpload = async (e) => {
     if (!file) return;
 
     const text = await file.text();
-    showToast("Procesando nota de Obsidian...");
+    showToast(t("toast_processing_obsidian"));
 
     // 1. Parsing Frontmatter
     const fmMatch = text.match(/^---\n([\s\S]*?)\n---/);
@@ -711,15 +736,16 @@ const handleObsidianUpload = async (e) => {
 
     const tx = db.transaction(['notes', 'activity'], 'readwrite');
     tx.objectStore('notes').add(note);
+    const justNowText = currentLanguage === 'es' ? 'Justo ahora' : 'Just now';
     tx.objectStore('activity').add({
         id: Date.now(),
         name: `Obsidian: ${note.title}`,
         type: 'obsidian-import',
-        time: 'Justo ahora'
+        time: justNowText
     });
 
     tx.oncomplete = () => {
-        showToast("Nota de Obsidian importada al Motor de Fichas");
+        showToast(t("toast_obsidian_imported"));
         renderLibrary();
         loadActivity();
     };
@@ -729,7 +755,7 @@ const handleObsidianUpload = async (e) => {
 const handleOfficeUpload = async (e) => {
     const file = e.target.files ? e.target.files[0] : null;
     if (!file) return;
-    showToast("Indexando Documento...");
+    showToast(t("toast_indexing_doc"));
 
     const id = 'res_off_' + Date.now();
     const resource = {
@@ -743,17 +769,18 @@ const handleOfficeUpload = async (e) => {
 
     const tx = db.transaction(['resources', 'activity'], 'readwrite');
     tx.objectStore('resources').add(resource);
+    const justNowText = currentLanguage === 'es' ? 'Justo ahora' : 'Just now';
     tx.objectStore('activity').add({
         id: Date.now(),
         name: `Doc: ${file.name}`,
         type: 'office-import',
-        time: 'Justo ahora'
+        time: justNowText
     });
 
     tx.oncomplete = () => {
         renderLibrary();
         loadActivity();
-        showToast("Documento añadido");
+        showToast(t("toast_doc_added"));
     };
 };
 
@@ -767,12 +794,12 @@ async function openOfficeViewer(id) {
         const badgeEl = document.getElementById('office-type-badge');
 
         titleEl.innerText = res.name;
-        container.innerHTML = 'Procesando contenido...';
+        container.innerHTML = t("toast_loading_doc");
         document.getElementById('office-viewer-overlay').classList.remove('hidden');
 
         try {
             if (res.name.endsWith('.docx')) {
-                badgeEl.innerText = "Soporte Word Nativo";
+                badgeEl.innerText = t("office_viewer_native_support");
                 const result = await mammoth.convertToHtml({ arrayBuffer });
                 container.innerHTML = `<div class="prose prose-stone max-w-none prose-headings:font-bold prose-headings:text-stone-800 prose-p:text-stone-600 prose-a:text-amber-700">${result.value}</div>`;
             }
@@ -781,15 +808,15 @@ async function openOfficeViewer(id) {
                 container.innerHTML = `
                             <div class="flex flex-col items-center justify-center h-full text-center text-stone-400 space-y-4 py-20">
                                 <i data-lucide="monitor-x" class="w-16 h-16 text-stone-300"></i>
-                                <h3 class="text-xl font-bold text-stone-600">Visualización no soportada</h3>
-                                <p class="text-sm max-w-md leading-relaxed">El formato de <b>${res.name}</b> no es compatible con el motor de lectura seguro.</p>
+                                <h3 class="text-xl font-bold text-stone-600">${t("office_viewer_not_supported")}</h3>
+                                <p class="text-sm max-w-md leading-relaxed">${t("office_viewer_not_supported_desc").replace("{name}", res.name)}</p>
                             </div>`;
             }
         } catch (err) {
             container.innerHTML = `
                         <div class="p-8 text-center text-red-500 bg-red-50 rounded border border-red-200">
                             <i data-lucide="alert-triangle" class="w-8 h-8 mx-auto mb-2"></i>
-                            <p>Error al renderizar el documento: ${err.message}</p>
+                            <p>${t("office_viewer_error")} ${err.message}</p>
                         </div>`;
         }
         lucide.createIcons();
@@ -836,7 +863,7 @@ const handleNotebookUpload = async (e) => {
     const text = await file.text();
     try {
         JSON.parse(text); // Validar JSON
-        showToast("Indexando Notebook...");
+        showToast(t("toast_indexing_nb"));
 
         const id = 'res_nb_' + Date.now();
         const resource = {
@@ -850,20 +877,21 @@ const handleNotebookUpload = async (e) => {
 
         const tx = db.transaction(['resources', 'activity'], 'readwrite');
         tx.objectStore('resources').add(resource);
+        const recentText = currentLanguage === 'es' ? 'Reciente' : 'Recent';
         tx.objectStore('activity').add({
             id: Date.now(),
             name: `Notebook: ${file.name}`,
             type: 'notebook-import',
-            time: 'Reciente'
+            time: recentText
         });
 
         tx.oncomplete = () => {
             renderLibrary();
             loadActivity();
-            showToast("Notebook añadido a la biblioteca");
+            showToast(t("toast_nb_added"));
         };
     } catch (err) {
-        showToast("Error: El archivo no es un .ipynb válido");
+        showToast(t("toast_nb_invalid"));
     }
 };
 
@@ -897,7 +925,7 @@ async function navigateByWikilink(linkText) {
                     }
                     nCursor.continue();
                 } else {
-                    showToast(`No se encontró destino para: ${target}`);
+                    showToast(`${t("toast_no_destination")}${target}`);
                 }
             };
         }
@@ -1074,21 +1102,21 @@ async function setItemFolder(id, entryType, folder) {
         store.put(item);
 
         tx.oncomplete = () => {
-            showToast(`Categoría: ${folder === 'all' ? 'Removida' : folder.toUpperCase()}`);
+            showToast(`${t("toast_category")}${folder === 'all' ? t("toast_removed") : folder.toUpperCase()}`);
             renderLibrary();
         };
     };
 }
 
 const deleteResourceOrNote = (id, entryType) => {
-    if (!confirm("¿Seguro de eliminar este registro del ecosistema?")) return;
+    if (!confirm(t("confirm_delete"))) return;
     const storeName = entryType === 'resource' ? 'resources' : 'notes';
     const tx = db.transaction(storeName, 'readwrite');
     tx.objectStore(storeName).delete(id);
     tx.oncomplete = () => {
         renderLibrary();
         updateStats();
-        showToast("Registro eliminado");
+        showToast(t("toast_record_deleted"));
     };
 };
 
@@ -1119,10 +1147,10 @@ let currentCollectionId = null;
 
 // --- GESTIÓN DE NOTAS ---
 const saveCurrentNote = async () => {
-    const title = document.getElementById('note-title').value || 'Sin Título';
+    const title = document.getElementById('note-title').value || (currentLanguage === 'es' ? 'Sin Título' : 'Untitled');
     const content = document.getElementById('note-content').value;
 
-    if (!content) return showToast("La ficha está vacía");
+    if (!content) return showToast(t("toast_ficha_empty"));
 
     const id = currentNoteId || 'note_' + Date.now();
     
@@ -1155,7 +1183,7 @@ const saveCurrentNote = async () => {
     tx.oncomplete = () => {
         currentNoteId = id;
         renderNotesList();
-        showToast("Ficha sellada exitosamente");
+        showToast(t("toast_ficha_sealed"));
     };
 };
 
@@ -1246,7 +1274,7 @@ const filterFichasByRef = (refName) => {
         const cursor = e.target.result;
         if (cursor) {
             const n = cursor.value;
-            if (n.title.includes(`FICHA: ${refName}`)) {
+            if (n.title.includes(`FICHA: ${refName}`) || n.title.includes(`CARD: ${refName}`)) {
                 const item = document.createElement('div');
                 item.className = `p-3 rounded cursor-pointer transition-all border border-amber-300 bg-amber-50/30 shadow-sm mb-2`;
                 item.onclick = () => loadNote(n.id);
@@ -1259,7 +1287,7 @@ const filterFichasByRef = (refName) => {
             cursor.continue();
         }
     };
-    showToast(`Filtrando fichas de: ${refName}`);
+    showToast(`${t("toast_filtering_fichas")}${refName}`);
 };
 
 // --- EXPORTACIÓN DE NOTAS ---
@@ -1274,24 +1302,25 @@ const escapeHtml = (text) => {
 };
 
 function exportNote(format) {
-    const title = document.getElementById('note-title').value || 'Sin_Titulo';
+    const title = document.getElementById('note-title').value || (currentLanguage === 'es' ? 'Sin_Titulo' : 'Untitled');
     const safeTitle = escapeHtml(title);
     const content = document.getElementById('note-content').value;
 
-    if (!content) return showToast("No hay contenido para exportar");
+    if (!content) return showToast(t("toast_no_content_export"));
 
     if (format === 'md') {
         const blob = new Blob([`# ${title}\n\n${content}`], { type: 'text/markdown;charset=utf-8' });
         saveAs(blob, `${title.replace(/\s+/g, '_')}.md`);
-        showToast("Archivo Markdown exportado");
+        showToast(t("toast_md_exported"));
     }
     else if (format === 'pdf') {
         const printContainer = document.getElementById('print-section');
+        const exportFromText = currentLanguage === 'es' ? 'Exportado desde' : 'Exported from';
         printContainer.innerHTML = `
                     <h1>${safeTitle}</h1>
                     <div class="note-content">${marked.parse(content)}</div>
                     <div class="metadata">
-                        Exportado desde Anticithera Hub - ${new Date().toLocaleString()}<br>
+                        ${exportFromText} Anticithera Hub - ${new Date().toLocaleString()}<br>
                         Local ID: ${currentNoteId || 'N/A'}
                     </div>
                 `;
@@ -1299,19 +1328,20 @@ function exportNote(format) {
     }
     else if (format === 'docx') {
         // Generamos un HTML robusto que Word reconozca como documento
+        const exportFromText = currentLanguage === 'es' ? 'Exportado desde' : 'Exported from';
         const htmlContent = `
                     <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
                     <head><meta charset='utf-8'><title>${safeTitle}</title></head>
                     <body style="font-family: 'Times New Roman', serif;">
                         <h1 style="text-align: center; border-bottom: 1px solid black; padding-bottom: 10px;">${safeTitle}</h1>
                         <div style="margin-top: 20px; line-height: 1.5;">${marked.parse(content)}</div>
-                        <p style="margin-top: 50px; font-size: 10pt; color: #666;">Exportado desde Anticithera Hub - ${new Date().toLocaleDateString()}</p>
+                        <p style="margin-top: 50px; font-size: 10pt; color: #666;">${exportFromText} Anticithera Hub - ${new Date().toLocaleDateString()}</p>
                     ${'</'}body>
                     ${'</'}html>
                 `;
         const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
         saveAs(blob, `${title.replace(/\s+/g, '_')}.doc`);
-        showToast("Archivo DOC exportado (formato Word)");
+        showToast(t("toast_doc_exported"));
     }
 }
 
@@ -1776,7 +1806,7 @@ async function moveNoteToCollection(noteId, colId, colColor) {
         note.collectionColor = colColor;
         store.put(note);
         tx.oncomplete = () => {
-            showToast("Ficha organizada");
+            showToast(t("toast_ficha_organized"));
             renderNotesList();
         };
     }
@@ -1796,7 +1826,7 @@ function toggleDarkMode() {
         lucide.createIcons();
     }
     
-    showToast(isDark ? "Modo Oscuro Activado" : "Modo Sepia Activado");
+    showToast(isDark ? t("toast_dark_mode") : t("toast_sepia_mode"));
 }
 
 function loadDarkModePreference() {
@@ -1903,7 +1933,7 @@ async function handleSessionSubmit(e, action) {
         const password = passwordInput ? passwordInput.value : '';
         
         if (!username || !password) {
-            showToast("Usuario y contraseña requeridos");
+            showToast(t("toast_user_pass_required"));
             return;
         }
 
@@ -1916,7 +1946,7 @@ async function handleSessionSubmit(e, action) {
 
             const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.error || 'Error al iniciar sesión');
+                throw new Error(data.error || t("toast_session_error"));
             }
 
             userSession = {
@@ -1928,14 +1958,14 @@ async function handleSessionSubmit(e, action) {
 
             safeStorage.setItem('anticithera_session', JSON.stringify(userSession));
             updateSessionUI();
-            showToast(`Sesión iniciada como ${data.username}`);
+            showToast(`${t("toast_session_started")}${data.username}`);
 
             document.getElementById('session-form-login')?.reset();
             showSessionForm('initial');
             document.getElementById('userSessionPanel')?.classList.add('hidden');
         } catch (error) {
             console.error("Error de login:", error);
-            showToast(error.message || "Error al iniciar sesión");
+            showToast(error.message || t("toast_session_error"));
         }
     } else if (action === 'register') {
         const usernameInput = document.getElementById('register-username');
@@ -1946,7 +1976,7 @@ async function handleSessionSubmit(e, action) {
         const password = passwordInput ? passwordInput.value : '';
 
         if (!username || !email || !password) {
-            showToast("Todos los campos son requeridos");
+            showToast(t("toast_all_fields_required"));
             return;
         }
 
@@ -1959,7 +1989,7 @@ async function handleSessionSubmit(e, action) {
 
             const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.error || 'Error al registrar usuario');
+                throw new Error(data.error || t("toast_register_error"));
             }
 
             userSession = {
@@ -1971,20 +2001,20 @@ async function handleSessionSubmit(e, action) {
 
             safeStorage.setItem('anticithera_session', JSON.stringify(userSession));
             updateSessionUI();
-            showToast(`Registro exitoso. Sesión iniciada.`);
+            showToast(t("toast_register_success"));
 
             document.getElementById('session-form-register')?.reset();
             showSessionForm('initial');
             document.getElementById('userSessionPanel')?.classList.add('hidden');
         } catch (error) {
             console.error("Error de registro:", error);
-            showToast(error.message || "Error al registrar usuario");
+            showToast(error.message || t("toast_register_error"));
         }
     }
 }
 
 async function loginWithGoogle() {
-    showToast("Conectando con Google...");
+    showToast(t("toast_connecting_google"));
     try {
         const response = await fetch(`${API_BASE_URL}/auth/register`, {
             method: 'POST',
@@ -2011,11 +2041,11 @@ async function loginWithGoogle() {
         };
         safeStorage.setItem('anticithera_session', JSON.stringify(userSession));
         updateSessionUI();
-        showToast("Sesión iniciada con Google");
+        showToast(t("toast_session_google"));
         document.getElementById('userSessionPanel')?.classList.add('hidden');
     } catch (e) {
         console.error("Error en conexión con Google:", e);
-        showToast(e.message || "Error al conectar con Google");
+        showToast(e.message || t("toast_session_error"));
     }
 }
 
@@ -2040,7 +2070,7 @@ async function logoutSession() {
     userSession = null;
     safeStorage.removeItem('anticithera_session');
     updateSessionUI();
-    showToast("Sesión cerrada");
+    showToast(t("toast_session_closed"));
     document.getElementById('userSessionPanel')?.classList.add('hidden');
 }
 

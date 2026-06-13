@@ -103,14 +103,14 @@
     <button id="selectionFAB"
         class="hidden fixed z-[500] bg-amber-900 text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-2xl flex items-center gap-2"
         style="left: 50%; transform: translateX(-50%);">
-        <i data-lucide="plus-square" class="w-3 h-3"></i> Crear Ficha
+        <i data-lucide="plus-square" class="w-3 h-3"></i> <span data-i18n="btn_crear_ficha">Crear Ficha</span>
     </button>
 
     <div id="metadata-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center p-4 modal-overlay">
         <div
             class="bg-white border border-stone-400 w-full max-w-2xl rounded shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             <div class="p-4 bg-stone-100 border-b border-stone-200 flex justify-between items-center">
-                <h3 class="font-bold italic text-stone-700">Metadatos y Citación Académica</h3>
+                <h3 class="font-bold italic text-stone-700" data-i18n="modal_metadata_title">Metadatos y Citación Académica</h3>
                 <button type="button" onclick="closeModal('metadata-modal')"
                     class="text-stone-400 hover:text-stone-900"><i data-lucide="x"></i></button>
             </div>
@@ -123,13 +123,13 @@
         <div
             class="bg-white border border-stone-400 w-full max-w-lg rounded shadow-2xl overflow-hidden flex flex-col transform transition-all">
             <div class="p-4 bg-stone-100 border-b border-stone-200 flex justify-between items-center">
-                <h3 class="font-bold italic text-stone-700">Nueva Ficha Bibliográfica</h3>
+                <h3 class="font-bold italic text-stone-700" data-i18n="modal_ficha_title">Nueva Ficha Bibliográfica</h3>
                 <button type="button" onclick="closeModal('ficha-modal')" class="text-stone-400 hover:text-stone-900"><i
                         data-lucide="x"></i></button>
             </div>
             <div class="p-6 space-y-4">
                 <div>
-                    <label class="text-[10px] uppercase font-bold text-stone-400 block mb-1">Fragmento
+                    <label class="text-[10px] uppercase font-bold text-stone-400 block mb-1" data-i18n="modal_ficha_fragment">Fragmento
                         Seleccionado</label>
                     <div id="ficha-text-preview"
                         class="p-3 bg-stone-50 border border-stone-200 rounded text-sm italic text-stone-600 max-h-32 overflow-y-auto leading-relaxed">
@@ -137,26 +137,26 @@
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="text-[10px] uppercase font-bold text-stone-400 block mb-1">Referencia
+                        <label class="text-[10px] uppercase font-bold text-stone-400 block mb-1" data-i18n="modal_ficha_ref">Referencia
                             Origen</label>
                         <input type="text" id="ficha-ref" readonly
                             class="w-full bg-stone-100 border border-stone-200 rounded px-3 py-2 text-xs outline-none text-stone-500">
                     </div>
                     <div>
-                        <label class="text-[10px] uppercase font-bold text-stone-400 block mb-1">Página</label>
+                        <label class="text-[10px] uppercase font-bold text-stone-400 block mb-1" data-i18n="modal_ficha_page">Página</label>
                         <input type="text" id="ficha-page" readonly
                             class="w-full bg-stone-100 border border-stone-200 rounded px-3 py-2 text-xs outline-none text-stone-500">
                     </div>
                 </div>
                 <div>
-                    <label class="text-[10px] uppercase font-bold text-stone-400 block mb-1">Comentario / Análisis
+                    <label class="text-[10px] uppercase font-bold text-stone-400 block mb-1" data-i18n="modal_ficha_comment">Comentario / Análisis
                         Personal</label>
-                    <textarea id="ficha-comment" placeholder="Ingresa tus reflexiones sobre este fragmento..."
+                    <textarea id="ficha-comment" data-i18n-placeholder="modal_ficha_comment_placeholder" placeholder="Ingresa tus reflexiones sobre este fragmento..."
                         class="w-full border border-stone-300 rounded p-3 text-sm focus:ring-1 focus:ring-amber-700 outline-none h-32 resize-none leading-relaxed"></textarea>
                 </div>
                 <div class="flex justify-end pt-2">
                     <button type="button" onclick="saveFicha()"
-                        class="btn-sepia px-8 py-2.5 rounded text-[10px] font-bold uppercase tracking-widest shadow hover:shadow-lg transition-all">Almacenar
+                        class="btn-sepia px-8 py-2.5 rounded text-[10px] font-bold uppercase tracking-widest shadow hover:shadow-lg transition-all" data-i18n="modal_ficha_save">Almacenar
                         Ficha</button>
                 </div>
             </div>
@@ -166,7 +166,7 @@
     <div id="collection-modal" class="hidden fixed inset-0 z-[600] flex items-center justify-center p-4 modal-overlay">
         <div class="bg-white border border-stone-400 w-full max-w-sm rounded shadow-2xl overflow-hidden flex flex-col">
             <div class="p-4 bg-amber-900 text-white flex justify-between items-center">
-                <h3 class="font-bold italic text-sm tracking-widest uppercase">Nueva Colección</h3>
+                <h3 class="font-bold italic text-sm tracking-widest uppercase" data-i18n="modal_col_title">Nueva Colección</h3>
                 <button type="button" onclick="closeModal('collection-modal')"
                     class="text-white/70 hover:text-white transition-colors">
                     <i data-lucide="x" class="w-4 h-4"></i>
@@ -174,13 +174,13 @@
             </div>
             <div class="p-6 space-y-4">
                 <div>
-                    <label class="text-[9px] uppercase font-bold text-stone-500 mb-2 block tracking-widest">Nombre de la
+                    <label class="text-[9px] uppercase font-bold text-stone-500 mb-2 block tracking-widest" data-i18n="modal_col_name">Nombre de la
                         Colección</label>
-                    <input type="text" id="collection-name" placeholder="Ej: Investigación I"
+                    <input type="text" id="collection-name" data-i18n-placeholder="modal_col_name_placeholder" placeholder="Ej: Investigación I"
                         class="w-full bg-stone-50 border border-stone-300 rounded-lg py-2 px-4 text-xs outline-none focus:ring-1 focus:ring-amber-700">
                 </div>
                 <div>
-                    <label class="text-[9px] uppercase font-bold text-stone-500 mb-2 block tracking-widest">Color
+                    <label class="text-[9px] uppercase font-bold text-stone-500 mb-2 block tracking-widest" data-i18n="modal_col_color">Color
                         Distintivo</label>
                     <div class="grid grid-cols-6 gap-2">
                         <input type="radio" name="col-color" value="#78350f" id="c1" class="hidden peer/c1" checked>
@@ -240,7 +240,7 @@
                     </div>
                 </div>
                 <button type="button" onclick="saveNewCollection()"
-                    class="w-full bg-stone-800 text-white py-3 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-900 transition-all mt-2">Crear
+                    class="w-full bg-stone-800 text-white py-3 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-900 transition-all mt-2" data-i18n="modal_col_create">Crear
                     Colección</button>
             </div>
         </div>
@@ -250,12 +250,12 @@
         <div class="h-14 bg-stone-800 border-b border-stone-700 flex items-center justify-between px-4 text-white">
             <div class="flex items-center gap-4">
                 <button type="button" onclick="closePdfViewer()" class="p-2 hover:bg-stone-700 rounded"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-                <h2 id="pdf-viewer-title" class="text-sm font-bold truncate max-w-xs">Documento</h2>
+                <h2 id="pdf-viewer-title" class="text-sm font-bold truncate max-w-xs" data-i18n="pdf_viewer_document">Documento</h2>
             </div>
             <div class="flex items-center gap-2">
-                <button type="button" onclick="zoomPdf(-0.2)" class="p-2 hover:bg-stone-700 rounded" title="Zoom Out"><i data-lucide="minus"></i></button>
-                <button type="button" onclick="zoomPdf(0.2)" class="p-2 hover:bg-stone-700 rounded" title="Zoom In"><i data-lucide="plus"></i></button>
-                <button type="button" onclick="rotatePdf()" class="p-2 hover:bg-stone-700 rounded" title="Rotar"><i data-lucide="rotate-cw"></i></button>
+                <button type="button" onclick="zoomPdf(-0.2)" class="p-2 hover:bg-stone-700 rounded" data-i18n-title="pdf_viewer_zoom_out" title="Zoom Out"><i data-lucide="minus"></i></button>
+                <button type="button" onclick="zoomPdf(0.2)" class="p-2 hover:bg-stone-700 rounded" data-i18n-title="pdf_viewer_zoom_in" title="Zoom In"><i data-lucide="plus"></i></button>
+                <button type="button" onclick="rotatePdf()" class="p-2 hover:bg-stone-700 rounded" data-i18n-title="pdf_viewer_rotate" title="Rotar"><i data-lucide="rotate-cw"></i></button>
             </div>
         </div>
         <div id="pdf-render-container" class="flex-1 overflow-auto bg-stone-800 p-8 flex flex-col">
@@ -273,11 +273,9 @@
                     class="p-2 hover:bg-stone-100 rounded text-stone-600 transition-colors"><i data-lucide="arrow-left"
                         class="w-5 h-5"></i></button>
                 <div class="flex flex-col">
-                    <h2 id="office-title" class="text-sm font-bold text-stone-800 truncate max-w-md italic">Documento
-                    </h2>
+                    <h2 id="office-title" class="text-sm font-bold text-stone-800 truncate max-w-md italic" data-i18n="pdf_viewer_document">Documento</h2>
                     <span id="office-type-badge"
-                        class="text-[8px] font-bold uppercase text-amber-600 tracking-widest mt-0.5">LECTURA
-                        SEGURA</span>
+                        class="text-[8px] font-bold uppercase text-amber-600 tracking-widest mt-0.5" data-i18n="office_viewer_badge">LECTURA SEGURA</span>
                 </div>
             </div>
         </div>
@@ -307,7 +305,7 @@
                     class="hidden absolute top-full left-0 right-0 mt-2 bg-white border border-stone-200 shadow-2xl rounded-xl overflow-hidden z-[100] max-h-[400px] flex flex-col">
                     <div id="search-results-list" class="overflow-y-auto p-2 space-y-1"></div>
                     <div
-                        class="p-2 bg-stone-50 border-t border-stone-100 text-[9px] uppercase font-bold text-stone-400 text-center tracking-widest">
+                        class="p-2 bg-stone-50 border-t border-stone-100 text-[9px] uppercase font-bold text-stone-400 text-center tracking-widest" data-i18n="header_search_esc_to_close">
                         Presiona 'Esc' para cerrar
                     </div>
                 </div>
@@ -317,20 +315,20 @@
                 <div class="relative flex-1">
                     <i data-lucide="link"
                         class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400"></i>
-                    <input type="text" id="doiInput" placeholder="DOI"
+                    <input type="text" id="doiInput" data-i18n-placeholder="doi_placeholder" placeholder="DOI"
                         class="w-full bg-[#fdfaf1] border border-stone-300 rounded-full py-1.5 pl-8 pr-4 text-[10px] focus:ring-1 focus:ring-amber-700 outline-none transition-all">
                 </div>
                 <button type="button" onclick="importByDoi()"
-                    class="btn-sepia px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm">Importar</button>
+                    class="btn-sepia px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm" data-i18n="header_import_btn">Importar</button>
 
-                <button type="button" onclick="iniciarImportacionDrive()" title="Importar desde Google Drive"
+                <button type="button" onclick="iniciarImportacionDrive()" data-i18n-title="header_drive_title" title="Importar desde Google Drive"
                     class="border border-stone-300 bg-white/50 hover:bg-white px-2 py-1.5 rounded-full text-[#4285F4] transition-all shadow-sm flex items-center">
                     <i data-lucide="cloud" class="w-4 h-4"></i>
                 </button>
 
                 <input type="file" id="zipUploadInput" class="hidden" accept=".zip"
                     onchange="manejarArchivoZipLocal(event)">
-                <button type="button" onclick="menuImportarZip()" title="Restaurar copia de seguridad (ZIP/GitHub)"
+                <button type="button" onclick="menuImportarZip()" data-i18n-title="header_zip_title" title="Restaurar copia de seguridad (ZIP/GitHub)"
                     class="border border-stone-300 bg-white/50 hover:bg-white px-2 py-1.5 rounded-full text-amber-700 transition-all shadow-sm flex items-center">
                     <i data-lucide="archive-restore" class="w-4 h-4"></i>
                 </button>
@@ -343,7 +341,7 @@
                 <option value="en">EN</option>
             </select>
             
-            <button type="button" onclick="toggleDarkMode()" id="darkModeBtn" title="Cambiar Modo"
+            <button type="button" onclick="toggleDarkMode()" id="darkModeBtn" data-i18n-title="header_dark_mode_title" title="Cambiar Modo"
                 class="p-2 hover:bg-stone-300 rounded-full transition-all duration-300">
                 <i data-lucide="moon" class="w-4 h-4 text-stone-600" id="darkModeIcon"></i>
             </button>
@@ -361,17 +359,17 @@
                     
                     <!-- Estado: No autenticado -->
                     <div id="session-unauth-state" class="p-4 space-y-3">
-                        <h4 class="text-xs font-bold uppercase tracking-widest text-amber-900 mb-1">Acceso de Usuario</h4>
-                        <p class="text-[10px] text-stone-500 italic">Inicia sesión para registrar tus actividades de lectura.</p>
+                        <h4 class="text-xs font-bold uppercase tracking-widest text-amber-900 mb-1" data-i18n="session_title">Acceso de Usuario</h4>
+                        <p class="text-[10px] text-stone-500 italic" data-i18n="session_desc">Inicia sesión para registrar tus actividades de lectura.</p>
                         
                         <!-- Botones de Acción Iniciales -->
                         <div id="session-actions-initial" class="space-y-2">
                             <button type="button" onclick="showSessionForm('login')"
-                                class="w-full bg-stone-800 text-white py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-900 transition-all">
+                                class="w-full bg-stone-800 text-white py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-900 transition-all" data-i18n="session_btn_login">
                                 Iniciar Sesión
                             </button>
                             <button type="button" onclick="showSessionForm('register')"
-                                class="w-full bg-white border border-stone-300 text-stone-700 py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-50 transition-all">
+                                class="w-full bg-white border border-stone-300 text-stone-700 py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-50 transition-all" data-i18n="session_btn_register">
                                 Registrarse
                             </button>
                             <button type="button" onclick="loginWithGoogle()"
@@ -382,43 +380,43 @@
                                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
                                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                                 </svg>
-                                Registrarse con Google
+                                <span data-i18n="session_btn_google">Registrarse con Google</span>
                             </button>
                         </div>
 
                         <!-- Formulario de Login (Oculto por defecto) -->
                         <form id="session-form-login" class="hidden space-y-2.5 pt-2" onsubmit="handleSessionSubmit(event, 'login')">
                             <div>
-                                <label class="text-[9px] uppercase font-bold text-stone-500 tracking-wider">Usuario / Correo</label>
+                                <label class="text-[9px] uppercase font-bold text-stone-500 tracking-wider" data-i18n="session_label_user_email">Usuario / Correo</label>
                                 <input type="text" required id="login-username" class="w-full bg-stone-50 border border-stone-300 rounded p-1.5 text-xs outline-none focus:ring-1 focus:ring-amber-700">
                             </div>
                             <div>
-                                <label class="text-[9px] uppercase font-bold text-stone-500 tracking-wider">Contraseña</label>
+                                <label class="text-[9px] uppercase font-bold text-stone-500 tracking-wider" data-i18n="session_label_password">Contraseña</label>
                                 <input type="password" required id="login-password" class="w-full bg-stone-50 border border-stone-300 rounded p-1.5 text-xs outline-none focus:ring-1 focus:ring-amber-700">
                             </div>
                             <div class="flex gap-2 pt-1">
-                                <button type="button" onclick="showSessionForm('initial')" class="w-1/2 border border-stone-300 text-stone-600 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-50 transition-all">Volver</button>
-                                <button type="submit" class="w-1/2 bg-amber-900 text-white py-1.5 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-950 transition-all">Entrar</button>
+                                <button type="button" onclick="showSessionForm('initial')" class="w-1/2 border border-stone-300 text-stone-600 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-50 transition-all" data-i18n="session_btn_back">Volver</button>
+                                <button type="submit" class="w-1/2 bg-amber-900 text-white py-1.5 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-955 transition-all" data-i18n="session_btn_enter">Entrar</button>
                             </div>
                         </form>
 
                         <!-- Formulario de Registro (Oculto por defecto) -->
                         <form id="session-form-register" class="hidden space-y-2.5 pt-2" onsubmit="handleSessionSubmit(event, 'register')">
                             <div>
-                                <label class="text-[9px] uppercase font-bold text-stone-500 tracking-wider">Nombre de Usuario</label>
+                                <label class="text-[9px] uppercase font-bold text-stone-500 tracking-wider" data-i18n="session_label_username">Nombre de Usuario</label>
                                 <input type="text" required id="register-username" class="w-full bg-stone-50 border border-stone-300 rounded p-1.5 text-xs outline-none focus:ring-1 focus:ring-amber-700">
                             </div>
                             <div>
-                                <label class="text-[9px] uppercase font-bold text-stone-500 tracking-wider">Correo Electrónico</label>
+                                <label class="text-[9px] uppercase font-bold text-stone-500 tracking-wider" data-i18n="session_label_email">Correo Electrónico</label>
                                 <input type="email" required id="register-email" class="w-full bg-stone-50 border border-stone-300 rounded p-1.5 text-xs outline-none focus:ring-1 focus:ring-amber-700">
                             </div>
                             <div>
-                                <label class="text-[9px] uppercase font-bold text-stone-500 tracking-wider">Contraseña</label>
+                                <label class="text-[9px] uppercase font-bold text-stone-500 tracking-wider" data-i18n="session_label_password">Contraseña</label>
                                 <input type="password" required id="register-password" class="w-full bg-stone-50 border border-stone-300 rounded p-1.5 text-xs outline-none focus:ring-1 focus:ring-amber-700">
                             </div>
                             <div class="flex gap-2 pt-1">
-                                <button type="button" onclick="showSessionForm('initial')" class="w-1/2 border border-stone-300 text-stone-600 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-50 transition-all">Volver</button>
-                                <button type="submit" class="w-1/2 bg-amber-900 text-white py-1.5 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-950 transition-all">Registrar</button>
+                                <button type="button" onclick="showSessionForm('initial')" class="w-1/2 border border-stone-300 text-stone-600 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-50 transition-all" data-i18n="session_btn_back">Volver</button>
+                                <button type="submit" class="w-1/2 bg-amber-900 text-white py-1.5 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-amber-950 transition-all" data-i18n="session_btn_register_submit">Registrar</button>
                             </div>
                         </form>
                     </div>
@@ -436,7 +434,7 @@
                         </div>
                         <div class="p-4 space-y-4">
                             <div>
-                                <p class="text-[9px] uppercase font-bold text-stone-500 tracking-widest mb-1">Tiempo de sesión actual</p>
+                                <p class="text-[9px] uppercase font-bold text-stone-500 tracking-widest mb-1" data-i18n="session_label_current_time">Tiempo de sesión actual</p>
                                 <div class="flex items-center gap-2">
                                     <i data-lucide="clock" class="w-4 h-4 text-amber-700"></i>
                                     <span class="text-sm font-bold text-stone-700" id="sessionTimer">00:00:00</span>
@@ -444,7 +442,7 @@
                             </div>
                             <button type="button" onclick="logoutSession()"
                                 class="w-full flex items-center justify-center gap-2 bg-stone-100 text-stone-600 border border-stone-300 py-2 rounded text-[10px] font-bold uppercase tracking-widest hover:bg-stone-200 transition-all mt-2">
-                                <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Cerrar Sesión
+                                <i data-lucide="log-out" class="w-3.5 h-3.5"></i> <span data-i18n="session_btn_logout">Cerrar Sesión</span>
                             </button>
                         </div>
                     </div>
@@ -476,15 +474,15 @@
 
             <div class="flex-1 overflow-y-auto px-4 py-2 border-t border-stone-300 flex flex-col">
                 <div class="flex justify-between items-center mb-2 px-2 text-stone-500">
-                    <span class="text-[10px] uppercase font-bold tracking-widest text-amber-900">Explorador</span>
-                    <button type="button" id="btn-open-folder" title="Seleccionar Carpeta Local"
+                    <span class="text-[10px] uppercase font-bold tracking-widest text-amber-900" data-i18n="sidebar_explorer">Explorador</span>
+                    <button type="button" id="btn-open-folder" data-i18n-title="sidebar_open_folder_title" title="Seleccionar Carpeta Local"
                         class="hover:text-amber-700 transition-colors p-1 bg-white/50 rounded border border-stone-300 shadow-sm">
                         <i data-lucide="folder-search" class="w-3.5 h-3.5"></i>
                     </button>
                 </div>
                 <div id="file-explorer-tree"
                     class="flex-1 text-xs text-stone-600 space-y-0.5 overflow-y-auto pb-4 custom-scrollbar">
-                    <div class="italic text-[10px] text-stone-400 text-center mt-6">Haz clic en el ícono de carpeta para
+                    <div class="italic text-[10px] text-stone-400 text-center mt-6" data-i18n="sidebar_open_folder_desc">Haz clic en el ícono de carpeta para
                         vincular tu directorio local.</div>
                 </div>
             </div>
@@ -493,7 +491,7 @@
                 <button type="button" onclick="exportarLibreriaAZip()"
                     class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded text-[10px] font-bold uppercase tracking-widest transition-transform hover:scale-[1.02] shadow-md"
                     style="background-color: #433422; color: #d2c1a5;">
-                    <i data-lucide="archive" class="w-4 h-4"></i> Exportar Librería
+                    <i data-lucide="archive" class="w-4 h-4"></i> <span data-i18n="sidebar_export_btn">Exportar Librería</span>
                 </button>
             </div>
         </aside>
@@ -507,32 +505,32 @@
                     <div id="terminal-welcome-state" class="space-y-10">
                         <!-- Bienvenida -->
                         <div class="text-center md:text-left py-4">
-                            <span class="text-[10px] uppercase font-bold text-amber-900 tracking-[0.2em] block mb-1">Panel de Control</span>
-                            <h2 class="text-4xl md:text-5xl font-extrabold italic text-stone-800 tracking-tight">¿Qué vamos a hacer hoy?</h2>
-                            <p class="text-stone-500 text-sm mt-2 italic font-medium">Estado del sistema: <span class="text-green-700 font-bold">Operativo</span></p>
+                            <span class="text-[10px] uppercase font-bold text-amber-900 tracking-[0.2em] block mb-1" data-i18n="terminal_welcome_ctrl">Panel de Control</span>
+                            <h2 class="text-4xl md:text-5xl font-extrabold italic text-stone-800 tracking-tight" data-i18n="terminal_welcome_what_to_do">¿Qué vamos a hacer hoy?</h2>
+                            <p class="text-stone-500 text-sm mt-2 italic font-medium"><span data-i18n="terminal_welcome_status">Estado del sistema:</span> <span class="text-green-700 font-bold" data-i18n="terminal_welcome_operative">Operativo</span></p>
                         </div>
 
                         <!-- Menú de tipos de documento -->
                         <div class="p-6 rounded-2xl shadow-xl text-stone-100 flex flex-col md:flex-row gap-6 items-center justify-between" style="background-color: #433422;">
                             <div class="flex-1 w-full space-y-2">
-                                <h3 class="text-xs font-bold uppercase tracking-widest text-[#d2c1a5]">Menú de tipos de documento</h3>
+                                <h3 class="text-xs font-bold uppercase tracking-widest text-[#d2c1a5]" data-i18n="terminal_welcome_menu_type">Menú de tipos de documento</h3>
                                 <div class="flex flex-wrap gap-2 pt-1" id="document-type-selector">
-                                    <button type="button" onclick="selectDocumentType(this, 'Artículo')" class="doc-type-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-800/40 text-[#d2c1a5] border border-stone-700/60 hover:bg-stone-800/70 transition-all">Artículo</button>
-                                    <button type="button" onclick="selectDocumentType(this, 'Tesis')" class="doc-type-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-800/40 text-[#d2c1a5] border border-stone-700/60 hover:bg-stone-800/70 transition-all">Tesis</button>
-                                    <button type="button" onclick="selectDocumentType(this, 'Tesina')" class="doc-type-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-800/40 text-[#d2c1a5] border border-stone-700/60 hover:bg-stone-800/70 transition-all">Tesina</button>
-                                    <button type="button" onclick="selectDocumentType(this, 'Ensayo')" class="doc-type-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-800/40 text-[#d2c1a5] border border-stone-700/60 hover:bg-stone-800/70 transition-all">Ensayo</button>
-                                    <button type="button" onclick="selectDocumentType(this, 'Personalizado')" class="doc-type-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-800/40 text-[#d2c1a5] border border-stone-700/60 hover:bg-stone-800/70 transition-all">Personalizado</button>
+                                    <button type="button" onclick="selectDocumentType(this, 'Artículo')" class="doc-type-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-800/40 text-[#d2c1a5] border border-stone-700/60 hover:bg-stone-800/70 transition-all" data-i18n="terminal_welcome_art">Artículo</button>
+                                    <button type="button" onclick="selectDocumentType(this, 'Tesis')" class="doc-type-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-800/40 text-[#d2c1a5] border border-stone-700/60 hover:bg-stone-800/70 transition-all" data-i18n="terminal_welcome_tesis">Tesis</button>
+                                    <button type="button" onclick="selectDocumentType(this, 'Tesina')" class="doc-type-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-800/40 text-[#d2c1a5] border border-stone-700/60 hover:bg-stone-800/70 transition-all" data-i18n="terminal_welcome_tesina">Tesina</button>
+                                    <button type="button" onclick="selectDocumentType(this, 'Ensayo')" class="doc-type-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-800/40 text-[#d2c1a5] border border-stone-700/60 hover:bg-stone-800/70 transition-all" data-i18n="terminal_welcome_ensayo">Ensayo</button>
+                                    <button type="button" onclick="selectDocumentType(this, 'Personalizado')" class="doc-type-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-800/40 text-[#d2c1a5] border border-stone-700/60 hover:bg-stone-800/70 transition-all" data-i18n="terminal_welcome_custom">Personalizado</button>
                                 </div>
                             </div>
                             
                             <!-- Línea para nombrar la librería + Botón Crear -->
                             <div id="library-name-container" class="hidden flex-1 w-full space-y-1.5 animate-fade">
-                                <label class="text-[10px] uppercase font-bold text-[#d2c1a5] tracking-wider block">Nombre de la Librería</label>
+                                <label class="text-[10px] uppercase font-bold text-[#d2c1a5] tracking-wider block" data-i18n="terminal_welcome_lib_name">Nombre de la Librería</label>
                                 <div class="flex gap-2">
-                                    <input type="text" id="library-name-input" oninput="updateLibraryName(this.value)" placeholder="Ej: MiInvestigacion" 
+                                    <input type="text" id="library-name-input" oninput="updateLibraryName(this.value)" data-i18n-placeholder="terminal_welcome_lib_placeholder" placeholder="Ej: MiInvestigacion" 
                                         class="flex-1 bg-[#fdfaf1] border border-stone-600 rounded-lg py-2 px-3 text-xs outline-none text-stone-800 focus:ring-2 focus:ring-[#8c7456] transition-all">
                                     <button type="button" onclick="createLibrary()" 
-                                        class="bg-[#8c7456] hover:bg-[#735e45] text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all">
+                                        class="bg-[#8c7456] hover:bg-[#735e45] text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all" data-i18n="terminal_welcome_create_btn">
                                         Crear
                                     </button>
                                 </div>
@@ -547,11 +545,11 @@
                                     <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-900 border border-amber-200 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-amber-900 group-hover:text-white transition-all duration-300">
                                         <i data-lucide="library" class="w-5 h-5"></i>
                                     </div>
-                                    <h3 class="font-bold text-lg text-stone-800 group-hover:text-amber-950 transition-colors">La Librería</h3>
-                                    <p class="text-xs text-stone-500 mt-1 leading-relaxed line-clamp-2">Explora, sube y organiza PDFs, documentos de Office y notebooks localmente.</p>
+                                    <h3 class="font-bold text-lg text-stone-800 group-hover:text-amber-950 transition-colors" data-i18n="nav_libreria">La Librería</h3>
+                                    <p class="text-xs text-stone-500 mt-1 leading-relaxed line-clamp-2" data-i18n="terminal_welcome_desc_libreria">Explora, sube y organiza PDFs, documentos de Office y notebooks localmente.</p>
                                 </div>
                                 <span class="text-[9px] uppercase font-bold text-amber-900 tracking-wider flex items-center gap-1 group-hover:translate-x-1 transition-transform mt-2">
-                                    Acceder <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                    <span data-i18n="terminal_welcome_access">Acceder</span> <i data-lucide="arrow-right" class="w-3 h-3"></i>
                                 </span>
                             </div>
 
@@ -561,11 +559,11 @@
                                     <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-900 border border-amber-200 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-amber-900 group-hover:text-white transition-all duration-300">
                                         <i data-lucide="pen-tool" class="w-5 h-5"></i>
                                     </div>
-                                    <h3 class="font-bold text-lg text-stone-800 group-hover:text-amber-950 transition-colors">Motor de Fichas</h3>
-                                    <p class="text-xs text-stone-500 mt-1 leading-relaxed line-clamp-2">Crea fichas bibliográficas y redacta notas científicas conectadas.</p>
+                                    <h3 class="font-bold text-lg text-stone-800 group-hover:text-amber-950 transition-colors" data-i18n="nav_notas">Motor de Fichas</h3>
+                                    <p class="text-xs text-stone-500 mt-1 leading-relaxed line-clamp-2" data-i18n="terminal_welcome_desc_notas">Crea fichas bibliográficas y redacta notas científicas conectadas.</p>
                                 </div>
                                 <span class="text-[9px] uppercase font-bold text-amber-900 tracking-wider flex items-center gap-1 group-hover:translate-x-1 transition-transform mt-2">
-                                    Acceder <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                    <span data-i18n="terminal_welcome_access">Acceder</span> <i data-lucide="arrow-right" class="w-3 h-3"></i>
                                 </span>
                             </div>
 
@@ -575,11 +573,11 @@
                                     <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-900 border border-amber-200 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-amber-900 group-hover:text-white transition-all duration-300">
                                         <i data-lucide="flask-conical" class="w-5 h-5"></i>
                                     </div>
-                                    <h3 class="font-bold text-lg text-stone-800 group-hover:text-amber-950 transition-colors">Laboratorio</h3>
-                                    <p class="text-xs text-stone-500 mt-1 leading-relaxed line-clamp-2">Visualiza notebooks de Jupyter y ejecuta celdas interactivas en tiempo real.</p>
+                                    <h3 class="font-bold text-lg text-stone-800 group-hover:text-amber-950 transition-colors" data-i18n="nav_laboratorio">Laboratorio</h3>
+                                    <p class="text-xs text-stone-500 mt-1 leading-relaxed line-clamp-2" data-i18n="terminal_welcome_desc_lab">Visualiza notebooks de Jupyter y ejecuta celdas interactivas en tiempo real.</p>
                                 </div>
                                 <span class="text-[9px] uppercase font-bold text-amber-900 tracking-wider flex items-center gap-1 group-hover:translate-x-1 transition-transform mt-2">
-                                    Acceder <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                    <span data-i18n="terminal_welcome_access">Acceder</span> <i data-lucide="arrow-right" class="w-3 h-3"></i>
                                 </span>
                             </div>
                         </div>
@@ -590,14 +588,14 @@
                         <!-- Cabecera del Proyecto -->
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-stone-300/60 pb-6">
                             <div>
-                                <span id="dashboard-document-type" class="text-[9px] uppercase font-bold text-amber-900 bg-amber-200/60 px-2.5 py-1 rounded-full tracking-widest inline-block mb-2">TIPO: TESIS</span>
+                                <span id="dashboard-document-type" class="text-[9px] uppercase font-bold text-amber-900 bg-amber-200/60 px-2.5 py-1 rounded-full tracking-widest inline-block mb-2"><span data-i18n="terminal_dashboard_type">TIPO:</span> TESIS</span>
                                 <h2 id="dashboard-library-name" class="text-4xl md:text-5xl font-black text-stone-800 tracking-tight">Nombre de mi Proyecto</h2>
-                                <p class="text-stone-500 text-xs mt-1.5 italic font-medium">Proyecto activo • Almacenamiento local seguro</p>
+                                <p class="text-stone-500 text-xs mt-1.5 italic font-medium" data-i18n="terminal_dashboard_status">Proyecto activo • Almacenamiento local seguro</p>
                             </div>
                             <div>
                                 <button type="button" onclick="editLibrarySettings()" 
                                     class="border border-stone-400 bg-white/40 hover:bg-white text-stone-700 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm">
-                                    <i data-lucide="settings" class="w-3.5 h-3.5"></i> Configurar
+                                    <i data-lucide="settings" class="w-3.5 h-3.5"></i> <span data-i18n="terminal_dashboard_config">Configurar</span>
                                 </button>
                             </div>
                         </div>
@@ -610,7 +608,7 @@
                                 </div>
                                 <div>
                                     <h4 class="text-2xl font-black text-stone-800" id="dashboard-pdf-count">0</h4>
-                                    <p class="text-[9px] uppercase font-bold text-stone-400 tracking-wider">Documentos</p>
+                                    <p class="text-[9px] uppercase font-bold text-stone-400 tracking-wider" data-i18n="terminal_dashboard_docs">Documentos</p>
                                 </div>
                             </div>
                             <div class="glass-card p-5 rounded-2xl border border-stone-300/40 flex items-center gap-4 bg-white/40 shadow-sm">
@@ -619,7 +617,7 @@
                                 </div>
                                 <div>
                                     <h4 class="text-2xl font-black text-stone-800" id="dashboard-notes-count">0</h4>
-                                    <p class="text-[9px] uppercase font-bold text-stone-400 tracking-wider">Fichas de Lectura</p>
+                                    <p class="text-[9px] uppercase font-bold text-stone-400 tracking-wider" data-i18n="terminal_dashboard_fichas">Fichas de Lectura</p>
                                 </div>
                             </div>
                         </div>
@@ -629,18 +627,18 @@
                             <!-- Sección de Documentos Recientes -->
                             <div class="glass-card p-6 rounded-2xl border border-stone-300/40 bg-white/30 space-y-4">
                                 <h3 class="font-bold text-xs uppercase tracking-widest text-stone-500 flex items-center gap-2">
-                                    <i data-lucide="clock" class="w-4 h-4 text-amber-700"></i> Documentos Recientes
+                                    <i data-lucide="clock" class="w-4 h-4 text-amber-700"></i> <span data-i18n="terminal_dashboard_recent_docs">Documentos Recientes</span>
                                 </h3>
                                 <div id="dashboard-recent-docs" class="space-y-2">
                                     <!-- Se carga dinámicamente -->
-                                    <div class="p-4 text-xs italic text-stone-400 text-center">No hay documentos en la librería todavía.</div>
+                                    <div class="p-4 text-xs italic text-stone-400 text-center" data-i18n="terminal_dashboard_no_docs">No hay documentos en la librería todavía.</div>
                                 </div>
                             </div>
 
                             <!-- Sección de Catálogo de Plantillas -->
                             <div class="glass-card p-6 rounded-2xl border border-stone-300/40 bg-white/30 space-y-4">
                                 <h3 class="font-bold text-xs uppercase tracking-widest text-stone-500 flex items-center gap-2">
-                                    <i data-lucide="layout-template" class="w-4 h-4 text-amber-700"></i> Catálogo de Plantillas
+                                    <i data-lucide="layout-template" class="w-4 h-4 text-amber-700"></i> <span data-i18n="terminal_dashboard_templates">Catálogo de Plantillas</span>
                                 </h3>
                                 <div id="dashboard-templates-container" class="space-y-3">
                                     <!-- Se carga dinámicamente -->
@@ -650,18 +648,18 @@
 
                         <!-- Accesos Directos a los Módulos -->
                         <div class="space-y-4">
-                            <h3 class="font-bold text-xs uppercase tracking-widest text-stone-500">Módulos del Sistema</h3>
+                            <h3 class="font-bold text-xs uppercase tracking-widest text-stone-500" data-i18n="terminal_dashboard_sys_modules">Módulos del Sistema</h3>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <!-- Módulo 1: La Librería -->
                                 <div onclick="navigateTo('libreria')" class="group glass-card p-5 rounded-xl border border-stone-300/40 hover:border-amber-700/60 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col justify-between h-36 bg-white/50 backdrop-blur-sm">
                                     <div>
                                         <h4 class="font-bold text-sm text-stone-800 group-hover:text-amber-950 transition-colors flex items-center gap-2">
-                                            <i data-lucide="library" class="w-4 h-4 text-amber-800"></i> La Librería
+                                            <i data-lucide="library" class="w-4 h-4 text-amber-800"></i> <span data-i18n="nav_libreria">La Librería</span>
                                         </h4>
-                                        <p class="text-[11px] text-stone-500 mt-1.5 leading-normal">Explora, sube y organiza tus archivos locales.</p>
+                                        <p class="text-[11px] text-stone-500 mt-1.5 leading-normal" data-i18n="terminal_dashboard_desc_libreria">Explora, sube y organiza tus archivos locales.</p>
                                     </div>
                                     <span class="text-[9px] uppercase font-bold text-amber-900 tracking-wider flex items-center gap-1 group-hover:translate-x-0.5 transition-transform mt-2">
-                                        Entrar <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                        <span data-i18n="terminal_dashboard_enter">Entrar</span> <i data-lucide="arrow-right" class="w-3 h-3"></i>
                                     </span>
                                 </div>
 
@@ -669,12 +667,12 @@
                                 <div onclick="navigateTo('notas')" class="group glass-card p-5 rounded-xl border border-stone-300/40 hover:border-amber-700/60 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col justify-between h-36 bg-white/50 backdrop-blur-sm">
                                     <div>
                                         <h4 class="font-bold text-sm text-stone-800 group-hover:text-amber-950 transition-colors flex items-center gap-2">
-                                            <i data-lucide="pen-tool" class="w-4 h-4 text-amber-800"></i> Motor de Fichas
+                                            <i data-lucide="pen-tool" class="w-4 h-4 text-amber-800"></i> <span data-i18n="nav_notas">Motor de Fichas</span>
                                         </h4>
-                                        <p class="text-[11px] text-stone-500 mt-1.5 leading-normal">Crea fichas bibliográficas y notas conectadas.</p>
+                                        <p class="text-[11px] text-stone-500 mt-1.5 leading-normal" data-i18n="terminal_dashboard_desc_notas">Crea fichas bibliográficas y notas conectadas.</p>
                                     </div>
                                     <span class="text-[9px] uppercase font-bold text-amber-900 tracking-wider flex items-center gap-1 group-hover:translate-x-0.5 transition-transform mt-2">
-                                        Entrar <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                        <span data-i18n="terminal_dashboard_enter">Entrar</span> <i data-lucide="arrow-right" class="w-3 h-3"></i>
                                     </span>
                                 </div>
 
@@ -682,12 +680,12 @@
                                 <div onclick="navigateTo('laboratorio')" class="group glass-card p-5 rounded-xl border border-stone-300/40 hover:border-amber-700/60 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col justify-between h-36 bg-white/50 backdrop-blur-sm">
                                     <div>
                                         <h4 class="font-bold text-sm text-stone-800 group-hover:text-amber-950 transition-colors flex items-center gap-2">
-                                            <i data-lucide="flask-conical" class="w-4 h-4 text-amber-800"></i> Laboratorio
+                                            <i data-lucide="flask-conical" class="w-4 h-4 text-amber-800"></i> <span data-i18n="nav_laboratorio">Laboratorio</span>
                                         </h4>
-                                        <p class="text-[11px] text-stone-500 mt-1.5 leading-normal">Ejecuta y visualiza notebooks Jupyter.</p>
+                                        <p class="text-[11px] text-stone-500 mt-1.5 leading-normal" data-i18n="terminal_dashboard_desc_lab">Ejecuta y visualiza notebooks Jupyter.</p>
                                     </div>
                                     <span class="text-[9px] uppercase font-bold text-amber-900 tracking-wider flex items-center gap-1 group-hover:translate-x-0.5 transition-transform mt-2">
-                                        Entrar <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                        <span data-i18n="terminal_dashboard_enter">Entrar</span> <i data-lucide="arrow-right" class="w-3 h-3"></i>
                                     </span>
                                 </div>
                             </div>
@@ -699,7 +697,7 @@
 
             <section id="view-libreria" class="p-8 animate-fade hidden h-full flex flex-col">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-3xl font-bold italic">La Librería</h2>
+                    <h2 class="text-3xl font-bold italic" data-i18n="libreria_title">La Librería</h2>
                     <div class="flex gap-2">
                         <input type="file" id="pdfUpload" class="hidden" accept=".pdf"
                             onchange="handleFileUpload(event)">
@@ -712,19 +710,19 @@
 
                         <button type="button" onclick="document.getElementById('pdfUpload').click()"
                             class="btn-sepia px-4 py-2 rounded text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
-                            <i data-lucide="cloud-upload" class="w-3 h-3"></i> Subir PDF
+                            <i data-lucide="cloud-upload" class="w-3 h-3"></i> <span data-i18n="libreria_btn_pdf">Subir PDF</span>
                         </button>
                         <button type="button" onclick="document.getElementById('notebookUpload').click()"
                             class="bg-amber-100/50 border border-amber-300 px-4 py-2 rounded text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-amber-100 transition-all">
-                            <i data-lucide="layout" class="w-3 h-3 text-amber-900"></i> Notebook
+                            <i data-lucide="layout" class="w-3 h-3 text-amber-900"></i> <span data-i18n="libreria_btn_nb">Notebook</span>
                         </button>
                         <button type="button" onclick="document.getElementById('officeUpload').click()"
                             class="bg-white border border-stone-400 px-4 py-2 rounded text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-stone-50 transition-all">
-                            <i data-lucide="file-text" class="w-3 h-3 text-blue-800"></i> Documento Office
+                            <i data-lucide="file-text" class="w-3 h-3 text-blue-800"></i> <span data-i18n="libreria_btn_office">Documento Office</span>
                         </button>
                         <button type="button" onclick="document.getElementById('obsidianUpload').click()"
                             class="border border-stone-400 bg-white/50 px-4 py-2 rounded text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-white transition-all">
-                            <i data-lucide="file-text" class="w-3 h-3 text-purple-700"></i> Obsidian
+                            <i data-lucide="file-text" class="w-3 h-3 text-purple-700"></i> <span data-i18n="libreria_btn_obsidian">Obsidian</span>
                         </button>
                     </div>
                 </div>
@@ -733,41 +731,42 @@
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div class="md:col-span-2 relative">
                             <label
-                                class="text-[10px] uppercase font-bold text-stone-500 mb-1 block tracking-widest">Filtrar
+                                class="text-[10px] uppercase font-bold text-stone-500 mb-1 block tracking-widest" data-i18n="libreria_filter_title">Filtrar
                                 por Contenido / Título</label>
                             <input type="text" id="advSearchInput" oninput="renderLibrary()"
+                                data-i18n-placeholder="libreria_filter_placeholder"
                                 placeholder="Buscar términos específicos..."
                                 class="w-full bg-white/50 border border-stone-300 rounded-lg py-2 pl-4 text-xs outline-none focus:ring-1 focus:ring-amber-700">
                         </div>
                         <div>
                             <label
-                                class="text-[10px] uppercase font-bold text-stone-500 mb-1 block tracking-widest">Tipo</label>
+                                class="text-[10px] uppercase font-bold text-stone-500 mb-1 block tracking-widest" data-i18n="libreria_filter_type">Tipo</label>
                             <select id="advTypeFilter" onchange="renderLibrary()"
                                 class="w-full bg-white/50 border border-stone-300 rounded-lg py-2 px-3 text-xs outline-none">
-                                <option value="all">Todos los registros</option>
-                                <option value="pdf">Documentos PDF</option>
-                                <option value="office">Documentos Office</option>
-                                <option value="note">Notas Manuales</option>
-                                <option value="ficha">Fichas Bibliográficas</option>
-                                <option value="obsidian">Notebooks Obsidian</option>
+                                <option value="all" data-i18n="libreria_filter_type_all">Todos los registros</option>
+                                <option value="pdf" data-i18n="libreria_filter_type_pdf">Documentos PDF</option>
+                                <option value="office" data-i18n="libreria_filter_type_office">Documentos Office</option>
+                                <option value="note" data-i18n="libreria_filter_type_note">Notas Manuales</option>
+                                <option value="ficha" data-i18n="libreria_filter_type_ficha">Fichas Bibliográficas</option>
+                                <option value="obsidian" data-i18n="libreria_filter_type_obsidian">Notebooks Obsidian</option>
                             </select>
                         </div>
                         <div>
                             <label
-                                class="text-[10px] uppercase font-bold text-stone-500 mb-1 block tracking-widest">Categoría
+                                class="text-[10px] uppercase font-bold text-stone-500 mb-1 block tracking-widest" data-i18n="libreria_filter_folder">Categoría
                                 / Carpeta</label>
                             <select id="advFolderFilter" onchange="renderLibrary()"
                                 class="w-full bg-white/50 border border-stone-300 rounded-lg py-2 px-3 text-xs outline-none">
-                                <option value="all">Cualquier Carpeta</option>
-                                <option value="investigacion">Investigación</option>
-                                <option value="borradores">Borradores</option>
-                                <option value="favoritos">Favoritos</option>
-                                <option value="archivo">Archivo Histórico</option>
+                                <option value="all" data-i18n="libreria_filter_folder_all">Cualquier Carpeta</option>
+                                <option value="investigacion" data-i18n="libreria_filter_folder_inv">Investigación</option>
+                                <option value="borradores" data-i18n="libreria_filter_folder_drafts">Borradores</option>
+                                <option value="favoritos" data-i18n="libreria_filter_folder_favs">Favoritos</option>
+                                <option value="archivo" data-i18n="libreria_filter_folder_archive">Archivo Histórico</option>
                             </select>
                         </div>
                     </div>
                     <div class="flex items-center gap-2 overflow-x-auto pb-1" id="adv-tag-filters">
-                        <span class="text-[9px] font-bold uppercase text-stone-400 mr-2 whitespace-nowrap">Tags
+                        <span class="text-[9px] font-bold uppercase text-stone-400 mr-2 whitespace-nowrap" data-i18n="libreria_tags_sug">Tags
                             Sugeridos:</span>
                     </div>
                 </div>
@@ -783,9 +782,10 @@
                     <div class="w-1/3 border-r border-stone-300 pr-6 flex flex-col h-full overflow-hidden">
                         <div class="flex gap-2 mb-4">
                             <button type="button" onclick="createNewNote()"
+                                data-i18n="notas_btn_new"
                                 class="flex-1 py-3 border border-stone-400 border-dashed rounded text-[10px] font-bold uppercase hover:bg-white transition-all">Nueva
                                 Entrada</button>
-                            <button type="button" onclick="openNewCollectionModal()" title="Nueva Colección"
+                            <button type="button" onclick="openNewCollectionModal()" data-i18n-title="notas_btn_new_col_title" title="Nueva Colección"
                                 class="px-4 py-3 border border-amber-600 bg-amber-50 text-amber-900 rounded hover:bg-amber-100 transition-all shadow-sm">
                                 <i data-lucide="folder-plus" class="w-4 h-4"></i>
                             </button>
@@ -794,8 +794,9 @@
                         <div class="mb-6">
                             <div class="flex items-center justify-between mb-2">
                                 <span
+                                    data-i18n="notas_col_title"
                                     class="text-[9px] uppercase font-bold tracking-widest text-stone-500">Colecciones</span>
-                                <span class="text-[8px] text-stone-400 italic">Arrastra fichas aquí</span>
+                                <span class="text-[8px] text-stone-400 italic" data-i18n="notas_col_drag">Arrastra fichas aquí</span>
                             </div>
                             <div id="collections-grid"
                                 class="collection-grid custom-scrollbar max-h-48 overflow-y-auto pr-1">
@@ -805,7 +806,7 @@
 
                         <div class="flex-1 flex flex-col overflow-hidden">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-[9px] uppercase font-bold tracking-widest text-stone-500">Fichas
+                                <span class="text-[9px] uppercase font-bold tracking-widest text-stone-500" data-i18n="notas_recent_title">Fichas
                                     Recientes</span>
                                 <button onclick="renderNotesList()"
                                     class="text-stone-400 hover:text-amber-700 transition-colors">
@@ -816,23 +817,24 @@
                         </div>
                     </div>
                     <div class="flex-1 flex flex-col bg-white rounded-lg shadow-inner border border-stone-300 p-8">
-                        <input type="text" id="note-title" placeholder="Título de la Ficha..."
+                        <input type="text" id="note-title" data-i18n-placeholder="notas_placeholder_title" placeholder="Título de la Ficha..."
                             class="text-3xl font-bold italic outline-none border-b border-stone-100 pb-4 mb-6">
-                        <textarea id="note-content" placeholder="Escribe tus reflexiones científicas aquí..."
+                        <textarea id="note-content" data-i18n-placeholder="notas_placeholder_content" placeholder="Escribe tus reflexiones científicas aquí..."
                             class="flex-1 outline-none resize-none leading-relaxed text-lg italic text-stone-600"></textarea>
                         <div class="mt-4 flex justify-between items-center">
                             <div class="flex gap-2">
-                                <button type="button" onclick="exportNote('md')" title="Exportar como Markdown (.md)"
+                                <button type="button" onclick="exportNote('md')" data-i18n-title="notas_export_md" title="Exportar como Markdown (.md)"
                                     class="p-2 border border-stone-300 rounded hover:bg-stone-50 text-stone-600 transition-colors"><i
                                         data-lucide="file-text" class="w-4 h-4"></i></button>
-                                <button type="button" onclick="exportNote('docx')" title="Exportar como Word (.docx)"
+                                <button type="button" onclick="exportNote('docx')" data-i18n-title="notas_export_word" title="Exportar como Word (.docx)"
                                     class="p-2 border border-stone-300 rounded hover:bg-stone-50 text-blue-700 transition-colors"><i
                                         data-lucide="file-text" class="w-4 h-4"></i></button>
-                                <button type="button" onclick="exportNote('pdf')" title="Exportar / Imprimir PDF"
+                                <button type="button" onclick="exportNote('pdf')" data-i18n-title="notas_export_pdf" title="Exportar / Imprimir PDF"
                                     class="p-2 border border-stone-300 rounded hover:bg-stone-50 text-red-700 transition-colors"><i
                                         data-lucide="printer" class="w-4 h-4"></i></button>
                             </div>
                             <button type="button" onclick="saveCurrentNote()"
+                                data-i18n="notas_btn_seal"
                                 class="btn-sepia px-8 py-2 rounded text-[10px] font-bold uppercase tracking-widest">Sellar
                                 Ficha</button>
                         </div>
@@ -845,8 +847,8 @@
                 <aside class="w-80 bg-[#e6dbbf] border-r border-stone-300 flex flex-col shadow-inner">
                     <div class="p-6 border-b border-stone-300 flex justify-between items-center bg-[#dfd2b0]">
                         <div>
-                            <h2 class="text-xl font-bold italic text-stone-800">Notebooks</h2>
-                            <p class="text-[10px] uppercase font-bold text-stone-500 tracking-widest mt-1">Laboratorio
+                            <h2 class="text-xl font-bold italic text-stone-800" data-i18n="lab_notebooks">Notebooks</h2>
+                            <p class="text-[10px] uppercase font-bold text-stone-500 tracking-widest mt-1" data-i18n="lab_subtitle">Laboratorio
                                 Experimental</p>
                         </div>
                         <i data-lucide="flask-conical" class="text-amber-900/40 w-8 h-8"></i>
@@ -854,8 +856,7 @@
                     <div id="lab-notebooks-list" class="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
                         <!-- Lista de Notebooks cargada dinámicamente -->
                         <div class="text-center py-10">
-                            <p class="text-[10px] uppercase font-bold text-stone-400 italic">No hay notebooks importados
-                            </p>
+                            <p class="text-[10px] uppercase font-bold text-stone-400 italic" data-i18n="lab_no_notebooks">No hay notebooks importados</p>
                         </div>
                     </div>
                 </aside>
@@ -868,8 +869,8 @@
                             class="w-24 h-24 rounded-full bg-stone-200/50 flex items-center justify-center mb-6 border border-stone-300/50">
                             <i data-lucide="terminal" class="w-10 h-10 text-stone-400"></i>
                         </div>
-                        <h3 class="text-2xl font-bold text-stone-600 italic">Módulo de Análisis</h3>
-                        <p class="text-sm text-stone-400 max-w-xs mt-3 italic leading-relaxed">Selecciona un notebook
+                        <h3 class="text-2xl font-bold text-stone-600 italic" data-i18n="lab_analysis_module">Módulo de Análisis</h3>
+                        <p class="text-sm text-stone-400 max-w-xs mt-3 italic leading-relaxed" data-i18n="lab_analysis_desc">Selecciona un notebook
                             del panel lateral para iniciar el procesamiento de datos y simulaciones.</p>
                     </div>
 
@@ -879,18 +880,18 @@
                             <div class="flex items-center gap-3">
                                 <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
                                 <h2 id="lab-notebook-title"
-                                    class="text-lg font-bold italic text-stone-800 truncate max-w-md">Notebook</h2>
+                                    class="text-lg font-bold italic text-stone-800 truncate max-w-md" data-i18n="pdf_viewer_document">Notebook</h2>
                             </div>
                             <div class="flex items-center gap-2">
-                                <button onclick="goToDocumentCollection()" title="Ver Colección de Fichas"
+                                <button onclick="goToDocumentCollection()" data-i18n-title="lab_view_cards_title" title="Ver Colección de Fichas"
                                     class="p-2 hover:bg-amber-100 text-amber-700 hover:text-amber-900 rounded-lg transition-all flex items-center gap-2">
                                     <i data-lucide="book-copy" class="w-5 h-5"></i>
                                 </button>
-                                <button onclick="togglePresentationMode()" title="Modo Presentación"
+                                <button onclick="togglePresentationMode()" data-i18n-title="lab_view_presentation_title" title="Modo Presentación"
                                     class="p-2 hover:bg-amber-100 text-stone-600 hover:text-amber-900 rounded-lg transition-all flex items-center gap-2">
                                     <i data-lucide="monitor-play" class="w-5 h-5"></i>
                                     <span
-                                        class="text-[10px] font-bold uppercase tracking-widest hidden md:inline">Presentación</span>
+                                        class="text-[10px] font-bold uppercase tracking-widest hidden md:inline" data-i18n="lab_view_presentation_text">Presentación</span>
                                 </button>
                                 <button onclick="closeLabNotebook()"
                                     class="p-2 hover:bg-stone-200 rounded-full transition-colors group">
