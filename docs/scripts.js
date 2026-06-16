@@ -43,6 +43,7 @@ let pdfDoc = null;
 let scale = 1.3;
 let rotation = 0;
 let selectedText = "";
+let currentView = "terminal";
 const fab = document.getElementById('selectionFAB');
 const floatingBtn = fab; // Compatibilidad heredada
 // --- MOTOR DE INTERNACIONALIZACIÓN (i18n) ---
@@ -278,6 +279,7 @@ async function renderPageContinuous(num, container) {
     pageWrapper.className = 'pdf-page-container mb-6 mx-auto relative bg-white shadow-xl';
     pageWrapper.style.width = `${viewport.width}px`;
     pageWrapper.style.height = `${viewport.height}px`;
+    pageWrapper.dataset.page = num;
 
     // Canvas exclusivo para esta página
     const canvas = document.createElement('canvas');
@@ -348,9 +350,25 @@ document.addEventListener('mouseup', (e) => {
 
     if (text && isTextLayer) {
         selectedText = text;
-        fab.style.left = `${e.pageX}px`;
-        fab.style.top = `${e.pageY - 40}px`;
-        fab.classList.remove('hidden');
+        
+        // Obtener el número de página
+        const pageContainer = e.target.closest('.pdf-page-container');
+        window.selectedPageNum = pageContainer ? pageContainer.dataset.page : "1";
+
+        // Posicionamiento inteligente del botón flotante
+        try {
+            const range = selection.getRangeAt(0);
+            const rect = range.getBoundingClientRect();
+            fab.style.left = `${rect.left + (rect.width / 2)}px`;
+            fab.style.top = `${rect.top - 40}px`;
+            fab.classList.remove('hidden');
+        } catch (err) {
+            console.warn("Error posicionando FAB:", err);
+            // Fallback
+            fab.style.left = `${e.clientX}px`;
+            fab.style.top = `${e.clientY - 40}px`;
+            fab.classList.remove('hidden');
+        }
     }
     // Caso 2: Clic fuera para limpiar (si no hay selección activa)
     else if (!text) {
@@ -379,7 +397,7 @@ function openFichaModal() {
 
     if (pdfOverlay && !pdfOverlay.classList.contains('hidden')) {
         docTitle = document.getElementById('pdf-viewer-title').innerText;
-        page = pageNum;
+        page = window.selectedPageNum || "1";
     } else if (officeOverlay && !officeOverlay.classList.contains('hidden')) {
         docTitle = document.getElementById('office-title').innerText;
         page = "Única";
@@ -842,7 +860,7 @@ function handleSelectionEvent(e) {
         const rect = range.getBoundingClientRect();
 
         fab.style.left = `${rect.left + (rect.width / 2)}px`;
-        fab.style.top = `${rect.top + window.scrollY - 40}px`;
+        fab.style.top = `${rect.top - 40}px`;
         fab.classList.remove('hidden');
     } else {
         fab.classList.add('hidden');
@@ -1481,6 +1499,7 @@ document.addEventListener('keydown', (e) => {
 
 // --- INTERFAZ ---
 const navigateTo = (viewId) => {
+    currentView = viewId;
     document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
     document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
 

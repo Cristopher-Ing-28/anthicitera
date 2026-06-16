@@ -37,7 +37,7 @@ function handleLabSelection(e) {
 
             if (fab) {
                 fab.style.left = `${rect.left + (rect.width / 2)}px`;
-                fab.style.top = `${rect.top + window.scrollY - 40}px`;
+                fab.style.top = `${rect.top - 40}px`;
                 fab.classList.remove('hidden');
             }
         } catch (err) {

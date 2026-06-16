@@ -68,8 +68,8 @@ public class AuthService {
     @Transactional
     public String login(String username, String password) {
         try {
-            Usuario user = em.createQuery("SELECT u FROM Usuario u WHERE u.username = :username", Usuario.class)
-                    .setParameter("username", username)
+            Usuario user = em.createQuery("SELECT u FROM Usuario u WHERE u.username = :loginVal OR u.email = :loginVal", Usuario.class)
+                    .setParameter("loginVal", username)
                     .getSingleResult();
 
             if (BCrypt.checkpw(password, user.getPasswordHash())) {
