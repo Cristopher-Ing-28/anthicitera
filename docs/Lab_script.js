@@ -450,18 +450,7 @@ async function renderOutput(output, container) {
     }
 }
 
-/**
- * Escapa caracteres especiales para prevenir XSS
- */
-function escapeHtml(str) {
-    if (!str) return '';
-    return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
+// Se utiliza la función escapeHtml global ya declarada en scripts.js
 
 /**
  * Escanea el contenedor en busca de imágenes con rutas relativas y trata de resolverlas
