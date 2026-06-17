@@ -72,16 +72,21 @@ class AuthServiceTest {
     }
 
     @Test
-    void login_Success() {
-        when(em.createQuery(contains("u.username"), eq(Usuario.class))).thenReturn(usuarioQuery);
-        when(usuarioQuery.setParameter("username", "testuser")).thenReturn(usuarioQuery);
-        when(usuarioQuery.getSingleResult()).thenReturn(usuarioPrueba);
+void login_Success() {
+    // Mock the query creation with the exact query string
+    when(em.createQuery(anyString(), eq(Usuario.class))).thenReturn(usuarioQuery);
+    when(usuarioQuery.setParameter("username", "testuser")).thenReturn(usuarioQuery);
+    when(usuarioQuery.getSingleResult()).thenReturn(usuarioPrueba);
+    
+    // Also mock the session query creation for persist operation
+    when(em.createQuery(anyString(), eq(SesionActividad.class))).thenReturn(sesionQuery);
+    when(sesionQuery.setParameter(anyString(), any())).thenReturn(sesionQuery);
 
-        String token = authService.login("testuser", "password123");
+    String token = authService.login("testuser", "password123");
 
-        assertNotNull(token);
-        verify(em, times(1)).persist(any(SesionActividad.class));
-    }
+    assertNotNull(token);
+    verify(em, times(1)).persist(any(SesionActividad.class));
+}
 
     @Test
     void login_Failure_WrongPassword() {
