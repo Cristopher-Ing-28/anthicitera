@@ -1,0 +1,1 @@
+ngrok http --domain=brilliant-shrivel-excretory.ngrok-free.dev 8080
