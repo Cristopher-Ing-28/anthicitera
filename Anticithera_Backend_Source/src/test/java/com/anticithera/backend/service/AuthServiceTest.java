@@ -78,10 +78,10 @@ void login_Success() {
     when(usuarioQuery.setParameter("username", "testuser")).thenReturn(usuarioQuery);
     when(usuarioQuery.getSingleResult()).thenReturn(usuarioPrueba);
     
-    // Mock the session query
+    // Mock the session query - ensure it returns a valid session
     when(em.createQuery(anyString(), eq(SesionActividad.class))).thenReturn(sesionQuery);
     when(sesionQuery.setParameter(anyString(), any())).thenReturn(sesionQuery);
-    when(sesionQuery.getSingleResult()).thenReturn(new SesionActividad()); // Add this line
+    when(sesionQuery.getSingleResult()).thenThrow(new jakarta.persistence.NoResultException()); // Session doesn't exist yet
     
     String token = authService.login("testuser", "password123");
     
