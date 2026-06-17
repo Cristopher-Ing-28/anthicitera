@@ -73,19 +73,23 @@ class AuthServiceTest {
 
     @Test
 void login_Success() {
-    // Mock the user query
-    when(em.createQuery(anyString(), eq(Usuario.class))).thenReturn(usuarioQuery);
+    // 1. Forzar una coincidencia más específica usando "contains"
+    // Reemplaza "u.username" y "s.token" por fragmentos reales de tus consultas JPQL/HQL
+    when(em.createQuery(contains("u.username"), eq(Usuario.class))).thenReturn(usuarioQuery);
     when(usuarioQuery.setParameter("username", "testuser")).thenReturn(usuarioQuery);
     when(usuarioQuery.getSingleResult()).thenReturn(usuarioPrueba);
     
-    // Mock the session query - ensure it returns a valid session
-    when(em.createQuery(anyString(), eq(SesionActividad.class))).thenReturn(sesionQuery);
+    // 2. Mock de la consulta de sesión con su propio filtro
+    when(em.createQuery(contains("s.token"), eq(SesionActividad.class))).thenReturn(sesionQuery);
+    // Usa anyString() o any() genérico para los parámetros si no quieres ligarte a nombres exactos
     when(sesionQuery.setParameter(anyString(), any())).thenReturn(sesionQuery);
-    when(sesionQuery.getSingleResult()).thenThrow(new jakarta.persistence.NoResultException()); // Session doesn't exist yet
+    when(sesionQuery.getSingleResult()).thenThrow(new jakarta.persistence.NoResultException());
     
+    // Ejecución
     String token = authService.login("testuser", "password123");
     
-    assertNotNull(token);
+    // Verificaciones
+    assertNotNull(token, "El token no debería ser nulo si las credenciales son correctas");
     verify(em, times(1)).persist(any(SesionActividad.class));
 }
 
